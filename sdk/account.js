@@ -13,15 +13,16 @@
  * Account.isValidBackupString(backupString);
  */
 
-var lib = require('bitmark-lib');
-var Seed = lib.Seed;
-var AuthKey = lib.AuthKey;
+let lib = require('bitmark-lib');
+let Seed = lib.Seed;
+let AuthKey = lib.AuthKey;
+let API = require('./api');
 
 function AccountInfo(values) {
-  this.getValues = function() { return values; }
+  this.getValues = () => { return values; }
 }
 
-var Account = function(network, version) {
+let Account = function(network, version) {
   if (!(this instanceof Account)) {
     return new Account(network, version);
   }
@@ -41,6 +42,16 @@ var Account = function(network, version) {
 
 Account.prototype.getBackupString = function() {
   return this.seed.toString();
+}
+
+Account.prototype.getAuthKey = function() {
+  return this.authKey;
+}
+
+Account.prototype.issue = function() {
+  let args = Array.prototype.slice.call(arguments);
+  args.push(this);
+  return API.issue.apply(API, args);
 }
 
 module.exports = Account;
