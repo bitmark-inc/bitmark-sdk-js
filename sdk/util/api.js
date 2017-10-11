@@ -18,39 +18,39 @@ let requestToAPI = (method, name, params, networkName) => {
     }
 
     let url = `${network.api_server}/${network.api_version}/${name}`;
-    let query = '';
-    if (params) {
-      query = querystring.stringify(params);
-      if (query) {
-        url += '?' + query;
-      }
-    }
-    
+    // let query = '';
+    // if (params && method ==='get') {
+    //   query = querystring.stringify(params);
+    //   if (query) {
+    //     url += '?' + query;
+    //   }
+    // }
+
     let requestCallback = (error, response, body) => {
       if (error) {
         reject(error);
       } else if (response.statusCode === 404) {
         reject({code: 404, message: 'not found'});
       } else if (response.statusCode !== 200) {
-        reject(new Error(body));
+        reject(new Error(body.message));
       } else {
-        try {
-          body = JSON.parse(body);
-          resolve(body);
-        } catch (error) {
-          reject(error);
-        }
+        resolve(body);
       }
     }
 
+    let options = {};
+    options.method = method.toUpperCase();
+    options.uri = url;
+
     if (method === 'get') {
-      request.get(url, requestCallback);
+      options.qs = params;
     } else if (method === 'post') {
-      console.log(params);
-      request.post(url, params, requestCallback);
+      options.json = params;
     } else {
       reject(new Error('API error: method is not supported'));
     }
+
+    request(options, requestCallback);
   });
 }
 

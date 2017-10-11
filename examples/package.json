@@ -1,0 +1,15 @@
+{
+  "name": "bitmark-sdk-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "issue.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "bitmark-sdk": "git+https://github.com/bitmark-inc/bitmark-sdk.git"
+  }
+}

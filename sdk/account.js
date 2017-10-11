@@ -13,9 +13,8 @@
  * Account.isValidBackupString(backupString);
  */
 
-let lib = require('bitmark-lib');
-let Seed = lib.Seed;
-let AuthKey = lib.AuthKey;
+let Seed = require('./seed');
+let AuthKey = require('./auth-key');
 let API = require('./api');
 
 function AccountInfo(values) {
@@ -33,19 +32,40 @@ let Account = function(network, version) {
   }
 
   try {
-    this.seed = new Seed(network, version);
-    this.authKey = AuthKey.fromSeed(this.seed);
+    this._seed = new Seed(network, version);
+    this._authKey = AuthKey.fromSeed(this._seed);
+    this._network = this._seed.getNetwork();
+    this._version = this._seed.getVersion();
   } catch (error) {
     throw error;
   }
 }
 
+Account.fromBackupString = function(backupString) {
+  let seed = Seed.fromString(backupString);
+  let authKey = AuthKey.fromSeed(seed);
+  let accountInfo = new AccountInfo({_seed: seed, _authKey: authKey});
+  return new Account(accountInfo);
+}
+
 Account.prototype.getBackupString = function() {
-  return this.seed.toString();
+  return this._seed.toString();
 }
 
 Account.prototype.getAuthKey = function() {
-  return this.authKey;
+  return this._authKey;
+}
+
+Account.prototype.getAccountNumber = function() {
+  return this._authKey.getAccountNumber();
+}
+
+Account.prototype.getNetwork = function() {
+  return this._network;
+}
+
+Account.prototype.getVersion = function() {
+  return this._version;
 }
 
 Account.prototype.issue = function() {

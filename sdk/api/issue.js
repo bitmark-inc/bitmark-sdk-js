@@ -6,7 +6,8 @@ const API_METHOD = 'post';
 
 let _ = require('lodash');
 let util = require('../util');
-let lib = require('bitmark-lib');
+let Asset = require('../records/asset');
+let Issue = require('../records/issue');
 
 let issue = (asset, quantity, account) => {
   let assetId;
@@ -15,7 +16,7 @@ let issue = (asset, quantity, account) => {
   let issueObjects = [];
 
   // Validate data
-  if (asset instanceof lib.Asset) {
+  if (asset instanceof Asset) {
     if (!asset.isSigned()) {
       asset.sign(account.getAuthKey());
     }
@@ -33,7 +34,7 @@ let issue = (asset, quantity, account) => {
 
   // create issues
   for (let i = 0; i < quantity; i++) {
-    let issue = new lib.Issue()
+    let issue = new Issue()
       .fromAsset(assetId)
       .sign(account.getAuthKey());
     issueObjects.push(issue);
@@ -47,7 +48,7 @@ let issue = (asset, quantity, account) => {
   }
   requestBody.issues = issueRecords;
 
-  return util.api.request(API_METHOD, API_NAME, requestBody)
+  return util.api.request(API_METHOD, API_NAME, requestBody, account.getNetwork())
     .then(() => {
       return Promise.resolve(issueObjects);
     });

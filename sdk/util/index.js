@@ -1,4 +1,9 @@
 module.exports = {
+  api: require('./api'),
   assert: require('./assert'),
-  api: require('./api')
+  common: require('./common'),
+  base58: require('./base58'),
+  binary: require('./binary-packing'),
+  varint: require('./varint'),
+  fingerprint: require('./fingerprint')
 }
