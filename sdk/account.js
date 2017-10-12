@@ -34,8 +34,6 @@ let Account = function(network, version) {
   try {
     this._seed = new Seed(network, version);
     this._authKey = AuthKey.fromSeed(this._seed);
-    this._network = this._seed.getNetwork();
-    this._version = this._seed.getVersion();
   } catch (error) {
     throw error;
   }
@@ -61,17 +59,23 @@ Account.prototype.getAccountNumber = function() {
 }
 
 Account.prototype.getNetwork = function() {
-  return this._network;
+  return this._seed.getNetwork();
 }
 
 Account.prototype.getVersion = function() {
-  return this._version;
+  return this._seed.getVersion();
 }
 
 Account.prototype.issue = function() {
   let args = Array.prototype.slice.call(arguments);
   args.push(this);
   return API.issue.apply(API, args);
+}
+
+Account.prototype.transfer = function() {
+  let args = Array.prototype.slice.call(arguments);
+  args.push(this);
+  return API.transfer.apply(API, args);
 }
 
 module.exports = Account;

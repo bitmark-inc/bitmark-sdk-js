@@ -1,3 +1,4 @@
 module.exports = {
-  issue: require('./issue')
+  issue: require('./issue'),
+  transfer: require('./transfer')
 }
