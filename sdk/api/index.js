@@ -1,4 +1,3 @@
-module.exports = {
-  issue: require('./issue'),
-  transfer: require('./transfer')
-}
+let funcs = {};
+Object.assign(funcs, require('./issue'), require('./transfer'), require('./bitmarks'));
+module.exports = funcs;

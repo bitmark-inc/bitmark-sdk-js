@@ -8,6 +8,8 @@ module.exports = exports = {
   Issue: require('./sdk/records/issue'),
   Transfer: require('./sdk/records/transfer'),
 
+  API: require('./sdk/api'),
+
   config: require('./sdk/config'),
   networks: require('./sdk/networks'),
 

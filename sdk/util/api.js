@@ -1,6 +1,5 @@
 let request = require('request');
 let networks = require('../networks');
-let querystring = require('querystring');
 
 let requestToAPI = (method, name, params, networkName) => {
   return new Promise((resolve, reject) => {
@@ -18,13 +17,6 @@ let requestToAPI = (method, name, params, networkName) => {
     }
 
     let url = `${network.api_server}/${network.api_version}/${name}`;
-    // let query = '';
-    // if (params && method ==='get') {
-    //   query = querystring.stringify(params);
-    //   if (query) {
-    //     url += '?' + query;
-    //   }
-    // }
 
     let requestCallback = (error, response, body) => {
       if (error) {
@@ -39,12 +31,13 @@ let requestToAPI = (method, name, params, networkName) => {
     }
 
     let options = {};
-    options.method = method.toUpperCase();
+    method = method.toUpperCase();
+    options.method = method;
     options.uri = url;
 
-    if (method === 'get') {
+    if (method === 'GET') {
       options.qs = params;
-    } else if (method === 'post') {
+    } else if (method === 'POST') {
       options.json = params;
     } else {
       reject(new Error('API error: method is not supported'));

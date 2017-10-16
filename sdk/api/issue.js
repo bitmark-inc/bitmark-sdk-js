@@ -54,4 +54,4 @@ let issue = (asset, quantity, account) => {
     });
 }
 
-module.exports = issue;
+module.exports = {issue};

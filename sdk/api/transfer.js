@@ -20,4 +20,4 @@ let transfer = (link, toOwner, account) => {
     });
 }
 
-module.exports = transfer;
+module.exports = {transfer};
