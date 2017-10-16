@@ -46,6 +46,10 @@ Account.fromBackupString = function(backupString) {
   return new Account(accountInfo);
 }
 
+Account.isValidBackupString = function(backupString) {
+  return Seed.isValid(backupString);
+}
+
 Account.prototype.getBackupString = function() {
   return this._seed.toString();
 }

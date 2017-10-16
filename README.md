@@ -17,54 +17,50 @@ var bitmarkSDK = require('bitmark-sdk');
 
 # Usage
 
-## Seed
+## Account
 
 #### Set up
 
 ```javascript
-var Seed = bitmarkSDK.Seed;
+var Account = bitmarkSDK.Account;
 ```
 
-Seed is where everything starts for an entity which wants to use bitmark services.
-A seed is used to generate:
-1. auth key: for authentication of transactions (issue or transfer)
-2. encryption key: for encryption of assets
+Account is where everything starts for an entity which wants to use bitmark services.
+An account is used to:
+1. register asset to the system
+2. issue bitmark
+3. encrypt the asset in case of private property
+4. transfer bitmark
 
-To create a new random seed:
+To create a new random account:
 
 ```javascript
-var seed = new Seed();
+var account = new Account();
 ```
 
-There are 2 optional parameters for the Seed constructor: *network* and *version*. The default for *network* is `livenet`, and the only supported version now is 1.
+There are 2 optional parameters for the Account constructor: *network* and *version*. The default for *network* is `livenet`, and the only supported version now is 1.
 
 ```javascript
-var seed = new Seed('testnet');
-var seed = new Seed('testnet', 1);
+var account = new Account('testnet');
+var account = new Account('testnet', 1);
 ```
 
-Losing the seed means losing the control over bitmarks and assets of the entity.
-Thus, a seed should be backed up by saving its string format in a secure place, and be imported when there are operations which require authentication or encryption.
+Losing the account means losing the control over bitmarks and assets of the entity.
+Thus, an account should be backed up by saving its string format in a secure place, and be imported when there are operations which require authentication or encryption.
 
 ```javascript
-var backup = seed.toString(); // using toBase58 is equivalent
-var restore = Seed.fromString(backup);
-var isValidSeedString = Seed.isValid(backup); // check whether a string is in valid format
+var backupString = account.getBackupString(); // using toBase58 is equivalent
+var restore = Account.fromBackupString(backupString);
+var isValidBackupString = Account.isValidBackupString(backupString); // check whether a string is in valid format
 ```
-
-Passing a counter to the seed, it will create a new 32-byte secret key
-```javascript
-var key = seed.generateKey(999);
-```
-Note: the counter 999 and 1000 are preserved to generate auth key and encryption key
-
-#### Methods
-* *generateKey(counter)* — returns 32 bytes in a Buffer object
-* *toString()* — returns the seed in string format
-* *toBase58()* — returns the seed in Base58 format (same as `toString`)
+### Methods
+* *getBackupString()* - export the account as a string
+* *getAuthKey()* - return the auth key instance, see AuthKey section for more detail
+* *getAccountNumber()* - return the account number instance, see AccountNumber section for more detail
 * *getNetwork()* — returns the network of the seed, either `livenet` or `testnet`
 * *getVersion()* — returns the version of the seed
-* *getCore()* — returns the core of the seed, for keypair derivation
+* *issue()* - issue bitmarks, see issue API section for more detail
+* *transfer()* - transfer a bitmark, see transfer API section for more detail
 
 ## Auth Key
 
@@ -76,42 +72,22 @@ var AuthKey = bitmarkSDK.AuthKey;
 
 #### Instantiate
 
-To create the auth key from a new seed:
+To get the auth key from an account:
 ```javascript
-var authKey = AuthKey.fromSeed(new Seed());
+var account = new Account();
+var authKey = account.getAuthKey();
 ```
 
-To instantiate a AuthKey object:
-
-```javascript
-var authKey01 = new AuthKey();
-```
-
-There are 2 optional parameters for the AuthKey constructor: *network* and *key type*. The default for *network* is `livenet`, and the default for *key type* is `ed25519`.
-
-```javascript
-var authKey02 = new AuthKey('testnet');
-var authKey03 = new AuthKey('livenet', 'ed25519');
-```
-
-To parse the private key from the KIF string:
+To parse the private key from the KIF (Key Imported Format) string:
 
 ```javascript
 var authKey = AuthKey.fromKIF('cELQPQoW2YDWBq37V6ZLnEiHDD46BG3tEvVmj6BpiCSvQwSszC');
 ```
 
-To parse the private key from buffer:
-
-```javascript
-var authKey = AuthKey.fromBuffer('75d954e8f790ca792502148edfefed409d3da04b49443d390435e776821252e26c60fe96ba261d2f3942a33d2eaea2391dfb662de79bc0c4ef53521ce8b11c20', 'testnet', 'ed25519');
-```
-
-The buffer can be either a hexadecimal string or a Buffer object. For ed25519, we can input a seed (32 bytes) or a full private key (64 bytes).
-
 #### Methods
 * *toBuffer()* — returns a Buffer object containing the private key
 * *toString()* — returns *toBuffer()* in hexadecimal format
-* *toKIF()* — returns the private key in KIF format.
+* *toKIF()* — returns the private key in KIF.
 * *getNetwork()* — returns either `livenet` or `testnet`, depending on the key
 * *getType()* — returns the key type (currently only `ed25519`)
 * *getAccountNumber()* — returns an AccountNumber object (see the next section)
@@ -128,11 +104,11 @@ var AccountNumber = bitmarkSDK.AccountNumber;
 
 #### Instantiate
 
-To instantiate an AccountNumber object from an AuthKey:
+To instantiate an AccountNumber object from an Account:
 
 ```javascript
-var authKey = AuthKey.fromKIF('cELQPQoW2YDWBq37V6ZLnEiHDD46BG3tEvVmj6BpiCSvQwSszC');
-var accountNumber = authKey.getAccountNumber()
+var account = new Account();
+var accountNumber = account.getAccountNumber()
 ```
 
 To instantiate an AccountNumber object from an account number string:
@@ -206,6 +182,7 @@ var asset = new Asset()
 * *getRegistrant()* — returns an AccountNumber object specifying the Asset's *Registrant* property
 * *getSignature()* — returns the Asset object's signature buffer
 * *getId()* — returns the Asset object's 'AssetIndex' as a string value
+* *toJSON()* — returns the Asset object in JSON format
 
 
 ### Issue Record
@@ -235,6 +212,7 @@ Note: `fromAsset()` can receive either an Asset object or an *asset-id* string.
 * *getSignature()* — returns the Issue object's signature buffer
 * *getAsset()*: returns the Issue record's corresponding *AssetIndex* as a string value
 * *getId()* — returns a hexadecimal string id for the Issue record
+* *toJSON()* — returns the Issue object in JSON format
 
 ---
 
@@ -258,7 +236,7 @@ var transfer = new Transfer()
       .sign(authKey);
 ```
 
-Note: `fromTx()` can receive either an Issue or Transfer object *or* an id string from either an Issue or Transfer object.
+Note: `fromTx()` can receive either an Issue or Transfer instance *or* an id string from either an Issue or Transfer instance.
 
 #### Methods
 * *isSigned()* — returns `true` if the transfer record is signed
@@ -266,8 +244,118 @@ Note: `fromTx()` can receive either an Issue or Transfer object *or* an id strin
 * *getSignature()*: returns the Transfer object's signature buffer
 * *getPreTxId()*: returns a hexadecimal string of the *Id* for the previous record in the chain-of ownership (either an Issue record or Transfer record) — the same as a record's *Link* property in the blockchain data structure
 * *getId()* — returns a hexadecimal string id for the Transfer record
-
+* *toJSON()* — returns the Transfer object in JSON format
 ---
+
+## API
+
+```javascript
+var API = require('bitmark-sdk').API
+```
+
+### Issue
+
+Under Construction
+
+### Transfer
+
+#### Usage
+```javascript
+API.transfer(link, toOwner, account)
+  .then((transfer) => {
+    console.log(`transfer with id ${transfer.getId()} is waiting to be confirmed`);
+  })
+  .catch((error) => {
+    console.log(`Tranfer failed with error: ${error.message}`);
+  });
+```
+
+Or we can call call it from account instance
+```javascript
+account.transfer(link, toOwner)
+```
+
+#### Parameters
+* *link* Issuance/Transfer instance of id string from Issuance/Transfer instance
+* *toOwner* can receive AccountNumber instance or AccountNumber in string format
+* *account* Account instance
+
+#### Return
+The transfer API return a promise instance after the call is finished.
+The `then` callback is called with Transfer instance
+
+### Get specific bitmark
+
+#### Usage
+```javascript
+var id = '6dc2b758d641d3aa4c5033eeaa6639ada4aea231a37f09de3297a58c2152c22';
+var network = 'testnet';
+var options = {pending: true, asset: true};
+API.getBitmark(id, network, options)
+  .then(result => {
+    // use result as you wish
+  });
+```
+
+#### Parameter
+* *id* id string of the transaction
+* *network* network name
+* *options* see all the possible option in the API document
+
+### Get collection of bitmarks
+
+#### Usage
+```javascript
+var network = 'testnet';
+var options = {pending: true, asset: true, owner: 'eQc5G8Zi7FfRQckrfzNmc3TjkutQKgzBiSQiQRjorsPBBs8FoF'};
+API.getBitmarks(network, options)
+  .then(result => {
+    // use result as you wish
+  });
+```
+
+#### Parameter
+* *network* network name
+* *options* see all the possible option in the API document
+
+### Get specific Asset
+
+#### Usage
+```javascript
+var id = '7d683640a76bf1f9db3ff654044a37f9b616dbbc10085e635504998a971e0722d1d6b4b967cc09b7a6f912a4be30eb8c4f590f0efddd4ada08d1d6ab566cb140';
+var network = 'testnet';
+var options = {};
+API.getBitmark(id, network, options)
+  .then(result => {
+    // use result as you wish
+  });
+```
+
+#### Parameter
+* *id* id string of the asset
+* *network* network name
+* *options* see all the possible option in the API document
+
+### Get specific Asset
+
+#### Usage
+```javascript
+var id = '7d683640a76bf1f9db3ff654044a37f9b616dbbc10085e635504998a971e0722d1d6b4b967cc09b7a6f912a4be30eb8c4f590f0efddd4ada08d1d6ab566cb140';
+var network = 'testnet';
+var options = {};
+API.getBitmark(id, network, options)
+  .then(result => {
+    // use result as you wish
+  });
+```
+
+#### Parameter
+* *id* id string of the asset
+* *network* network name
+* *options* see all the possible option in the API document
+
+
+
 
 ## Utilities
 

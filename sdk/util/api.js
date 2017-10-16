@@ -1,8 +1,13 @@
 let request = require('request');
 let networks = require('../networks');
 
-let requestToAPI = (method, name, params, networkName) => {
+let sendRequest = (options) => {
+  options = options || {};
   return new Promise((resolve, reject) => {
+    let method = options.method;
+    let apiUrl = options.url;
+    let params = options.params;
+    let networkName = options.network;
 
     // Validate data
     let network = networkName ? networks[networkName] : networks['livenet'];
@@ -11,12 +16,12 @@ let requestToAPI = (method, name, params, networkName) => {
       return;
     }
 
-    if (!name) {
-      reject(new Error('API error: name is required'));
+    if (!apiUrl) {
+      reject(new Error('API error: api url is required'));
       return;
     }
 
-    let url = `${network.api_server}/${network.api_version}/${name}`;
+    let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
 
     let requestCallback = (error, response, body) => {
       if (error) {
@@ -30,23 +35,48 @@ let requestToAPI = (method, name, params, networkName) => {
       }
     }
 
-    let options = {};
+    let requestOptions = {};
     method = method.toUpperCase();
-    options.method = method;
-    options.uri = url;
+    requestOptions.method = method;
+    requestOptions.uri = url;
 
     if (method === 'GET') {
-      options.qs = params;
+      requestOptions.qs = params;
     } else if (method === 'POST') {
-      options.json = params;
+      requestOptions.json = params;
     } else {
       reject(new Error('API error: method is not supported'));
     }
 
-    request(options, requestCallback);
+    request(requestOptions, requestCallback);
+  });
+}
+
+let sendMultipartRequest = (options) => {
+  options = options || {};
+  return new Promise((resolve, reject) => {
+    let apiUrl = options.url;
+    let params = options.params;
+    let networkName = options.network;
+    let headers = options.headers;
+    
+    // Validate data
+    let network = networkName ? networks[networkName] : networks['livenet'];
+    if (!network) {
+      reject(new Error('API error: does not recognize network'));
+      return;
+    }
+
+    if (!apiUrl) {
+      reject(new Error('API error: api name is required'));
+      return;
+    }
+
+    let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
+    
   });
 }
 
 module.exports = {
-  request: requestToAPI
+  request: sendRequest
 }

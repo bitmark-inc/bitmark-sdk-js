@@ -14,10 +14,14 @@ let transfer = (link, toOwner, account) => {
 
   // make request
   let requestBody = {transfer: record.toJSON()};
-  return util.api.request(API_METHOD, API_NAME, requestBody, account.getNetwork())
-    .then(() => {
-      return Promise.resolve(record);
-    });
+  return util.api.request({
+    method: API_METHOD,
+    url: API_NAME,
+    params: requestBody,
+    network: account.getNetwork()
+  }).then(() => {
+    return Promise.resolve(record);
+  });
 }
 
 module.exports = {transfer};

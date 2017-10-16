@@ -1,21 +1,28 @@
 const API_NAME = 'bitmarks';
 const API_METHOD = 'get';
 
-let _ = require('lodash');
 let util = require('../util');
 
-let getBitmark = (id, network, options) => {
+let getBitmark = (id, options, network) => {
   options = options || {};
-  return util.api.request(API_METHOD, `${API_NAME}/${id}`, options, network)
-  .then((result) => {
+  return util.api.request({
+    method: API_METHOD,
+    url: `${API_NAME}/${id}`,
+    params: options,
+    network
+  }).then((result) => {
     return Promise.resolve(result);
   });
 }
 
-let getBitmarks = (network, options) => {
+let getBitmarks = (options, network) => {
   options = options || {};
-  return util.api.request(API_METHOD, API_NAME, options, network)
-  .then((result) => {
+  return util.api.request({
+    method: API_METHOD,
+    url: API_NAME,
+    params: options,
+    network
+  }).then((result) => {
     return Promise.resolve(result);
   });
 }

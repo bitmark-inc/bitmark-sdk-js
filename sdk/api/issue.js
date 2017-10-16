@@ -9,6 +9,10 @@ let util = require('../util');
 let Asset = require('../records/asset');
 let Issue = require('../records/issue');
 
+let upload = (filePath, account) => {
+
+}
+
 let issue = (asset, quantity, account) => {
   let assetId;
   let assetRecord;
