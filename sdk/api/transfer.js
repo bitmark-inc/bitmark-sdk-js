@@ -14,7 +14,7 @@ let transfer = (link, toOwner, account) => {
 
   // make request
   let requestBody = {transfer: record.toJSON()};
-  return util.api.request({
+  return util.api.sendRequest({
     method: API_METHOD,
     url: API_NAME,
     params: requestBody,

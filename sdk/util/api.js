@@ -1,5 +1,6 @@
 let request = require('request');
 let networks = require('../networks');
+let _ = require('lodash');
 
 let sendRequest = (options) => {
   options = options || {};
@@ -22,14 +23,14 @@ let sendRequest = (options) => {
     }
 
     let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
+    console.log(url);
 
     let requestCallback = (error, response, body) => {
+      console.log(body);
       if (error) {
         reject(error);
-      } else if (response.statusCode === 404) {
-        reject({code: 404, message: 'not found'});
       } else if (response.statusCode !== 200) {
-        reject(new Error(body.message));
+        reject({code: response.statusCode, error: new Error(body.message)});
       } else {
         resolve(body);
       }
@@ -73,10 +74,27 @@ let sendMultipartRequest = (options) => {
     }
 
     let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
-    
+
+    let requestCallback = (error, response, body) => {
+      console.log(body);
+      if (error) {
+        reject(error);
+      } else if (response.statusCode !== 200) {
+        reject({code: response.statusCode, error: new Error(body.message)});
+      } else {
+        resolve(body);
+      }
+    }
+
+    let requestOptions = {
+      method: 'post',
+      uri: url,
+      formData: params,
+      headers: headers
+    };
+
+    request(requestOptions, requestCallback);    
   });
 }
 
-module.exports = {
-  request: sendRequest
-}
+module.exports = {sendRequest, sendMultipartRequest}

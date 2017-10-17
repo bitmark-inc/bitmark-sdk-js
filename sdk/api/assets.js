@@ -6,7 +6,7 @@ let util = require('../util');
 
 let getAsset = (id, options, network) => {
   options = options || {};
-  return util.api.request({
+  return util.api.sendRequest({
     method: API_METHOD,
     url: `${API_NAME}/${id}`,
     params: options,
@@ -18,7 +18,7 @@ let getAsset = (id, options, network) => {
 
 let getAssets = (options, network) => {
   options = options || {};
-  return util.api.request({
+  return util.api.sendRequest({
     method: API_METHOD,
     url: API_NAME,
     params: options,

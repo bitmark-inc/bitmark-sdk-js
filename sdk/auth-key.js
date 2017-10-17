@@ -174,6 +174,11 @@ AuthKey.fromSeed = function(seed) {
   return new AuthKey(buildAuthKey(key, network, type));
 }
 
+AuthKey.prototype.sign = function(message) {
+  let keyHandler = keyHandlers.getHandler(this.getType());
+  return keyHandler.sign(Buffer.from(message, 'utf8'), this.toBuffer());
+}
+
 AuthKey.prototype.toBuffer = function(){ return this._priKey; };
 
 AuthKey.prototype.toString = function(){ return this._priKey.toString('hex'); };

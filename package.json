@@ -1,6 +1,6 @@
 {
   "name": "bitmark-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Bitmark SDK",
   "main": "index.js",
   "directories": {
@@ -31,6 +31,7 @@
   "dependencies": {
     "bn.js": "^4.11.6",
     "bs58": "^3.0.0",
+    "form-data": "^2.3.1",
     "js-sha3": "^0.6.1",
     "lodash": "^4.6.1",
     "tweetnacl-nodewrap": "^0.1.9"
