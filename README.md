@@ -255,7 +255,56 @@ var API = require('bitmark-sdk').API
 
 ### Issue
 
-Under Construction
+#### Usage
+
+```javascript
+let account = new Account('testnet');
+let filepath = '/path/to/my/file';
+let asset = null;
+let quantity = 10;
+
+// Issue a new asset
+util.fingerprint.fromStream(fs.createReadStream(filepath))
+  .then(fingerprint => {
+    asset = new Asset()
+      .setName('My asset')
+      .setMetadata({Author: 'me'})
+      .setFingerprint(fingerprint)
+      .sign(account.getAuthKey());
+
+    return API.issueNew(fs.createReadStream(filepath), asset, quantity, account); // you can use account.issueNew instead
+  })
+  .then(issues => {
+    // process the issues as you wish
+  })
+  .catch(error => {
+    // process the error
+  });
+```
+
+```javascript
+// Later on, when we want to issue more
+let quantity = 15;
+API.issueMore(asset, quantity, account) // we can use account.issueMore instead
+  .then(issues => {
+    // process the issues as you wish
+  })
+  .catch(error => {
+    // process the error
+  });
+```
+
+#### Parameters
+For `issueNew(file, asset, quantity, account)`
+* *file* a string filepath or FileReaderStream instance
+* *asset* Asset instance
+* *quantity* an interger between 1 and 100
+* *account* the owner of the issues
+
+For `issueMore(asset, quantity, account)`
+* *asset* Asset instance of asset id string
+* *quantity* an interger between 1 and 100
+* *account* the owner of the issues
 
 ### Transfer
 
@@ -354,9 +403,6 @@ API.getBitmark(id, network, options)
 * *network* network name
 * *options* see all the possible option in the API document
 
-
-
-
 ## Utilities
 
 ### Fingerprint
@@ -371,7 +417,7 @@ var fingerprint = bitmarkSDK.util.fingeprint;
 #### Methods
 * *fromBuffer(Buffer)* - returns a fingerprint string from buffer content
 * *fromString(string)* - returns a fingerprint string from string content
-
+* *fromStream(ReadStream)* - returns a promise which then callback with the fingerprint
 
 --
 

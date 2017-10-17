@@ -70,10 +70,16 @@ Account.prototype.getVersion = function() {
   return this._seed.getVersion();
 }
 
-Account.prototype.issue = function() {
+Account.prototype.issueNew = function() {
   let args = Array.prototype.slice.call(arguments);
   args.push(this);
-  return API.issue.apply(API, args);
+  return API.issueNew.apply(API, args);
+}
+
+Account.prototype.issueMore = function() {
+  let args = Array.prototype.slice.call(arguments);
+  args.push(this);
+  return API.issueMore.apply(API, args);
 }
 
 Account.prototype.transfer = function() {
