@@ -157,19 +157,4 @@ describe('Auth Key', function(){
       expect(authKey.getAccountNumber().toString()).to.equal(testNetKey.account_number);
     });
   });
-
-  describe('Build from seed', function() {
-    let validData = [{
-      core: '651bf8bc9f8e8fce9d18ac62fb93a483a06d1b43fdf28d1afa5578bc7518a6ac',
-      seed: '5XEECqtUz83pdgg2L11UrMBb34za1rhi12GNFmRRrd8Qudi1nkJbNxk',
-      key: 'c8a4b1a1d1c657985a8ade24453acd779222a517c1a7190a70942c85831593ed',
-      account_number: 'bsDeangMAbczSxz2qXJE3Gvf8zKuZdMUSx6fB7mqGGwVn5pxj4'
-    }];
-    validData.forEach((item) => {
-      let seed = Seed.fromString(item.seed);
-      let authKey = AuthKey.fromSeed(seed);
-      expect(seed.generateKey(config.key.auth_key_index).toString('hex')).to.equal(item.key);
-      expect(authKey.getAccountNumber().toString()).to.equal(item.account_number);
-    });
-  });
 });

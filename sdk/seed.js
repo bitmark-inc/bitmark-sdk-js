@@ -5,11 +5,9 @@ let varint = require('./util/varint.js');
 let base58 = require('./util/base58.js');
 let assert = require('./util/assert.js');
 let _ = require('lodash');
-let nacl = require('tweetnacl-nodewrap');
 
 let networks = require('./networks.js');
 let config = require('./config.js');
-let BigInteger = require('bn.js');
 
 let seedVersionEncoded = varint.encode(config.seed.version);
 
@@ -34,12 +32,12 @@ function standardzeVersion(version) {
   return version;
 }
 
-function exportSeedToString(core, network, version) {
-  assert(core && Buffer.isBuffer(core) && core.length === config.seed.length, new TypeError('Invalid core'));
+function exportToString(core, network, version) {
+  assert(core && Buffer.isBuffer(core) && core.length === config.core.length, new TypeError('Invalid core'));
   assert(network, new TypeError('Invalid network'));
   assert(version, new TypeError('Invalid version'));
 
-  let networkValue = varint.encode(network.seed_value);
+  let networkValue = varint.encode(network.core_value);
   let versionValue = varint.encode(version);
   let exportedSeed = Buffer.concat([config.seed.magic, versionValue, networkValue, core]);
   let checksum = common.sha3_256(exportedSeed).slice(0, config.seed.checksum_length);
@@ -84,16 +82,16 @@ function parseSeedString(seedString) {
 
   let networkValue, network;
   networkValue = rest.slice(0, config.seed.network_length).readInt8(0);
-  if (networkValue === networks.livenet.seed_value) {
+  if (networkValue === networks.livenet.core_value) {
     network = networks.livenet;
-  } else if (networkValue === networks.testnet.seed_value) {
+  } else if (networkValue === networks.testnet.core_value) {
     network = networks.testnet;
   } else {
     throw new Error('Invalid seed string: can not recognize network value');
   }
   let core = rest.slice(config.seed.network_length);
 
-  if (core.length !== config.seed.length) {
+  if (core.length !== config.core.length) {
     throw new Error('Invalid seed string: wrong core length');
   }
 
@@ -102,17 +100,6 @@ function parseSeedString(seedString) {
     _string: seedString,
     _network: network.name,
     _version: version.readUInt8(0)
-  });
-}
-
-function newSeed(network, version) {
-  let core = common.generateRandomBytes(config.seed.length);
-  let exportedSeed = exportSeedToString(core, network, version);
-  return new SeedInfo({
-    _core: core,
-    _string: exportedSeed,
-    _network: network.name,
-    _version: version
   });
 }
 
@@ -126,16 +113,29 @@ function Seed(network, version) {
     return;
   }
 
-  network = standardizeNetwork(network);
-  version = standardzeVersion(version);
-  let data = newSeed(network, version);
-  common.addImmutableProperties(this, data.getValues());
+  throw new Error('Seed error: calling Seed constructor directly is now deprecated');
 }
 
 Seed.fromBase58 = Seed.fromString = function(seedString) {
   assert(_.isString(seedString), new TypeError('Seed error: Expect ' + seedString + ' to be a string'));
   return new Seed(parseSeedString(seedString));
 }
+
+Seed.fromCore = Seed.fromBuffer = function(core, network, version) {
+  assert(Buffer.isBuffer(core), new TypeError('Seed error: core need to be a buffer'));
+  assert(core.length === config.core.length, new TypeError(`Seed error: core need to be ${config.core.length} bytes`));
+
+  network = standardizeNetwork(network);
+  version = standardzeVersion(version);
+  let seedInfo = new SeedInfo({
+    _core: core,
+    _string: exportToString(core, network, version),
+    _network: network.name,
+    _version: version
+  });
+  return new Seed(seedInfo);
+}
+
 Seed.isValid = function(seedString) {
   try {
     parseSeedString(seedString);
@@ -143,14 +143,6 @@ Seed.isValid = function(seedString) {
   } catch (error) {
     return false;
   }
-}
-
-Seed.prototype.generateKey = function(index) {
-    let counter = new BigInteger(index.toString());
-    let counterBuffer = counter.toBuffer('be', config.seed.counter_length);
-    let nonce = Buffer.alloc(config.seed.nonce_length, 0);
-    let key = nacl.secretbox(counterBuffer, nonce, this._core);
-    return key;
 }
 
 Seed.prototype.toBase58 = Seed.prototype.toString = function() { return this._string; };

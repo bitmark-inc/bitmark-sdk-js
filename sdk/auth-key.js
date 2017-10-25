@@ -166,14 +166,6 @@ AuthKey.fromBuffer = function(data, network, type) {
   return new AuthKey(buildAuthKey(data, network, type));
 };
 
-AuthKey.fromSeed = function(seed) {
-  assert(seed instanceof Seed, new TypeError('Auth key error: ' + seed + ' not an instance of Seed'));
-  let key = seed.generateKey(config.key.auth_key_index);
-  let network = _verifyNetwork(seed.getNetwork());
-  let type = _verifyType();
-  return new AuthKey(buildAuthKey(key, network, type));
-}
-
 AuthKey.prototype.sign = function(message) {
   let keyHandler = keyHandlers.getHandler(this.getType());
   return keyHandler.sign(Buffer.from(message, 'utf8'), this.toBuffer());

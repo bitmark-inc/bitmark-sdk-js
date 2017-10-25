@@ -27,8 +27,7 @@ describe('Issue', function(){
     assetPk = AuthKey.fromKIF('ce5MNS5PwvZ1bo5cU9Fex7He2tMpFP2Q42ToKZTBEBdA5f4dXm');
     assetWithoutId = new Asset()
                 .setName('Test Bitmark Lib')
-                .addMetadata('description', 'this is description')
-                .setFingerprint('Test Bitmark Lib 11');
+                .addMetadata('description', 'this is description');
 
     assetWithId = new Asset()
                 .setName('this is name')

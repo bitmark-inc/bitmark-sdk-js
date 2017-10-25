@@ -33,7 +33,10 @@ module.exports = {
     length: 32,
     checksum_length: 4,
     network_length: 1,
-    magic: new Buffer('5afe', 'hex'),
+    magic: new Buffer('5afe', 'hex')
+  },
+  core: {
+    length: 32,
     counter_length: 16,
     nonce_length: 24
   },

@@ -10,7 +10,6 @@ let keyHandlers = require('../key-types/key-handlers.js');
 let config = require('../config.js');
 
 function resetSignState(asset) {
-  asset._id = null;
   asset._isSigned = false;
 }
 
@@ -140,6 +139,7 @@ Asset.prototype.getMetadata = function() {
 
 Asset.prototype.setFingerprint = function(fingerprint) {
   _setString(fingerprint, config.record.asset.max_fingerprint, 'fingerprint', this);
+  this._id = computeAssetId(this._fingerprint);
   resetSignState(this);
   return this;
 };
@@ -155,7 +155,6 @@ Asset.prototype.sign = function(priKey) {
 
   let keyHandler = keyHandlers.getHandler(priKey.getType());
   this._signature = keyHandler.sign(_packRecord(this), priKey.toBuffer());
-  this._id = computeAssetId(this._fingerprint);
   this._isSigned = true;
   return this;
 };

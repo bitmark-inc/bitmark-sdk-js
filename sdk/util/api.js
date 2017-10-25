@@ -23,14 +23,12 @@ let sendRequest = (options) => {
     }
 
     let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
-    console.log(url);
 
     let requestCallback = (error, response, body) => {
-      console.log(body);
       if (error) {
         reject(error);
       } else if (response.statusCode !== 200) {
-        reject({code: response.statusCode, error: new Error(body.message)});
+          reject(new Error(body.message));
       } else {
         resolve(body);
       }
@@ -40,6 +38,7 @@ let sendRequest = (options) => {
     method = method.toUpperCase();
     requestOptions.method = method;
     requestOptions.uri = url;
+    requestOptions.json = true;
 
     if (method === 'GET') {
       requestOptions.qs = params;
@@ -76,11 +75,10 @@ let sendMultipartRequest = (options) => {
     let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
 
     let requestCallback = (error, response, body) => {
-      console.log(body);
       if (error) {
         reject(error);
       } else if (response.statusCode !== 200) {
-        reject({code: response.statusCode, error: new Error(body.message)});
+        reject(new Error(body.message));
       } else {
         resolve(body);
       }
@@ -90,7 +88,8 @@ let sendMultipartRequest = (options) => {
       method: 'post',
       uri: url,
       formData: params,
-      headers: headers
+      headers: headers,
+      json: true
     };
 
     request(requestOptions, requestCallback);    

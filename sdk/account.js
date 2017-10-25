@@ -1,21 +1,24 @@
-/**
- * new Account();
- * new Account(network);
- * new Account(network, version);
- * 
- * Account.fromBackupString();
- * 
- * account.getBackupString();
- * account.getNetwork();
- * account.getAccountNumber();
- * account.getVersion();
- * 
- * Account.isValidBackupString(backupString);
- */
+let networks = require('./networks.js');
+let _ = require('lodash');
+let assert = require('./util/assert.js');
+let nacl = require('tweetnacl-nodewrap');
 
 let Seed = require('./seed');
+let RecoveryPhrase = require('./recovery-phrase');
 let AuthKey = require('./auth-key');
 let API = require('./api');
+let config = require('./config');
+let util = require('./util');
+let BigInteger = require('bn.js');
+
+function standardizeNetwork(network) {
+  network = network || networks.livenet;
+  if (_.isString(network)) {
+    network = networks[network];
+    assert(network, new TypeError('Seed error: can not recognize network'));
+  }
+  return network;
+}
 
 function AccountInfo(values) {
   this.getValues = () => { return values; }
@@ -32,55 +35,87 @@ let Account = function(network, version) {
   }
 
   try {
-    this._seed = new Seed(network, version);
-    this._authKey = AuthKey.fromSeed(this._seed);
+    this._core = util.common.generateRandomBytes(config.core.length);
+    this._network = standardizeNetwork(network).name;
   } catch (error) {
     throw error;
   }
 }
 
-Account.fromBackupString = function(backupString) {
-  let seed = Seed.fromString(backupString);
-  let authKey = AuthKey.fromSeed(seed);
-  let accountInfo = new AccountInfo({_seed: seed, _authKey: authKey});
-  return new Account(accountInfo);
-}
-
-Account.isValidBackupString = function(backupString) {
-  return Seed.isValid(backupString);
-}
-
-Account.prototype.getBackupString = function() {
-  return this._seed.toString();
+Account.prototype.generateKey = function(index) {
+  let counter = new BigInteger(index.toString());
+  let counterBuffer = counter.toBuffer('be', config.core.counter_length);
+  let nonce = Buffer.alloc(config.core.nonce_length, 0);
+  let key = nacl.secretbox(counterBuffer, nonce, this._core);
+  return key;
 }
 
 Account.prototype.getAuthKey = function() {
+  if (!this._authKey) {
+    this._authKey = AuthKey.fromBuffer(this.generateKey(config.key.auth_key_index), this._network);
+  }
   return this._authKey;
 }
 
 Account.prototype.getAccountNumber = function() {
-  return this._authKey.getAccountNumber();
+  return this.getAuthKey().getAccountNumber();
 }
 
 Account.prototype.getNetwork = function() {
-  return this._seed.getNetwork();
+  return this._network;
 }
 
-Account.prototype.getVersion = function() {
-  return this._seed.getVersion();
+// FOR BACKING UP THE ACCOUNT
+
+Account.fromSeed = function(seedString) {
+  let seed = Seed.fromString(seedString);
+  let accountInfo = new AccountInfo({_core: seed.getCore(), _network: seed.getNetwork()});
+  return new Account(accountInfo);
+};
+
+Account.isValidSeed = function(backupString) {
+  return Seed.isValid(backupString);
 }
 
-Account.prototype.issueNew = function() {
+Account.fromRecoveryPhrase = function(recoveryPhraseString) {
+  let recoveryPhrase = RecoveryPhrase.fromString(recoveryPhraseString);
+  let accountInfo = new AccountInfo({_core: recoveryPhrase.getCore(), _network: recoveryPhrase.getNetwork()});
+  return new Account(accountInfo);
+}
+
+Account.isValidRecoveryPhrase = function(recoveryPhraseString) {
+  return RecoveryPhrase.isValid(recoveryPhraseString);
+}
+
+Account.prototype.getSeed = function() {
+  let seed = Seed.fromCore(this._core, this._network);
+  return seed.toString();
+}
+
+Account.prototype.getRecoveryPhrase = function() {
+  let recoveryPhrase = RecoveryPhrase.fromCore(this._core, this._network);
+  return recoveryPhrase.toString();
+}
+
+// FOR API
+
+Account.prototype.issue = function() {
   let args = Array.prototype.slice.call(arguments);
   args.push(this);
-  return API.issueNew.apply(API, args);
+  return API.issue.apply(API, args);
 }
 
-Account.prototype.issueMore = function() {
-  let args = Array.prototype.slice.call(arguments);
-  args.push(this);
-  return API.issueMore.apply(API, args);
-}
+// Account.prototype.issueNew = function() {
+//   let args = Array.prototype.slice.call(arguments);
+//   args.push(this);
+//   return API.issueNew.apply(API, args);
+// }
+
+// Account.prototype.issueMore = function() {
+//   let args = Array.prototype.slice.call(arguments);
+//   args.push(this);
+//   return API.issueMore.apply(API, args);
+// }
 
 Account.prototype.transfer = function() {
   let args = Array.prototype.slice.call(arguments);

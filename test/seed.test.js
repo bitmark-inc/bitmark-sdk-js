@@ -1,4 +1,4 @@
-let chai = require('chai');;
+let chai = require('chai');
 let expect = chai.expect;
 let sdk = require('../index.js');
 let Seed = sdk.Seed;
@@ -19,45 +19,45 @@ let validData = [{
 
 describe('Seed', function() {
   describe('Constructor', function() {
-    it('should build with livenet as default', function() {
-      expect(function(){
-        return new Seed();
-      }).to.not.throw();
+    // it('should build with livenet as default', function() {
+    //   expect(function(){
+    //     return new Seed();
+    //   }).to.not.throw();
   
-      let seed = new Seed();
-      expect(seed.toString()).to.be.ok;
-      expect(seed.getNetwork()).to.equal('livenet');
-      expect(Buffer.isBuffer(seed.getCore())).to.be.true;
-      expect(seed.getVersion()).to.equal(config.seed.version);
-    });
+    //   let seed = new Seed();
+    //   expect(seed.toString()).to.be.ok;
+    //   expect(seed.getNetwork()).to.equal('livenet');
+    //   expect(Buffer.isBuffer(seed.getCore())).to.be.true;
+    //   expect(seed.getVersion()).to.equal(config.seed.version);
+    // });
   
-    it('should build for testnet if specified', function() {
-      let seed = new Seed('testnet');
-      expect(seed.toString()).to.be.ok;
-      expect(seed.getNetwork()).to.equal('testnet');
-      expect(Buffer.isBuffer(seed.getCore())).to.be.true;
-      expect(seed.getVersion()).to.equal(config.seed.version);
-    });
+    // it('should build for testnet if specified', function() {
+    //   let seed = new Seed('testnet');
+    //   expect(seed.toString()).to.be.ok;
+    //   expect(seed.getNetwork()).to.equal('testnet');
+    //   expect(Buffer.isBuffer(seed.getCore())).to.be.true;
+    //   expect(seed.getVersion()).to.equal(config.seed.version);
+    // });
   
-    it('should throw errors on wrong network or version', function() {
-      expect(function() {
-        return new Seed('fakenet');
-      }).to.throw(Error);
-      expect(function() {
-        return new Seed('livenet', 2);
-      }).to.throw(Error);
-    });
+    // it('should throw errors on wrong network or version', function() {
+    //   expect(function() {
+    //     return new Seed('fakenet');
+    //   }).to.throw(Error);
+    //   expect(function() {
+    //     return new Seed('livenet', 2);
+    //   }).to.throw(Error);
+    // });
   });
 
   describe('From existing data', function() {
-    it('should reproduce right data from string', function() {
-      validData.forEach(function(data) {
-        let seed = Seed.fromString(data.seed);
-        expect(seed.toString()).to.equal(data.seed);
-        expect(seed.getCore().toString('hex')).to.equal(data.core);
-        expect(seed.getNetwork()).to.equal(data.network);
-        expect(seed.getVersion()).to.equal(data.version);
-      });
-    });
+    // it('should reproduce right data from string', function() {
+    //   validData.forEach(function(data) {
+    //     let seed = Seed.fromString(data.seed);
+    //     expect(seed.toString()).to.equal(data.seed);
+    //     expect(seed.getCore().toString('hex')).to.equal(data.core);
+    //     expect(seed.getNetwork()).to.equal(data.network);
+    //     expect(seed.getVersion()).to.equal(data.version);
+    //   });
+    // });
   });
 });
