@@ -51,7 +51,7 @@ var account = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKq
 
 // The file path to the asset
 var filePath = "example.txt"
-// The accessibility of an asset can be either public or private.
+// The accessibility of an asset can be either public or private. (private assets are not supported yet)
 // |---------------|-----------|------------------------------------------|
 // | accessibility | public    | private                                  |
 // |---------------|-----------|------------------------------------------|
