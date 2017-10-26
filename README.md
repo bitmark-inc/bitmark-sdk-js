@@ -83,6 +83,7 @@ account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
 ```
 
 After bitmarks are successfully issued, you'll get an array of bitmark IDs.
+To get detailed information of bitmarks, please refer to [Bitmark Query API](http://docs.bitmarkcoreapi.apiary.io/#reference/queries).
 
 ## How to transfer a bitmark?
 
