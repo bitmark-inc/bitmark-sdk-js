@@ -28,7 +28,11 @@ let sendRequest = (options) => {
       if (error) {
         reject(error);
       } else if (response.statusCode !== 200) {
-          reject(new Error(body.message));
+          if (typeof body === "string") {
+            reject(new Error(body));
+          } else {
+            reject(new Error(body.message));
+          }
       } else {
         resolve(body);
       }
