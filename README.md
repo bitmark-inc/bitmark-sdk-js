@@ -15,6 +15,86 @@ $ npm install bitmark-sdk
 var bitmarkSDK = require('bitmark-sdk');
 ```
 
+# Quick start
+
+How to create and restore an account?
+```javascript
+var Account = bitmarkSDK.Account;
+
+var account = new Account('testnet');
+// The account number designates ownership by serving as the account value
+// in Bitmark blockchain records.
+console.log("Account Number: ", account.getAccountNumber().toString())
+
+// There are two different ways to restore an account:
+// - from a seed (base58 encoded string)
+// - from a recovery phrase (24 English words)
+
+// The seed should be stored in a secure way by application developers,
+// and then can be used to reconstruct the account when.
+console.log("\nSeed:", account.getSeed())
+account = Account.fromSeed(account.getSeed())
+console.log("Restored Account Number:", account.getAccountNumber().toString())
+
+// The recovery phrase should be sent to each application user
+// so that they can back up their own accounts and properties.
+console.log("\nRecovery Phrase:", account.getRecoveryPhrase())
+account = Account.fromRecoveryPhrase(account.getRecoveryPhrase())
+console.log("Restored Account Number:", account.getAccountNumber().toString())
+```
+
+How to issue bitmarks?
+```javascript
+var Account = bitmarkSDK.Account;
+
+var account = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKqSxKWr4x");
+
+// The file path to the asset
+var filePath = "example.txt"
+// The accessibility of an asset can be either public or private.
+// |---------------|-----------|------------------------------------------|
+// | accessibility | public    | private                                  |
+// |---------------|-----------|------------------------------------------|
+// | encryption    | NO        | YES                                      |
+// | access right  | every one | the issuer and the current bitmark owner |
+// |---------------|-----------|------------------------------------------|
+var accessibility = "public"
+// The name of the asset to be registered  on the blockchain
+var propertyName = "bitmark javascript sdk demo"
+// the metadata of the asset to be registered on the blockchain
+var propertyMetadata = {"author": "Bitmark Inc. developers"}
+// the amount of bitmarks to be issued
+var quantity = 1
+account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
+  .then(function(result) {
+    console.log("Bitmark IDs:");
+    for (var i in result) {
+      console.log(result[i].txId);
+    }
+  })
+  .catch(function(error) {
+    console.log(error)
+  });
+```
+
+How to transfer a bitmark?
+```javascript
+var Account = bitmarkSDK.Account;
+
+var accountA = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKqSxKWr4x");
+var accountB = Account.fromSeed("5XEECt6Mhj8Tanb9CDTGHhTQ7RqbS5LHD383LRK6QGDuj8mwfUU6gKs");
+
+var bitmarkId = "85148d5535708a4f345d70772ba25432464c91b9e71844fe167168cfbaf1526a"
+accountA.transfer(bitmarkId, accountB.getAccountNumber().toString())
+  .then(function(result) {
+    var txId = result;
+    console.log("Transaction ID: ", txId)
+  })
+  .catch(function(error) {
+    console.log(error)
+  });
+```
+
 # Usage
 
 ## Account
