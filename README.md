@@ -17,54 +17,54 @@ var bitmarkSDK = require('bitmark-sdk');
 
 # Quick start
 
-How to create and restore an account?
+## How to create and restore an account?
+
+### create a new account
 ```javascript
 var Account = bitmarkSDK.Account;
 
 var account = new Account('testnet');
 // The account number designates ownership by serving as the account value
 // in Bitmark blockchain records.
-console.log("Account Number: ", account.getAccountNumber().toString())
-
-// There are two different ways to restore an account:
-// - from a seed (base58 encoded string)
-// - from a recovery phrase (24 English words)
-
-// The seed should be stored in a secure way by application developers,
-// and then can be used to reconstruct the account when.
-console.log("\nSeed:", account.getSeed())
-account = Account.fromSeed(account.getSeed())
-console.log("Restored Account Number:", account.getAccountNumber().toString())
-
-// The recovery phrase should be sent to each application user
-// so that they can back up their own accounts and properties.
-console.log("\nRecovery Phrase:", account.getRecoveryPhrase())
-account = Account.fromRecoveryPhrase(account.getRecoveryPhrase())
-console.log("Restored Account Number:", account.getAccountNumber().toString())
+var accountNumber = account.getAccountNumber().toString();
 ```
 
-How to issue bitmarks?
+### restore an account
+There are two different ways to restore an account:
+- from a seed (base58 encoded string):
+
+  should be stored in a secure way by application developers, and then can be used to reconstruct the account in order to issue or transfer bitmarks for their users
+- from a recovery phrase (24 English words):
+
+  should be sent to each application user so that they can back up their own accounts and properties.
+
+```javascript
+var restoredAccount = Account.fromSeed(account.getSeed())
+
+var restoredAccount = Account.fromRecoveryPhrase(account.getRecoveryPhrase());
+```
+
+## How to issue bitmarks?
+
+To issue bitmarks on an asset, first you have to decide the accessibility of the asset. The accessibility is set to either `public` or `private`. The following table describes the differences.
+
+| accessibility | public    | private                                  |
+|---------------|-----------|------------------------------------------|
+| encryption    | NO        | YES                                      |
+| access right  | every one | the issuer and the current bitmark owner |
+
+Currently, `private` is not supported yet.
+
 ```javascript
 var Account = bitmarkSDK.Account;
 
 var account = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKqSxKWr4x");
 
-// The file path to the asset
-var filePath = "example.txt"
-// The accessibility of an asset can be either public or private. (private assets are not supported yet)
-// |---------------|-----------|------------------------------------------|
-// | accessibility | public    | private                                  |
-// |---------------|-----------|------------------------------------------|
-// | encryption    | NO        | YES                                      |
-// | access right  | every one | the issuer and the current bitmark owner |
-// |---------------|-----------|------------------------------------------|
+var filePath = "example.txt" // the file path to the asset
 var accessibility = "public"
-// The name of the asset to be registered  on the blockchain
-var propertyName = "bitmark javascript sdk demo"
-// the metadata of the asset to be registered on the blockchain
-var propertyMetadata = {"author": "Bitmark Inc. developers"}
-// the amount of bitmarks to be issued
-var quantity = 1
+var propertyName = "bitmark js sdk demo" // the name of the asset to be registered on the blockchain
+var propertyMetadata = {"author": "Bitmark Inc. developers"} // the metadata of the asset to be registered on the blockchain
+var quantity = 1 // the amount of bitmarks to be issued
 account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
   .then(function(result) {
     console.log("Bitmark IDs:");
@@ -77,7 +77,9 @@ account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
   });
 ```
 
-How to transfer a bitmark?
+After bitmarks are successfully issued, you'll get an array of bitmark IDs.
+
+## How to transfer a bitmark?
 ```javascript
 var Account = bitmarkSDK.Account;
 
@@ -94,6 +96,8 @@ accountA.transfer(bitmarkId, accountB.getAccountNumber().toString())
     console.log(error)
   });
 ```
+
+After the bitmark is successfully transferred, you'll get an ID of this transaction.
 
 # Usage
 
