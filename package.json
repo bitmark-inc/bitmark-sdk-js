@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/bitmark-inc/bitmark-sdk",
   "dependencies": {
+    "axios": "^0.17.0",
     "bn.js": "^4.11.6",
     "bs58": "^3.0.0",
     "form-data": "^2.3.1",

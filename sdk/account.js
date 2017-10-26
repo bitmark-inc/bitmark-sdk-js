@@ -123,6 +123,10 @@ Account.prototype.transfer = function() {
   return API.transfer.apply(API, args);
 }
 
+Account.prototype.downloadAsset = function(bitmarkId) {
+  return API.downloadBitmarkAsset(bitmarkId, this._network);
+}
+
 Account.prototype.getBitmarks = function(options) {
   options = options || {};
   options.owner = this.getAccountNumber().toString();
