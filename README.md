@@ -106,6 +106,26 @@ accountA.transfer(bitmarkId, accountB.getAccountNumber().toString())
 
 After the bitmark is successfully transferred, you'll get an ID of this transaction.
 
+## Download your assets
+
+You can download your assets by its bitmark IDs.
+
+```javascript
+var Account = bitmarkSDK.Account;
+
+var account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
+
+var bitmarkId = '4d4ac977168387238356db0d797d2e122e99acfd0917015df3c6eed52ce5d6dc'
+account.downloadAsset(bitmarkId) // plain/text
+  .then(function(data){
+    console.log(data) // <Buffer: ....>
+    console.log(data.toString()) // Get the text content
+  })
+  .catch(function(err) {
+    console.log(err)
+  })
+```
+
 # Usage
 
 ## Account
