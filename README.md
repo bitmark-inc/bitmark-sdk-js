@@ -20,12 +20,17 @@ var bitmarkSDK = require('bitmark-sdk');
 ## How to create and restore an account?
 
 ### create a new account
+
 ```javascript
 var Account = bitmarkSDK.Account;
 
 var account = new Account('testnet');
-// The account number designates ownership by serving as the account value
-// in Bitmark blockchain records.
+```
+
+The account number designates ownership by serving as the account value
+in Bitmark blockchain records.
+
+```javascript
 var accountNumber = account.getAccountNumber().toString();
 ```
 
@@ -80,6 +85,7 @@ account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
 After bitmarks are successfully issued, you'll get an array of bitmark IDs.
 
 ## How to transfer a bitmark?
+
 ```javascript
 var Account = bitmarkSDK.Account;
 
