@@ -2,8 +2,9 @@ let chai = require('chai');
 let expect = chai.expect;
 let sdk = require('../index.js');
 let Account = sdk.Account;
+let fs = require('fs');
 
-let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
+// let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
 let networks = sdk.networks;
 networks.testnet.api_server = 'https://api.devel.bitmark.com';
 
@@ -58,19 +59,49 @@ describe('Account', function() {
     });
   });
 
-  describe('Account API', function() {
+  describe('Issue API', function() {
     this.timeout(15000);
     it('should allow to issue and use the account to sign', function(done) {
-      let account = new Account('testnet');
-      let fileContent = Buffer.from('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'hex');
-      account.issue(fileContent, 'public', 'name', {author: 'test'}, 10)
+      let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
+      let file = './test/tmp/myfile.test';
+      fs.writeFileSync(file, sdk.util.common.generateRandomBytes(1000));
+
+      account.issue(file, 'public', 'name', {author: 'test'}, 10)
         .then(result => {
           expect(result).to.be.ok;
+          fs.unlinkSync(file);
           done();
         })
         .catch(error => {
           expect(error).to.be.undefined;
+          fs.unlinkSync(file);
+          done();
         });
     });
   });
+
+
+  describe('Get Bitmarks and transfer API', function(done) {
+    this.timeout(15000);
+    it('should allow to get bitmark and transfer it away', function(done) {
+      let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
+      // eKz3xqW6HN9YymvDy6PbTBeKm4RZSWCe35d5mNYqC9xVLbwW7R
+      
+      account.getBitmarks({pending: true})
+        .then(result => {
+          let bitmarks = result.bitmarks;
+          let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed');
+          return account.transfer(bitmark.head_id, 'f2h3q1WAuQHaya3qSduVQwZ7foipo9WBs1DKDNsYvWXKfqrq9k')
+        })
+        .then(id => {
+          expect(id).to.be.ok;
+          done();
+        })
+        .catch(error => {
+          expect(error).is.undefined;
+          done();
+        });
+    });
+  });
+
 });

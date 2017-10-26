@@ -115,13 +115,6 @@ let Issue = require('../records/issue');
 // }
 
 
-let bufferToStream = (buffer) => {  
-  let stream = new Duplex();
-  stream.push(buffer);
-  stream.push(null);
-  return stream;
-}
-
 let upload = (fileReaderStream, accessibility, assetId, account) => {
   let requester = account.getAccountNumber().toString();
   let timestamp = new Date().getTime();
@@ -141,20 +134,9 @@ let upload = (fileReaderStream, accessibility, assetId, account) => {
   });
 }
 
-let compputeFingerprint = (file) => {
-  if (Buffer.isBuffer(file)) {
-    return Promise.resolve(util.fingerprint.fromBuffer(file));
-  }
-
-  if (file instanceof fs.ReadStream) {
-    return util.fingerprint.fromStream(file);
-  }
-}
-
 let issue = (file, accessibility, name, metadata, quantity, account) => {
   // Validate data
-  util.assert(!!file && (_.isString(file) || Buffer.isBuffer(file)),
-    'Issue error: filepath/buffer is required for a new asset');
+  util.assert(!!file && (_.isString(file)), 'Issue error: filepath is required for a new asset');
   util.assert(_.isString(name), 'Issue error: name must be a string');
   util.assert(quantity <= MAX_QUANTITY, `Issue error: quantity can not be greater than ${MAX_QUANTITY}`);
   util.assert(quantity > 0, 'Issue error: quantity must be greater than 0');
@@ -162,14 +144,14 @@ let issue = (file, accessibility, name, metadata, quantity, account) => {
 
   let asset, issues = [];
 
-  return compputeFingerprint(_.isString(file) ? fs.createReadStream(file) : file)
+  return util.fingerprint.fromStream(fs.createReadStream(file))
     .then(fingerprint => {
       asset = new Asset().setName(name).setMetadata(metadata).setFingerprint(fingerprint).sign(account.getAuthKey());
       for (let i = 0; i < quantity; i++) {
         let issue = new Issue().fromAsset(asset).sign(account.getAuthKey());
         issues.push(issue);
       }
-      return upload(_.isString(file) ? fs.createReadStream(file) : bufferToStream(file), accessibility, asset.getId(), account);
+      return upload(fs.createReadStream(file), accessibility, asset.getId(), account);
     })
     .then(() => {
       let requestBody = {};

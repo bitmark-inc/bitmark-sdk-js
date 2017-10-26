@@ -1,27 +1,34 @@
 const API_NAME = 'transfer';
 const API_METHOD = 'post';
-// const ID_LENGTH = '128';
 
 // let _ = require('lodash');
 let util = require('../util');
 let Transfer = require('../records/transfer');
+let bitmarkAPI = require('./bitmarks');
 
-let transfer = (link, toOwner, account) => {
-  // create the record
-  let record = new Transfer().fromTx(link).toAccountNumber(toOwner);
-  util.assert(!!account, 'Issue error: missing account');
-  record.sign(account.getAuthKey());
+let transfer = (bitmarkId, toAccountNumber, account) => {
+  util.assert(!!account, 'Transfer error: missing account');
+  util.assert(!!bitmarkId, 'Transfer error: missing bitmark id');
+  util.assert(!!toAccountNumber, 'Transfer error: missing account number')
 
-  // make request
-  let requestBody = {transfer: record.toJSON()};
-  return util.api.sendRequest({
-    method: API_METHOD,
-    url: API_NAME,
-    params: requestBody,
-    network: account.getNetwork()
-  }).then(() => {
-    return Promise.resolve(record);
-  });
+  let record;
+
+  return bitmarkAPI.getBitmark(bitmarkId, {pending: true}, account.getNetwork())
+    .then(result => {
+      let bitmark = result.bitmark;
+      record = new Transfer().fromTx(bitmark.head_id).toAccountNumber(toAccountNumber).sign(account.getAuthKey());
+      
+      let requestBody = {transfer: record.toJSON()};
+      return util.api.sendRequest({
+        method: API_METHOD,
+        url: API_NAME,
+        params: requestBody,
+        network: account.getNetwork()
+      });
+    })
+    .then(() => {
+      return Promise.resolve(record.getId());
+    });
 }
 
 module.exports = {transfer};

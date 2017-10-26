@@ -58,7 +58,7 @@ Account.prototype.getAuthKey = function() {
 }
 
 Account.prototype.getAccountNumber = function() {
-  return this.getAuthKey().getAccountNumber();
+  return this.getAuthKey().getAccountNumber().toString();
 }
 
 Account.prototype.getNetwork = function() {
@@ -121,6 +121,12 @@ Account.prototype.transfer = function() {
   let args = Array.prototype.slice.call(arguments);
   args.push(this);
   return API.transfer.apply(API, args);
+}
+
+Account.prototype.getBitmarks = function(options) {
+  options = options || {};
+  options.owner = this.getAccountNumber().toString();
+  return API.getBitmarks(options, this._network);
 }
 
 module.exports = Account;
