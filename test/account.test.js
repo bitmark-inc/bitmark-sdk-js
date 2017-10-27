@@ -81,7 +81,7 @@ describe('Account', function() {
   });
 
 
-  describe('Get Bitmarks and transfer API', function(done) {
+  describe('Get Bitmarks and transfer API', function() {
     this.timeout(15000);
     it('should allow to get bitmark and transfer it away', function(done) {
       let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
