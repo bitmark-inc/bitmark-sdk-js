@@ -26,16 +26,16 @@ describe('Account', function() {
       expect(function(){
         return new Account();
       }).to.not.throw();
-  
+
       let account = new Account();
       expect(account.getNetwork()).to.equal('livenet');
     });
-  
+
     it('should build for testnet if specified', function() {
       let account = new Account('testnet');
       expect(account.getNetwork()).to.equal('testnet');
     });
-  
+
     it('should throw errors on wrong network or version', function() {
       expect(function() {
         return new Account('fakenet');
@@ -80,13 +80,28 @@ describe('Account', function() {
     });
   });
 
+  describe('Download Asset', function() {
+    it('should get the asset file of its bitmark ', function(done) {
+      let account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
+      account.downloadAsset('8551ad465e0804676c255d80dc03176b975650227efda1f070d3d72e4be2b631') // text
+      .then(data=>{
+        expect(data.toString()).to.equal('This is a test assets.\n')
+        done()
+      })
+      .catch(error => {
+        console.log(error)
+        expect(error).is.undefined;
+        done();
+      });
+    })
+  })
 
   describe('Get Bitmarks and transfer API', function() {
     this.timeout(15000);
     it('should allow to get bitmark and transfer it away', function(done) {
       let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
       // eKz3xqW6HN9YymvDy6PbTBeKm4RZSWCe35d5mNYqC9xVLbwW7R
-      
+
       account.getBitmarks({pending: true})
         .then(result => {
           let bitmarks = result.bitmarks;
@@ -103,5 +118,4 @@ describe('Account', function() {
         });
     });
   });
-
 });
