@@ -1,4 +1,5 @@
-let request = require('request');
+let request = require('axios');
+let FormData = require('form-data')
 let networks = require('../networks');
 let _ = require('lodash');
 
@@ -24,35 +25,36 @@ let sendRequest = (options) => {
 
     let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
 
-    let requestCallback = (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else if (response.statusCode !== 200) {
-          if (typeof body === "string") {
-            reject(new Error(body));
-          } else {
-            reject(new Error(body.message));
-          }
-      } else {
-        resolve(body);
-      }
-    }
-
     let requestOptions = {};
     method = method.toUpperCase();
     requestOptions.method = method;
-    requestOptions.uri = url;
-    requestOptions.json = true;
+    requestOptions.url = url;
 
     if (method === 'GET') {
-      requestOptions.qs = params;
+      requestOptions.params = params;
     } else if (method === 'POST') {
-      requestOptions.json = params;
+      requestOptions.data = params;
     } else {
       reject(new Error('API error: method is not supported'));
     }
 
-    request(requestOptions, requestCallback);
+    resolve(request(requestOptions)
+      .then((response) => {
+        let body = response.data
+        if (response.status !== 200) {
+          if (typeof body === "string") {
+            throw new Error(body);
+          } else {
+            throw new Error(body.message);
+          }
+        } else {
+          return body;
+        }
+      })
+      .catch(e => {
+        throw e;
+      })
+    )
   });
 }
 
@@ -63,7 +65,7 @@ let sendMultipartRequest = (options) => {
     let params = options.params;
     let networkName = options.network;
     let headers = options.headers;
-    
+
     // Validate data
     let network = networkName ? networks[networkName] : networks['livenet'];
     if (!network) {
@@ -76,28 +78,40 @@ let sendMultipartRequest = (options) => {
       return;
     }
 
-    let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
-
-    let requestCallback = (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else if (response.statusCode !== 200) {
-        reject(new Error(body.message));
-      } else {
-        resolve(body);
-      }
+    let form = new FormData()
+    for (let i in params) {
+      form.append(i, params[i])
     }
+
+    let url = `${network.api_server}/${network.api_version}/${apiUrl}`;
 
     let requestOptions = {
       method: 'post',
-      uri: url,
-      formData: params,
-      headers: headers,
-      json: true
+      url: url,
+      data: form,
+      headers: _.merge(headers, form.getHeaders())
     };
 
-    request(requestOptions, requestCallback);    
+    resolve(request(requestOptions)
+      .then((response) => {
+        let body = response.data
+        if (response.status !== 200) {
+          if (typeof body === "string") {
+            throw new Error(body);
+          } else {
+            throw new Error(body.message);
+          }
+        } else {
+          return body;
+        }
+      }).catch(e => {
+        throw e;
+      })
+    )
   });
 }
 
-module.exports = {sendRequest, sendMultipartRequest}
+module.exports = {
+  sendRequest,
+  sendMultipartRequest
+}

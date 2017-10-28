@@ -35,7 +35,6 @@
     "form-data": "^2.3.1",
     "js-sha3": "^0.6.1",
     "lodash": "^4.6.1",
-    "request": "^2.83.0",
     "tweetnacl-nodewrap": "^0.1.9"
   },
   "devDependencies": {
