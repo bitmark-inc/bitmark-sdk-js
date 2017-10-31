@@ -137,6 +137,7 @@ let upload = (fileReaderStream, accessibility, assetId, account) => {
 let issue = (file, accessibility, name, metadata, quantity, account) => {
   // Validate data
   util.assert(!!file && (_.isString(file)), 'Issue error: filepath is required for a new asset');
+  util.assert((accessibility === 'public' ) || (accessibility === 'private') , 'Issue error: accessibility must be either "public" or "private"');
   util.assert(_.isString(name), 'Issue error: name must be a string');
   util.assert(quantity <= MAX_QUANTITY, `Issue error: quantity can not be greater than ${MAX_QUANTITY}`);
   util.assert(quantity > 0, 'Issue error: quantity must be greater than 0');
