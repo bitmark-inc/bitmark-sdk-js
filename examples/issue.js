@@ -1,43 +1,17 @@
 let bitmarkSDK = require('../index.js');
 let axios = require("axios")
 
-const apiServer = "https://api.devel.bitmark.com"
+let account = bitmarkSDK.Account.fromSeed('5XEECtxro3wPhntfQCrPMv3X3Kft6A8smRiwB4pbTxgyu44QmQUhKsz')
 
-let mySeed = new bitmarkSDK.Seed.fromBase58('5XEECtxro3wPhntfQCrPMv3X3Kft6A8smRiwB4pbTxgyu44QmQUhKsz')
-let authKey = bitmarkSDK.AuthKey.fromSeed(mySeed);
-
-
-let myData = Date()
-console.log("My data is:", myData)
-let fingerprint = bitmarkSDK.util.fingerprint.fromString(myData)
-console.log("Fingerprint:", fingerprint)
-
-// Generate an asset
-let asset = new bitmarkSDK.Asset()
-asset
-  .setName("my asset")
-  .setMetadata({"jim": "test"})
-  .setFingerprint(fingerprint)
-  .sign(authKey)
-
-// Generate an issue
-let issue = new bitmarkSDK.Issue()
-issue
-  .fromAsset(asset)
-  .sign(authKey)
-
-// The request data
-let data = {
-  assets: [asset],
-  issues: [issue]
+var assetMeta = {
+  "issue_number": "1",
+  "media_url": "test",
+  "author": "john doe"
 }
-console.log(JSON.stringify(data, null, 2))
 
-axios
-  .post(apiServer + '/v1/issue', data)
-  .then((resp) => {
-    console.log(resp.data)
-  })
-  .catch((err) => {
-    console.log(err.response.data)
+account.issue("/Users/test/text", 'public', 'text', assetMeta, 1)
+  .then((data) => {
+    console.log(data)
+  }).catch((err) => {
+    console.log(err)
   })
