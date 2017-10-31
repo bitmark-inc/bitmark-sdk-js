@@ -73,14 +73,18 @@ Issue.prototype.sign = function(priKey){
   return this;
 };
 
-Issue.prototype.toJSON = function(){
+Issue.prototype.toJSON = function(includeId){
   assert(this._isSigned, 'Issue error: need to sign the record before getting JSON format');
-  return {
+  let result = {
     owner: this._owner.toString(),
     signature: this._signature.toString('hex'),
     asset: this._asset,
     nonce: this._nonce
   };
+  if (includeId) {
+    result.id = this._txId;
+  }
+  return result;
 };
 
 Issue.prototype.isSigned = function() { return this._isSigned; };

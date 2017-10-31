@@ -159,9 +159,13 @@ let issue = (file, accessibility, name, metadata, quantity, account) => {
       requestBody.assets = [asset.toJSON()];
       requestBody.issues = issues.map(issue => issue.toJSON());
       return util.api.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody, network: account.getNetwork()})
-    }).then(() => {
-      return Promise.resolve(issues.map(issue => issue.getId()));
-    });
+    })
+    .then(() => {
+      return Promise.resolve({
+        asset: asset.toJSON(true),
+        issues: issues.map(issue => issue.toJSON(true))
+      });
+    })
 }
 
 module.exports = {issue};

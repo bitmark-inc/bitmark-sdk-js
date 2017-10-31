@@ -5,8 +5,8 @@ let Account = sdk.Account;
 let fs = require('fs');
 
 // let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
-let networks = sdk.networks;
-networks.testnet.api_server = 'https://api.devel.bitmark.com';
+// let networks = sdk.networks;
+// networks.testnet.api_server = 'https://api.devel.bitmark.com';
 
 let validData = [{
   seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',

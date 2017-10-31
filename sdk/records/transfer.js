@@ -118,7 +118,7 @@ Transfer.prototype.sign = function(priKey){
   return this;
 };
 
-Transfer.prototype.toJSON = function(){
+Transfer.prototype.toJSON = function(includeId){
   assert(this._isSigned, 'Transfer error: need to sign the record before getting JSON format');
   let result = {
     owner: this._owner.toString(),
@@ -127,6 +127,9 @@ Transfer.prototype.toJSON = function(){
   };
   if (this._payment) {
     result.payment = this._payment;
+  }
+  if (includeId) {
+    result.id = this._txId;
   }
   return result;
 };

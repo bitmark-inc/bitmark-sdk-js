@@ -27,7 +27,7 @@ let transfer = (bitmarkId, toAccountNumber, account) => {
       });
     })
     .then(() => {
-      return Promise.resolve(record.getId());
+      return Promise.resolve({transfer: record.toJSON(true)});
     });
 }
 

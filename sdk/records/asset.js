@@ -159,15 +159,19 @@ Asset.prototype.sign = function(priKey) {
   return this;
 };
 
-Asset.prototype.toJSON = function() {
+Asset.prototype.toJSON = function(includeId) {
   assert(this._isSigned, 'Asset error: need to sign the record before getting JSON format');
-  return {
+  let result = {
     fingerprint: this._fingerprint,
     name: this._name,
     metadata: mapToMetadataString(this._metadata),
     registrant: this._registrant.toString(),
     signature: this._signature.toString('hex')
   };
+  if (includeId) {
+    result.id = this._id;
+  }
+  return result;
 };
 
 Asset.prototype.isSigned = function() { return this._isSigned; };
