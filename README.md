@@ -126,6 +126,25 @@ account.downloadAsset(bitmarkId) // plain/text
   })
 ```
 
+## List all bitmarks under the account
+
+```javascript
+var Account = bitmarkSDK.Account;
+
+var account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
+
+account.getBitmarks()
+  .then(function(result) {
+    for (var i in result.bitmarks) {
+      console.log("bitmarks under this account:");
+      console.log(result.bitmarks[i].id);
+    }
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+```
+
 # Usage
 
 ## Account
