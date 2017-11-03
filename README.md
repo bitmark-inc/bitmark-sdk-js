@@ -61,10 +61,6 @@ To issue bitmarks on an asset, first you have to decide the accessibility of the
 Currently, `private` is not supported yet.
 
 ```javascript
-var Account = bitmarkSDK.Account;
-
-var account = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKqSxKWr4x");
-
 var filePath = "example.txt" // the file path to the asset
 var accessibility = "public"
 var propertyName = "bitmark js sdk demo" // the name of the asset to be registered on the blockchain
@@ -88,13 +84,9 @@ To get detailed information of bitmarks, please refer to [Bitmark Query API](htt
 ## How to transfer a bitmark?
 
 ```javascript
-var Account = bitmarkSDK.Account;
-
-var accountA = Account.fromSeed("5XEECtvJBPnZjfKptCGEoT4RZZPYvcbWy38zBtyCB8NwvnKqSxKWr4x");
-var accountB = Account.fromSeed("5XEECt6Mhj8Tanb9CDTGHhTQ7RqbS5LHD383LRK6QGDuj8mwfUU6gKs");
-
 var bitmarkId = "85148d5535708a4f345d70772ba25432464c91b9e71844fe167168cfbaf1526a"
-accountA.transfer(bitmarkId, accountB.getAccountNumber().toString())
+var receiverAccountNumber = "e1pFRPqPhY2gpgJTpCiwXDnVeouY9EjHY6STtKwdN6Z4bp4sog"
+account.transfer(bitmarkId, receiverAccountNumber)
   .then(function(result) {
     var txId = result;
     console.log("Transaction ID: ", txId)
@@ -111,10 +103,6 @@ After the bitmark is successfully transferred, you'll get an ID of this transact
 You can download your assets by its bitmark IDs.
 
 ```javascript
-var Account = bitmarkSDK.Account;
-
-var account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
-
 var bitmarkId = '4d4ac977168387238356db0d797d2e122e99acfd0917015df3c6eed52ce5d6dc'
 account.downloadAsset(bitmarkId) // plain/text
   .then(function(data){
@@ -129,10 +117,6 @@ account.downloadAsset(bitmarkId) // plain/text
 ## List all bitmarks under the account
 
 ```javascript
-var Account = bitmarkSDK.Account;
-
-var account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
-
 account.getBitmarks()
   .then(function(result) {
     for (var i in result.bitmarks) {
