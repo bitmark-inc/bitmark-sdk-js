@@ -1,5 +1,6 @@
 // TODO: provide a way to parse the asset from buffer and json
 
+let util = require('../util');
 let common = require('../util/common.js');
 let assert = require('../util/assert.js');
 let varint = require('../util/varint.js');
@@ -21,25 +22,13 @@ function Asset() {
   resetSignState(this);
 }
 
-// function _getMostReturnedResult(resultSet, key) {
-//   let results = {}, finalResult = null;
-//   resultSet.forEach(function(result){
-//     result = result[key];
-//     results[result] = (results[result] || 0) + 1;
-//     if (!finalResult || results[result] > results[finalResult]) {
-//       finalResult = result;
-//     }
-//   });
-//   return finalResult;
-// }
-
 function _setString(val, length, name, asset) {
   assert(_.isString(val), new TypeError('Asset error: ' + name + ' must be a string'));
   val = common.normalizeStr(val);
   assert(val.length <= length, 'Asset error: ' + name + ' must be less than ' + length);
   if (asset['_' + name] !== val) {
     asset['_' + name] = val;
-    asset._isSigned = false;
+    resetSignState(asset);
   }
   return asset;
 }
@@ -143,6 +132,27 @@ Asset.prototype.setFingerprint = function(fingerprint) {
   resetSignState(this);
   return this;
 };
+
+Asset.prototype.loadFile = async function(filepath, accessibility) {
+  assert(filepath && _.isString(filepath), 'Asset error: unrecognized filepath');
+  assert(accessibility && (accessibility === 'public' || accessibility === 'private'),
+    'Asset error: unrecognized accessibility');
+  assert(accessibility )
+  
+  let fingerprint = await util.fingerprint.fromFile(filepath);
+  this.setFingerprint(fingerprint);
+  this._filepath = filepath;
+  this._accessibility = accessibility;
+  return this;
+};
+
+Asset.prototype.getFile = function() {
+  return this._filepath;
+}
+
+Asset.prototype.getAccessibility = function() {
+  return this._accessibility;
+}
 
 let computeAssetId = function(fingerprint) {
   return common.sha3_512(new Buffer(fingerprint, 'utf8')).toString('hex');

@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 bower_components
+tmp
 tmp*.js
 npm-debug.log
 coverage/

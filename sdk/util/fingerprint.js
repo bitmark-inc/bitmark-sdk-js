@@ -1,6 +1,7 @@
 let assert = require('./assert');
 let common = require('./common');
 let _ = require('lodash');
+let fs = require('fs');
 
 let computeFingerprintFromBuffer = function(data) {
   assert(Buffer.isBuffer(data), new TypeError('Fingerprint error: buffer is required'));
@@ -27,8 +28,14 @@ let computeFingerprintFromStream = function(stream) {
   });
 }
 
+let computeFingerprintFromFile = function(filepath) {
+  let readStream = fs.createReadStream(filepath);
+  return computeFingerprintFromStream(readStream);
+}
+
 module.exports = {
   fromBuffer: computeFingerprintFromBuffer,
   fromString: computeFingerprintFromString,
-  fromStream: computeFingerprintFromStream
+  fromStream: computeFingerprintFromStream,
+  fromFile: computeFingerprintFromFile
 }

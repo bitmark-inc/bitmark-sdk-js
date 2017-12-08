@@ -1,11 +1,16 @@
 let _ = require('lodash');
+let SDKError = require('../error');
 
-module.exports = function(condition, throwObject) {
+module.exports = function(condition, message, code) {
+  let error;
   if (!condition) {
-    if (_.isError(throwObject)) {
-      throw throwObject;
+    if (_.isString(message)) {
+      error = code ? new SDKError(message, code) : SDKError.serviceFailed(message);
+    } else if (!_.isError(message)) {
+      error = new SDKError(message);
     } else {
-      throw new Error(throwObject);
+      error = message;
     }
+    throw error;
   }
 };
