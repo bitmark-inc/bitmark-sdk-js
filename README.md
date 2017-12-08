@@ -3,131 +3,27 @@
 [![Build Status](https://travis-ci.org/bitmark-inc/bitmark-sdk.svg?branch=master)](https://travis-ci.org/bitmark-inc/bitmark-sdk)
 [![Coverage Status](https://coveralls.io/repos/bitmark-inc/bitmark-sdk/badge.svg?branch=master)](https://coveralls.io/r/bitmark-inc/bitmark-sdk?branch=master)
 
-# Install
+# Set Up
+
+## Prerequisites
+
+- Node.js version 7.6+
+
+## Installing the SDK
 
 ```sh
 $ npm install bitmark-sdk
 ```
 
-# Set up
+## Loading the SDK
 
 ```javascript
 var bitmarkSDK = require('bitmark-sdk');
 ```
 
-# Quick start
+# Quick Start
 
-## How to create and restore an account?
-
-### create a new account
-
-```javascript
-var Account = bitmarkSDK.Account;
-
-var account = new Account('testnet');
-```
-
-The account number designates ownership by serving as the account value
-in Bitmark blockchain records.
-
-```javascript
-var accountNumber = account.getAccountNumber().toString();
-```
-
-### restore an account
-There are two different ways to restore an account:
-- from a seed (base58 encoded string):
-
-  should be stored in a secure way by application developers, and then can be used to reconstruct the account in order to issue or transfer bitmarks for their users
-- from a recovery phrase (24 English words):
-
-  should be sent to each application user so that they can back up their own accounts and properties.
-
-```javascript
-var restoredAccount = Account.fromSeed(account.getSeed())
-
-var restoredAccount = Account.fromRecoveryPhrase(account.getRecoveryPhrase());
-```
-
-## How to issue bitmarks?
-
-To issue bitmarks on an asset, first you have to decide the accessibility of the asset. The accessibility is set to either `public` or `private`. The following table describes the differences.
-
-| accessibility | public    | private                                  |
-|---------------|-----------|------------------------------------------|
-| encryption    | NO        | YES                                      |
-| access right  | every one | the issuer and the current bitmark owner |
-
-Currently, `private` is not supported yet.
-
-```javascript
-var filePath = "example.txt" // the file path to the asset
-var accessibility = "public"
-var propertyName = "bitmark js sdk demo" // the name of the asset to be registered on the blockchain
-var propertyMetadata = {"author": "Bitmark Inc. developers"} // the metadata of the asset to be registered on the blockchain
-var quantity = 1 // the amount of bitmarks to be issued
-account.issue(filePath, accessibility, propertyName, propertyMetadata, quantity)
-  .then(function(result) {
-    console.log("Bitmark IDs:");
-    for (var i in result) {
-      console.log(result[i].txId);
-    }
-  })
-  .catch(function(error) {
-    console.log(error)
-  });
-```
-
-After bitmarks are successfully issued, you'll get an array of bitmark IDs.
-To get detailed information of bitmarks, please refer to [Bitmark Query API](http://docs.bitmarkcoreapi.apiary.io/#reference/queries).
-
-## How to transfer a bitmark?
-
-```javascript
-var bitmarkId = "85148d5535708a4f345d70772ba25432464c91b9e71844fe167168cfbaf1526a"
-var receiverAccountNumber = "e1pFRPqPhY2gpgJTpCiwXDnVeouY9EjHY6STtKwdN6Z4bp4sog"
-account.transfer(bitmarkId, receiverAccountNumber)
-  .then(function(result) {
-    var txId = result;
-    console.log("Transaction ID: ", txId)
-  })
-  .catch(function(error) {
-    console.log(error)
-  });
-```
-
-After the bitmark is successfully transferred, you'll get an ID of this transaction.
-
-## Download your assets
-
-You can download your assets by its bitmark IDs.
-
-```javascript
-var bitmarkId = '4d4ac977168387238356db0d797d2e122e99acfd0917015df3c6eed52ce5d6dc'
-account.downloadAsset(bitmarkId) // plain/text
-  .then(function(data){
-    console.log(data) // <Buffer: ....>
-    console.log(data.toString()) // Get the text content
-  })
-  .catch(function(err) {
-    console.log(err)
-  })
-```
-
-## List all bitmarks under the account
-
-```javascript
-account.getBitmarks()
-  .then(function(result) {
-    for (var i in result.bitmarks) {
-      console.log("bitmarks under this account:");
-      console.log(result.bitmarks[i].id);
-    }
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-```
+Please refer to our [Wiki page](https://github.com/bitmark-inc/bitmark-sdk/wiki/Quick-Start).
 
 # Usage
 
