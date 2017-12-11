@@ -44,9 +44,14 @@ let issue = async (asset, quantity, account) => {
   }
 
   let requestBody = {issues: []};
+  let result = {issues: []};
   for (let i = 0; i < quantity; i++) {
     let issue = new Issue().fromAsset(asset).sign(account.getAuthKey());
     requestBody.issues.push(issue.toJSON());
+
+    let issueResult = issue.toJSON();
+    issueResult.id = issue.getId(); // add missing id for toJSON()
+    result.issues.push(issueResult);
   }
 
   if (asset instanceof Asset && asset.getName()) {
@@ -57,7 +62,7 @@ let issue = async (asset, quantity, account) => {
   }
 
   await util.api.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody, network: account.getNetwork()});
-  return requestBody.issues;
+  return result;
 }
 
 module.exports = {issue};
