@@ -1,14 +1,14 @@
-const MAX_QUANTITY = 100;
-
+const ISSUE_BATCH_QUANTITY = 100;
 const API_NAME = 'issue';
 const API_METHOD = 'post';
 
-let _ = require('lodash');
-let fs = require('fs');
+const _ = require('lodash');
+const fs = require('fs');
 
-let util = require('../util');
-let Asset = require('../records/asset');
-let Issue = require('../records/issue');
+const util = require('../util');
+const Asset = require('../records/asset');
+const Issue = require('../records/issue');
+const SDKError = require('../error');
 
 
 let upload = (fileReaderStream, accessibility, assetId, account) => {
@@ -30,11 +30,14 @@ let upload = (fileReaderStream, accessibility, assetId, account) => {
   });
 }
 
-let issue = async (asset, quantity, account) => {
-  util.assert(!!asset, 'Issue error: asset is required');
-  util.assert(_.isNumber(quantity), 'Issue error: quantity must be a number');
-  util.assert(quantity <= MAX_QUANTITY, `Issue error: quantity can not be greater than ${MAX_QUANTITY}`);
-  util.assert(quantity > 0, 'Issue error: quantity must be greater than 0');
+let issue = async (asset, quantity, retryTimes, account) => {
+  retryTimes = retryTimes || 1;
+
+  util.assert.parameter(!!asset, 'missing asset');
+  util.assert.parameter(asset instanceof Asset || _.isString(asset), 'asset must be Asset object or asset id string');
+  util.assert.parameter(_.isNumber(quantity), 'quantity must be a number');
+  util.assert.parameter(quantity > 0, 'quantity must be greater than 0');
+  util.assert.parameter(_.isNumber(retryTimes), 'retryTimes must be a number');
 
   if (asset instanceof Asset) {
     let file = asset.getFile();
@@ -43,25 +46,51 @@ let issue = async (asset, quantity, account) => {
     }
   }
 
-  let requestBody = {issues: []};
-  let result = {issues: []};
-  for (let i = 0; i < quantity; i++) {
-    let issue = new Issue().fromAsset(asset).sign(account.getAuthKey());
-    requestBody.issues.push(issue.toJSON());
-
-    let issueResult = issue.toJSON();
-    issueResult.id = issue.getId(); // add missing id for toJSON()
-    result.issues.push(issueResult);
-  }
-
+  let isExistingAsset = false;
   if (asset instanceof Asset && asset.getName()) {
     if (!asset.isSigned()) {
       asset.sign(account.getAuthKey());
     }
-    requestBody.assets = [asset.toJSON()];
+    isExistingAsset = true;
   }
 
-  await util.api.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody, network: account.getNetwork()});
+  let result = {issues: []};
+  let count = 0;
+
+  while (count < quantity && retryTimes > 0) {
+    let remaining = quantity - count;
+    let batchLength = remaining > ISSUE_BATCH_QUANTITY ? ISSUE_BATCH_QUANTITY : remaining;
+    let requestBody = {issues: []};
+
+    if (isExistingAsset) {
+      requestBody.assets = [asset.toJSON()];
+    }
+    for (let i = 0; i < batchLength; i++) {
+      let issue = new Issue().fromAsset(asset).sign(account.getAuthKey());
+      requestBody.issues.push(issue.toJSON());
+  
+      let issueResult = issue.toJSON();
+      issueResult.id = issue.getId(); // add missing id for toJSON()
+      result.issues.push(issueResult);
+    }
+    try {
+      await util.api.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody, network: account.getNetwork()});
+      isExistingAsset = false;
+      count += batchLength;
+      delete result.error;
+    } catch (error) {
+      result.error = error;
+      retryTimes--;
+      if (retryTimes <= 0) {
+        if (result.issues.length) {
+          return result;
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+
   return result;
 }
 

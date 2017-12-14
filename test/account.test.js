@@ -4,9 +4,9 @@ let sdk = require('../index.js');
 let Account = sdk.Account;
 let fs = require('fs');
 
-// let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
-// let networks = sdk.networks;
-// networks.testnet.api_server = 'https://api.devel.bitmark.com';
+let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
+let networks = sdk.networks;
+networks.testnet.api_server = 'https://api.devel.bitmark.com';
 
 let validData = [{
   seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
@@ -61,38 +61,28 @@ describe('Account', function() {
 
   describe('Issue API', function() {
     this.timeout(15000);
-    it('should allow to issue and use the account to sign', function(done) {
+    it('should allow to issue and use the account to sign', async function(done) {
       let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
       let file = './test/tmp/myfile.test';
       fs.writeFileSync(file, sdk.util.common.generateRandomBytes(1000));
 
-      account.issue(file, 'public', 'name', {author: 'test'}, 10)
-        .then(result => {
-          expect(result).to.be.ok;
-          fs.unlinkSync(file);
-          done();
-        })
-        .catch(error => {
-          expect(error).to.be.undefined;
-          fs.unlinkSync(file);
-          done();
-        });
+      let asset = new sdk.Asset()
+        .setName('name')
+        .setMetadata({author: 'test'});
+      
+      await asset.loadFile(file, 'public');
+      await account.issue(asset, 10);
+      fs.unlinkSync(file);
+      done();
     });
   });
 
   describe('Download Asset', function() {
-    it('should get the asset file of its bitmark ', function(done) {
+    it('should get the asset file of its bitmark ', async function(done) {
       let account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
-      account.downloadAsset('8551ad465e0804676c255d80dc03176b975650227efda1f070d3d72e4be2b631') // text
-      .then(data=>{
-        expect(data.toString()).to.equal('This is a test assets.\n')
-        done()
-      })
-      .catch(error => {
-        console.log(error)
-        expect(error).is.undefined;
-        done();
-      });
+      let data = await account.downloadAsset('8551ad465e0804676c255d80dc03176b975650227efda1f070d3d72e4be2b631'); // text
+      expect(data.toString()).to.equal('This is a test assets.\n')
+      done();
     })
   })
 

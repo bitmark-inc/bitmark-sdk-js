@@ -99,10 +99,8 @@ Account.prototype.getRecoveryPhrase = function() {
 
 // FOR API
 
-Account.prototype.issue = function() {
-  let args = Array.prototype.slice.call(arguments);
-  args.push(this);
-  return API.issue.apply(API, args);
+Account.prototype.issue = function(asset, quantity, retryTimes) {
+  return API.issue(asset, quantity, retryTimes, this);
 }
 
 // Account.prototype.issueNew = function() {

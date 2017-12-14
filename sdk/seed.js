@@ -1,15 +1,16 @@
 'use strict';
 
-let common = require('./util/common.js');
-let varint = require('./util/varint.js');
-let base58 = require('./util/base58.js');
-let assert = require('./util/assert.js');
-let _ = require('lodash');
+const common = require('./util/common.js');
+const varint = require('./util/varint.js');
+const base58 = require('./util/base58.js');
+const assert = require('./util/assert.js');
+const _ = require('lodash');
 
-let networks = require('./networks.js');
-let config = require('./config.js');
+const SDKError = require('./error');
+const networks = require('./networks.js');
+const config = require('./config.js');
 
-let seedVersionEncoded = varint.encode(config.seed.version);
+const seedVersionEncoded = varint.encode(config.seed.version);
 
 function SeedInfo(values) {
   this.getValues = function() { return values; }
@@ -19,23 +20,21 @@ function standardizeNetwork(network) {
   network = network || networks.livenet;
   if (_.isString(network)) {
     network = networks[network];
-    assert(network, new TypeError('Seed error: can not recognize network'));
+    assert.parameter(network, 'unrecognized network');
   }
   return network;
 }
 
 function standardzeVersion(version) {
   version = version || config.seed.version;
-  if (version !== config.seed.version) {
-    throw new Error('Seed error: this version is not supported');
-  }
+  assert.parameter(version === config.seed.version, 'version is not supported');
   return version;
 }
 
 function exportToString(core, network, version) {
-  assert(core && Buffer.isBuffer(core) && core.length === config.core.length, new TypeError('Invalid core'));
-  assert(network, new TypeError('Invalid network'));
-  assert(version, new TypeError('Invalid version'));
+  assert.parameter(core && Buffer.isBuffer(core) && core.length === config.core.length, 'unrecognized core');
+  assert.parameter(network, 'unrecognized network');
+  assert.parameter(version, 'unrecognized version');
 
   let networkValue = varint.encode(network.core_value);
   let versionValue = varint.encode(version);
@@ -50,7 +49,7 @@ function parseSeedString(seedString) {
   try {
     seedStringBuffer = base58.decode(seedString);
   } catch (error) {
-    throw new TypeError('Seed String is not in base58 format');
+    throw SDKError.invalidParameter('seed string is not in base58 format');
   }
 
   // Verify checksum
@@ -59,25 +58,19 @@ function parseSeedString(seedString) {
   rest = seedStringBuffer.slice(0, seedStringBuffer.length - config.seed.checksum_length);
   checksumVerification = common.sha3_256(rest);
   checksumVerification = checksumVerification.slice(0, config.seed.checksum_length);
-  if (!common.bufferEqual(checksum, checksumVerification)) {
-    throw new Error('Invalid seed string: wrong checksum');
-  }
+  assert.parameter(common.bufferEqual(checksum, checksumVerification), 'wrong checksum for given seed');
 
 
   // Verify magic number
   let magicNumber;
   magicNumber = rest.slice(0, config.seed.magic.length);
-  if (!common.bufferEqual(magicNumber, config.seed.magic)) {
-    throw new Error('Invalid seed string: wrong app magic number');
-  }
+  assert.parameter(common.bufferEqual(magicNumber, config.seed.magic), 'wrong magic number for given seed');
   rest = rest.slice(config.seed.magic.length);
 
   // Verify version
   let version;
   version = rest.slice(0, seedVersionEncoded.length);
-  if (!common.bufferEqual(version, seedVersionEncoded)) {
-    throw new Error('Invalid seed string: unrecognized version');
-  }
+  assert.parameter(common.bufferEqual(version, seedVersionEncoded), 'unrecognized seed version');
   rest = rest.slice(seedVersionEncoded.length);
 
   let networkValue, network;
@@ -87,13 +80,11 @@ function parseSeedString(seedString) {
   } else if (networkValue === networks.testnet.core_value) {
     network = networks.testnet;
   } else {
-    throw new Error('Invalid seed string: can not recognize network value');
+    throw SDKError.invalidParameter('unrecognized network value');
   }
-  let core = rest.slice(config.seed.network_length);
 
-  if (core.length !== config.core.length) {
-    throw new Error('Invalid seed string: wrong core length');
-  }
+  let core = rest.slice(config.seed.network_length);
+  assert.parameter(core.length === config.core.length, 'wrong core length');
 
   return new SeedInfo({
     _core: core,
@@ -113,17 +104,17 @@ function Seed(network, version) {
     return;
   }
 
-  throw new Error('Seed error: calling Seed constructor directly is now deprecated');
+  throw SDKError.operationFobidden('calling Seed constructor directly has not been supported anymore');
 }
 
 Seed.fromBase58 = Seed.fromString = function(seedString) {
-  assert(_.isString(seedString), new TypeError('Seed error: Expect ' + seedString + ' to be a string'));
+  assert.parameter(_.isString(seedString), 'seed needs to be a string');
   return new Seed(parseSeedString(seedString));
 }
 
 Seed.fromCore = Seed.fromBuffer = function(core, network, version) {
-  assert(Buffer.isBuffer(core), new TypeError('Seed error: core need to be a buffer'));
-  assert(core.length === config.core.length, new TypeError(`Seed error: core need to be ${config.core.length} bytes`));
+  assert.parameter(Buffer.isBuffer(core), 'core should be a buffer');
+  assert.parameter(core.length === config.core.length, `core length should be ${config.core.length}`);
 
   network = standardizeNetwork(network);
   version = standardzeVersion(version);

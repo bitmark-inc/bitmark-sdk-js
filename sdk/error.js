@@ -21,6 +21,7 @@ class SDKError extends Error {
 
 SDKError.INVALID_PARAMETER_ERROR_CODE = 1000;
 SDKError.SERVICE_FAILED = 7000;
+SDKError.OPERATION_FORBIDDEN = 2000;
 
 SDKError.buildMessage = (message, code) => {
   switch (code) {
@@ -46,6 +47,10 @@ SDKError.invalidParameter = (message) => {
 
 SDKError.serviceFailed = (message) => {
   return new SDKError(message, SDKError.SERVICE_FAILED);
+}
+
+SDKError.operationFobidden = (message) => {
+  return new SDKError(message, SDKError.OPERATION_FORBIDDEN);
 }
 
 require('util').inherits(SDKError, Error);

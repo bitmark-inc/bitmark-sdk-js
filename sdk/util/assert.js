@@ -1,7 +1,12 @@
 let _ = require('lodash');
 let SDKError = require('../error');
-
-module.exports = function(condition, message, code) {
+/**
+ * message could be
+ * string then code is required
+ * {message, code} format
+ * error object
+ */
+let assert = function(condition, message, code) {
   let error;
   if (!condition) {
     if (_.isString(message)) {
@@ -14,3 +19,9 @@ module.exports = function(condition, message, code) {
     throw error;
   }
 };
+
+assert.parameter = function(condition, message) {
+  return assert(condition, message, SDKError.INVALID_PARAMETER_ERROR_CODE);
+}
+
+module.exports = assert;
