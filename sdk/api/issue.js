@@ -1,3 +1,5 @@
+import { request } from 'https';
+
 const ISSUE_BATCH_QUANTITY = 100;
 const API_NAME = 'issue';
 const API_METHOD = 'post';
@@ -60,6 +62,7 @@ let issue = async (asset, quantity, retryTimes, account) => {
   while (count < quantity && retryTimes > 0) {
     let remaining = quantity - count;
     let batchLength = remaining > ISSUE_BATCH_QUANTITY ? ISSUE_BATCH_QUANTITY : remaining;
+    let issues = [];
     let requestBody = {issues: []};
 
     if (isExistingAsset) {
@@ -67,16 +70,18 @@ let issue = async (asset, quantity, retryTimes, account) => {
     }
     for (let i = 0; i < batchLength; i++) {
       let issue = new Issue().fromAsset(asset).sign(account.getAuthKey());
+      issues.push(issue);
       requestBody.issues.push(issue.toJSON());
-  
-      let issueResult = issue.toJSON();
-      issueResult.id = issue.getId(); // add missing id for toJSON()
-      result.issues.push(issueResult);
     }
     try {
       await util.api.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody, network: account.getNetwork()});
       isExistingAsset = false;
       count += batchLength;
+      issues.forEach((issue) => {
+        let issueResult = issue.toJSON();
+        issueResult.id = issue.getId(); // add missing id for toJSON()
+        result.issues.push(issueResult);
+      });
       delete result.error;
     } catch (error) {
       result.error = error;
