@@ -1,21 +1,21 @@
-let networks = require('./networks.js');
-let _ = require('lodash');
-let assert = require('./util/assert.js');
-let nacl = require('tweetnacl-nodewrap');
+const networks = require('./networks.js');
+const _ = require('lodash');
+const assert = require('./util/assert.js');
+const nacl = require('tweetnacl-nodewrap');
 
-let Seed = require('./seed');
-let RecoveryPhrase = require('./recovery-phrase');
-let AuthKey = require('./auth-key');
-let API = require('./api');
-let config = require('./config');
-let util = require('./util');
-let BigInteger = require('bn.js');
+const Seed = require('./seed');
+const RecoveryPhrase = require('./recovery-phrase');
+const AuthKey = require('./auth-key');
+const API = require('./api');
+const config = require('./config');
+const util = require('./util');
+const BigInteger = require('bn.js');
 
 function standardizeNetwork(network) {
   network = network || networks.livenet;
   if (_.isString(network)) {
     network = networks[network];
-    assert(network, new TypeError('Seed error: can not recognize network'));
+    assert.parameter(network, 'unrecognized network');
   }
   return network;
 }

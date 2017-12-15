@@ -1,14 +1,15 @@
 'use strict';
 
-let common = require('./util/common.js');
-let varint = require('./util/varint.js');
-let assert = require('./util/assert.js');
-let _ = require('lodash');
+const common = require('./util/common.js');
+const varint = require('./util/varint.js');
+const assert = require('./util/assert.js');
+const _ = require('lodash');
 
-let networks = require('./networks.js');
-let config = require('./config.js');
-let BigInteger = require('bn.js');
-let bip39 = require('./bip39').words;
+const SDKError = require('./error');
+const networks = require('./networks.js');
+const config = require('./config.js');
+const BigInteger = require('bn.js');
+const bip39 = require('./bip39').words;
 
 function RecoveryPhraseInfo(values) {
   this.getValues = function() { return values; }
@@ -18,7 +19,7 @@ function standardizeNetwork(network) {
   network = network || networks.livenet;
   if (_.isString(network)) {
     network = networks[network];
-    assert(network, new TypeError('Seed error: can not recognize network'));
+    assert.parameter(network, 'unrecognized network');
   }
   return network;
 }
@@ -26,8 +27,8 @@ function standardizeNetwork(network) {
 let masks = [new BigInteger('0'), new BigInteger('1'), new BigInteger('3'), new BigInteger('7'), new BigInteger('15'), new BigInteger('31'), new BigInteger('63'), new BigInteger('127'), new BigInteger('255'), new BigInteger('511'), new BigInteger('1023')];
 
 function exportToWords(core, network) {
-  assert(core && Buffer.isBuffer(core) && core.length === config.core.length, new TypeError('Recovery Phrase error: Invalid core'));
-  assert(network, new TypeError('Recovery Phrase error: Invalid network'));
+  assert.parameter(core && Buffer.isBuffer(core) && core.length === config.core.length, 'unrecognized core');
+  assert.parameter(network, 'unrecognized network');
 
   let value = Buffer.concat([varint.encode(network.core_value), core]);
   
@@ -49,8 +50,8 @@ function exportToWords(core, network) {
 }
 
 function parseWords(words) {
-  assert(_.isArray(words), new TypeError('Recovery Phrase error: words must be an array'));
-  assert(words.length === 24, new TypeError('Recovery Phrase error: must be 24 words'));
+  assert.parameter(_.isArray(words), 'words must be an array');
+  assert.parameter(words.length === 24, 'words array must be 24 elements');
 
   let bytes = [];
   let remainder = new BigInteger('0');
@@ -60,9 +61,7 @@ function parseWords(words) {
     let word = words[i];
     let n = bip39.indexOf(word);
 
-    if (n < 0) {
-      throw new Error(`Recovery Phrase error: invalid word ${word}`);
-    }
+    assert.parameter(n >= 0, `unrecognized word "${word}"`)
 
     remainder.ishln(11).iadd(new BigInteger(n.toString()));
     for (bits += 11; bits >= 8; bits -= 8) {
@@ -73,9 +72,7 @@ function parseWords(words) {
     remainder.iand(masks[bits]);
   }
 
-  if (bytes.length !== 33) {
-    throw new Error(`Recovery Phrase error: only get ${bytes.length} from words`);
-  }
+  assert.parameter(bytes.length === 33, `only get ${bytes.length} bytes from words`);
 
   return new RecoveryPhraseInfo({
     _core: Buffer.from(bytes.slice(1)),
@@ -94,12 +91,12 @@ function RecoveryPhrase(network) {
     return;
   }
 
-  throw new Error('Recovery Phrase error: calling RecoveryPhrase constructor directly is now deprecated');
+  throw SDKError.operationFobidden('calling RecoveryPhrase constructor directly has not been supported anymore');
 }
 
 RecoveryPhrase.fromCore = RecoveryPhrase.fromBuffer = function(buffer, network) {
-  assert(Buffer.isBuffer(buffer), new TypeError('Recovery Phrase error: fromCore requires Buffer instance'));
-  assert(buffer.length === 32, new TypeError('Recovery Phrase error: buffer must be 32 bytes'));
+  assert.parameter(Buffer.isBuffer(buffer), 'buffer is not an instance of Buffer object');
+  assert.parameter(buffer.length === 32, 'buffer must be 32 bytes');
 
   network = standardizeNetwork(network);
   let info = new RecoveryPhraseInfo({
@@ -111,7 +108,7 @@ RecoveryPhrase.fromCore = RecoveryPhrase.fromBuffer = function(buffer, network) 
 }
 
 RecoveryPhrase.fromString = function(phrase) {
-  assert(_.isString(phrase), new TypeError('Recovery Phrase error: Expect ' + phrase + ' to be a string'));
+  assert.parameter(_.isString(phrase), new TypeError('Recovery Phrase error: Expect ' + phrase + ' to be a string'));
   phrase = phrase.replace(/\s\s/g, ' ');
   return new RecoveryPhrase(parseWords(phrase.split(' ')));
 }

@@ -1,16 +1,16 @@
-let common = require('./util/common.js');
-let varint = require('./util/varint.js');
-let base58 = require('./util/base58.js');
-let assert = require('./util/assert.js');
-let _ = require('lodash');
+const common = require('./util/common.js');
+const varint = require('./util/varint.js');
+const base58 = require('./util/base58.js');
+const assert = require('./util/assert.js');
+const _ = require('lodash');
 
-let networks = require('./networks.js');
-let config = require('./config.js');
+const networks = require('./networks.js');
+const config = require('./config.js');
 
-let BigInteger = require('bn.js');
-let keyHandlers = require('./key-types/key-handlers.js');
-let AccountNumber = require('./account-number.js');
-let Seed = require('./seed.js');
+const BigInteger = require('bn.js');
+const keyHandlers = require('./key-types/key-handlers.js');
+const AccountNumber = require('./account-number.js');
+const SDKError = require('./error');
 
 function AuthKeyInfo(values) {
   this.getValues = function() { return values; };
@@ -20,9 +20,9 @@ function _verifyNetwork(network) {
   network = network || networks.livenet;
   if (_.isString(network)) {
     network = networks[network];
-    assert(network, new TypeError('Auth key error: can not recognize network'));
+    assert.parameter(network, 'unrecognized network');
   }
-  assert(_.isFinite(network.kif_value), new TypeError('Auth key error: missing KIF information in network parameter'));
+  assert.parameter(_.isFinite(network.kif_value), 'missing kif information in network parameter');
   return network;
 }
 
@@ -31,7 +31,7 @@ function _verifyType(type) {
   if (_.isString(type)) {
     type = config.key.type[type.toLowerCase()];
   }
-  assert(type.name && config.key.type[type.name], new TypeError('Auth key error: can not recognize type'));
+  assert.parameter(type.name && config.key.type[type.name], 'unrecognized key type');
   return type;
 }
 
@@ -44,18 +44,18 @@ function parseKIFString(kifString) {
 
   // check for whether this is a kif
   let keyPartVal = new BigInteger(config.key.part.auth_key);
-  assert(keyVariant.and(new BigInteger(1)).eq(keyPartVal), 'Auth key error: can not parse the kif string');
+  assert.parameter(keyVariant.and(new BigInteger(1)).eq(keyPartVal), 'not a kif string');
   // detect network
   let networkVal = keyVariant.shrn(1).and(new BigInteger(0x01)).toNumber();
   let network = networkVal === networks.livenet.account_number_value ? networks.livenet : networks.testnet;
   // key type
   let keyTypeVal = keyVariant.shrn(4).and(new BigInteger(0x07)).toNumber();
   let keyType = common.getKeyTypeByValue(keyTypeVal);
-  assert(keyType, 'Auth key error: unknow key type');
+  assert.parameter(keyType, 'unrecognized key type');
 
   // check the length of kif
   let kifLength = keyVariantBufferLength + keyType.seed_length + config.key.checksum_length;
-  assert(kifLength === kifBuffer.length, 'Auth key error: KIF for ' + keyType.name + ' must be ' + kifLength + ' bytes');
+  assert.parameter(kifLength === kifBuffer.length, `KIF for ${keyType.name} must be ${kifLength} bytes`);
 
   // get private key
   let seed = kifBuffer.slice(keyVariantBufferLength, kifLength - config.key.checksum_length);
@@ -63,8 +63,7 @@ function parseKIFString(kifString) {
   // check checksum
   let checksum = common.sha3_256(kifBuffer.slice(0 ,kifLength - config.key.checksum_length));
   checksum = checksum.slice(0, config.key.checksum_length);
-  assert(common.bufferEqual(checksum, kifBuffer.slice(kifLength-config.key.checksum_length, kifLength)),
-    'Auth key error: checksum mismatch');
+  assert.parameter(common.bufferEqual(checksum, kifBuffer.slice(kifLength-config.key.checksum_length, kifLength)), 'checksum mismatch');
 
   // get account number
   let keyTypeHandler = keyHandlers.getHandler(keyType.name);
@@ -91,7 +90,7 @@ function buildAuthKey(keyPair, network, type) {
       seed = keyPair;
       keyPair = keyTypeHanlder.generateKeyPairFromSeed(seed); // keyPair from seed
     } else {
-      throw new TypeError('Auth key error: can not recognize buffer format. It must be either a seed/private key buffer');
+      throw SDKError.invalidParameter('unrecognized buffer format');
     }
   } else {
     seed = keyTypeHanlder.getSeedFromPriKey(keyPair.priKey);
@@ -148,17 +147,17 @@ function AuthKey(network, type) {
 }
 
 AuthKey.fromKIF = function(kifString) {
-  assert(_.isString(kifString), new TypeError('Auth key error: Expect ' + kifString + ' to be a string'));
+  assert.parameter(_.isString(kifString), 'KIF string is required');
   return new AuthKey(parseKIFString(kifString));
 };
 
 AuthKey.fromBuffer = function(data, network, type) {
   // verify data
-  assert(data, new TypeError('Auth key buffer is required'));
+  assert.parameter(data, 'buffer is required');
   if (_.isString(data) && /^([0-9a-f]{2})+$/.test(data.toLowerCase())) {
     data = new Buffer(data.toLowerCase(), 'hex');
   }
-  assert(Buffer.isBuffer(data), new TypeError('Auth key error: can not recognize buffer input format'));
+  assert.parameter(Buffer.isBuffer(data), 'unrecognized buffer format');
 
   network = _verifyNetwork(network);
   type = _verifyType(type);
