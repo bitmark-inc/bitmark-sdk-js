@@ -1,5 +1,3 @@
-import { request } from 'https';
-
 const ISSUE_BATCH_QUANTITY = 100;
 const API_NAME = 'issue';
 const API_METHOD = 'post';
@@ -10,7 +8,6 @@ const fs = require('fs');
 const util = require('../util');
 const Asset = require('../records/asset');
 const Issue = require('../records/issue');
-const SDKError = require('../error');
 
 
 let upload = (fileReaderStream, accessibility, assetId, account) => {
