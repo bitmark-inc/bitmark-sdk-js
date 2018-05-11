@@ -3,5 +3,6 @@ node_modules
 bower_components
 tmp
 tmp*.js
+tmp*.txt
 npm-debug.log
 coverage/

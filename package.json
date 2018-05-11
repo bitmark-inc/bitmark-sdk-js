@@ -29,19 +29,19 @@
   },
   "homepage": "https://github.com/bitmark-inc/bitmark-sdk",
   "dependencies": {
-    "axios": "^0.17.0",
-    "bn.js": "^4.11.6",
-    "bs58": "^3.0.0",
-    "form-data": "^2.3.1",
-    "js-sha3": "^0.6.1",
-    "lodash": "^4.6.1",
+    "axios": "^0.18.0",
+    "bn.js": "^4.11.8",
+    "bs58": "^4.0.1",
+    "form-data": "^2.3.2",
+    "js-sha3": "^0.7.0",
+    "lodash": "^4.17.10",
     "tweetnacl-nodewrap": "^0.1.9"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "coveralls": "^2.11.8",
-    "istanbul": "^0.4.2",
-    "mocha": "^2.4.5",
-    "q": "^1.4.1"
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.1.1",
+    "q": "^1.5.1"
   }
 }

@@ -4,10 +4,6 @@ let sdk = require('../index.js');
 let Account = sdk.Account;
 let fs = require('fs');
 
-let config = require(global.__baseBitmarkSDKModulePath + 'sdk/config.js');
-let networks = sdk.networks;
-networks.testnet.api_server = 'https://api.devel.bitmark.com';
-
 let validData = [{
   seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
   phrase: 'accident syrup inquiry you clutch liquid fame upset joke glow best school repeat birth library combine access camera organ trial crazy jeans lizard science',
@@ -61,7 +57,7 @@ describe('Account', function() {
 
   describe('Issue API', function() {
     this.timeout(15000);
-    it('should allow to issue and use the account to sign', async function(done) {
+    it('should allow to issue and use the account to sign', async function() {
       let account = Account.fromSeed('5XEECtYtR1zm9RZx1Aw2m3STEDMzm9Ardd7TjN8dAHNCV1dY4HaPHRn');
       let file = './test/tmp/myfile.test';
       fs.writeFileSync(file, sdk.util.common.generateRandomBytes(1000));
@@ -73,16 +69,14 @@ describe('Account', function() {
       await asset.loadFile(file, 'public');
       await account.issue(asset, 10);
       fs.unlinkSync(file);
-      done();
     });
   });
 
   describe('Download Asset', function() {
-    it('should get the asset file of its bitmark ', async function(done) {
-      let account = Account.fromSeed("5XEECtoyYxvLXC4B4kp5S2nm8xxw37Z4J5iGx17Qu8YaX1g9G23pLoA")
-      let data = await account.downloadAsset('8551ad465e0804676c255d80dc03176b975650227efda1f070d3d72e4be2b631'); // text
-      expect(data.toString()).to.equal('This is a test assets.\n')
-      done();
+    it('should get the asset file of its bitmark ', async function() {
+      let account = Account.fromSeed("5XEECtPVsBBy1Ztia2U31ccpCdTFHyr54TPRK6ZY2jwxVVeR2ifTkq6")
+      let data = await account.downloadAsset('47d5c77f32455703e157a62f6cf46c2cb28f13f32756705f67da67e9c444cc9e'); // text
+      expect(data.toString()).to.equal('This is a test assets')
     })
   })
 

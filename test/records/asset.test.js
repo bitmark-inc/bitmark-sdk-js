@@ -44,15 +44,15 @@ describe('Asset', function(){
   });
   it('should be able to check for valid metadata', function() {
     let key = makeRandomString(10);
-    let invalidValue = makeRandomString(makeRandomString(maxMetadata - 10));
+    let invalidValue = makeRandomString(maxMetadata - 10);
     let invalidData = {};
     invalidData[key] = invalidValue;
-    expect(Asset.isValidMetadata(invalidData)).to.equal.false;
+    expect(Asset.isValidMetadata(invalidData)).to.equal(false);
 
-    let validValue = makeRandomString(makeRandomString(maxMetadata - 11));
+    let validValue = makeRandomString(maxMetadata - 11);
     let validData = {};
     validData[key] = validValue;
-    expect(Asset.isValidMetadata(validData)).to.equal.true;
+    expect(Asset.isValidMetadata(validData)).to.equal(true);
   });
   it('should allow to setMetadata if the data is valid', function() {
     let asset1 = new Asset().setName(makeRandomString(maxName));
