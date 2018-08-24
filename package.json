@@ -1,6 +1,6 @@
 {
   "name": "bitmark-sdk",
-  "version": "0.0.5",
+  "version": "2.0.0",
   "description": "Bitmark SDK",
   "main": "index.js",
   "directories": {
@@ -10,7 +10,7 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "_mocha \"./test/**/*.test.js\"",
+    "test": "_mocha \"./test/sdk-v2/**/*.test.js\"",
     "coverage": "./node_modules/istanbul/lib/cli.js cover _mocha \"./test/**/*.js\"",
     "coveralls": "npm run-script coverage && ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
