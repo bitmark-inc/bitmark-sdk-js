@@ -1,8 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sdk = require('../../index');
-let Account = sdk.Account;
-let fs = require('fs');
+const chai = require('chai');
+const expect = chai.expect;
+const sdk = require('../../index');
+const Account = sdk.Account;
 
 let validData = {
     testnet: {
