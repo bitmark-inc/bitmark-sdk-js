@@ -11,13 +11,13 @@ const base58 = require('../../util/base58.js');
 const assert = require('../../util/assert.js');
 
 
-let AuthKey = function (authKeyInfo) {
-    assert.parameter(authKeyInfo, 'Auth Key info is required');
-    Object.assign(this, authKeyInfo);
+let AccountKey = function (accountKeyInfo) {
+    assert.parameter(accountKeyInfo, 'Account Key info is required');
+    Object.assign(this, accountKeyInfo);
 };
 
 // STATIC METHODS
-AuthKey.fromBuffer = function (buffer, network) {
+AccountKey.fromBuffer = function (buffer, network) {
     // verify data
     assert.parameter(buffer, 'buffer is required');
     if (_.isString(buffer) && /^([0-9a-f]{2})+$/.test(buffer.toLowerCase())) {
@@ -25,36 +25,74 @@ AuthKey.fromBuffer = function (buffer, network) {
     }
     assert.parameter(Buffer.isBuffer(buffer), 'unrecognized buffer format');
 
-    return new AuthKey(buildAuthKey(buffer, network));
+    return new AccountKey(buildAccountKey(buffer, network));
+};
+
+AccountKey.parseAccountNumber = function (accountNumber) {
+    let accountNumberBuffer = base58.decode(accountNumber);
+
+    let keyVariant = varint.decode(accountNumberBuffer);
+    let keyVariantBuffer = keyVariant.toBuffer();
+
+    // check for whether this is an account number
+    let keyPartVal = new BigInteger(BITMARK_CONFIG.key.part.public_key);
+    assert.parameter(keyVariant.and(new BigInteger(1)).eq(keyPartVal), 'not an account number string');
+    // detect network
+    let networkVal = keyVariant.shrn(1).and(new BigInteger(0x01)).toNumber();
+    let network = networkVal === NETWORKS_CONFIG.livenet.account_number_value ? NETWORKS_CONFIG.livenet : NETWORKS_CONFIG.testnet;
+    // key type
+    let keyTypeVal = keyVariant.shrn(4).and(new BigInteger(0x07)).toNumber();
+    let keyType = common.getKeyTypeByValue(keyTypeVal);
+    assert.parameter(keyType, 'unrecognized key type');
+    // check the length of the account number
+    let accountNumberLength = keyVariantBuffer.length + keyType.pubkey_length + BITMARK_CONFIG.key.checksum_length;
+    assert.parameter(accountNumberLength === accountNumberBuffer.length, `key type ${keyType.name.toUpperCase()} must be ${accountNumberLength} bytes`);
+
+    // get public key
+    let pubKey = accountNumberBuffer.slice(keyVariantBuffer.length, accountNumberLength - BITMARK_CONFIG.key.checksum_length);
+
+    // check checksum
+    let checksum = common.sha3_256(accountNumberBuffer.slice(0, keyVariantBuffer.length + keyType.pubkey_length));
+    checksum = checksum.slice(0, BITMARK_CONFIG.key.checksum_length);
+    assert.parameter(common.bufferEqual(checksum, accountNumberBuffer.slice(accountNumberLength - BITMARK_CONFIG.key.checksum_length, accountNumberLength)), 'checksum mismatch');
+
+    return {
+        network: network.name,
+        pubKey: pubKey
+    };
 };
 
 // PROTOTYPE METHODS
-AuthKey.prototype.sign = function (message) {
+AccountKey.prototype.sign = function (message) {
     let keyHandler = keyHandlers.getHandler(this.getType());
     return keyHandler.sign(Buffer.from(message, 'utf8'), this.getPrivateKey());
 };
 
-AuthKey.prototype.getPrivateKey = function () {
+AccountKey.prototype.getPrivateKey = function () {
     return this._priKey;
 };
 
-AuthKey.prototype.printPrivateKey = function () {
+AccountKey.prototype.printPrivateKey = function () {
     return this._priKey.toString('hex');
 };
 
-AuthKey.prototype.getNetwork = function () {
+AccountKey.prototype.printPublicKey = function () {
+    return this._pubKey.toString('hex');
+};
+
+AccountKey.prototype.getNetwork = function () {
     return this._network;
 };
 
-AuthKey.prototype.getType = function () {
+AccountKey.prototype.getType = function () {
     return this._type;
 };
 
-AuthKey.prototype.getAccountNumber = function () {
+AccountKey.prototype.getAccountNumber = function () {
     return this._accountNumber;
 };
 
-function buildAuthKey(buffer, network) {
+function buildAccountKey(buffer, network) {
     let keyType = BITMARK_CONFIG.key.type.ed25519;
     let keyHandler = keyHandlers.getHandler(keyType.name);
     let keyPair = keyHandler.generateKeyPairFromSeed(buffer);
@@ -62,6 +100,7 @@ function buildAuthKey(buffer, network) {
     return {
         _accountNumber: generateAccountNumber(keyPair.pubKey, network, keyType),
         _priKey: keyPair.priKey,
+        _pubKey: keyPair.pubKey,
         _network: network,
         _type: keyType.name
     };
@@ -92,4 +131,4 @@ function generateAccountNumber(pubKey, network, keyType) {
     return base58AccountNumber;
 }
 
-module.exports = AuthKey;
+module.exports = AccountKey;

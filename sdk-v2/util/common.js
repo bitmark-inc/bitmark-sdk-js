@@ -6,7 +6,9 @@ const nacl = require('tweetnacl-nodewrap');
 const BigInteger = require('bn.js');
 const _ = require('lodash');
 
-const bitmarkConfig = require('../config/bitmark-config');
+const BITMARK_CONFIG = require('../config/bitmark-config');
+
+const assert = require('./assert.js');
 
 let getKeyTypeByValue = function (value) {
     let typeName, typeValue;
@@ -14,10 +16,10 @@ let getKeyTypeByValue = function (value) {
     if (!(value instanceof BigInteger)) {
         value = new BigInteger(value);
     }
-    for (typeName in bitmarkConfig.key.type) {
-        typeValue = bitmarkConfig.key.type[typeName].value;
+    for (typeName in BITMARK_CONFIG.key.type) {
+        typeValue = BITMARK_CONFIG.key.type[typeName].value;
         if (value.eq(new BigInteger(typeValue))) {
-            return bitmarkConfig.key.type[typeName];
+            return BITMARK_CONFIG.key.type[typeName];
         }
     }
     return null;
@@ -83,6 +85,12 @@ let addImmutableProperties = function (target, properties) {
     return target;
 };
 
+let makeSureSDKInitialized = function () {
+    const sdkConfig = global.getSDKConfig();
+    assert.parameter(sdkConfig, `SDK is not initialized yet`);
+    assert.parameter(sdkConfig.network, `Global network is not defined`);
+};
+
 module.exports = {
     getKeyTypeByValue: getKeyTypeByValue,
     generateRandomBytesByLength: generateRandomBytesByLength,
@@ -91,5 +99,6 @@ module.exports = {
     addImmutableProperties: addImmutableProperties,
     sha3_256: getSHA3_256,
     sha3_512: getSHA3_512,
-    createSHA3_512Stream: createSHA3_512Stream
+    createSHA3_512Stream: createSHA3_512Stream,
+    makeSureSDKInitialized: makeSureSDKInitialized
 };
