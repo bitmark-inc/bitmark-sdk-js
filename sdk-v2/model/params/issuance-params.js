@@ -12,7 +12,7 @@ let IssuanceParams = function (assetId, param) {
     this.assetId = assetId;
 
     if (_.isNumber(param)) {
-        this.quantity = param
+        this.quantity = param;
     } else if (param instanceof Array) {
         this.nonces = param;
     } else {
@@ -58,6 +58,5 @@ IssuanceParams.prototype.toJSON = function () {
 
     return results;
 };
-
 
 module.exports = IssuanceParams;

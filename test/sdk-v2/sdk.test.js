@@ -16,7 +16,7 @@ describe('SDK', function () {
             expect(global.getSDKConfig().network).to.equal('testnet');
         });
 
-        it('should throw errors on wrong network or version', function () {
+        it('should throw errors on wrong network', function () {
             expect(function () {
                 sdk.init({network: 'fakenet'})
             }).to.throw(Error);
