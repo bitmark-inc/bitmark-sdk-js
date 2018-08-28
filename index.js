@@ -29,4 +29,6 @@ module.exports = exports = {
         global.getSDKConfig = () => config;
     },
     Account: require('./sdk-v2/core/account'),
+    Asset: require('./sdk-v2/core/asset'),
+    Bitmark: require('./sdk-v2/core/bitmark'),
 };

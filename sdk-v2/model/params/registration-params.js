@@ -1,0 +1,47 @@
+'use strict';
+const _ = require('lodash');
+
+const util = require('../../util');
+const assert = require('../../util/assert');
+const common = require('../../util/common');
+const varint = require('../../util/varint');
+const binary = require('../../util/binary');
+const BITMARK_CONFIG = require('../../config/bitmark-config');
+
+let RegistrationParams = function (assetName, metadata) {
+    this.assetName = assetName;
+    this.metadata = metadata;
+};
+
+// PROTOTYPE METHODS
+RegistrationParams.prototype.setFingerprint = async function (filePath) {
+    this.fingerprint = await util.fingerprint.fromFile(filePath);
+};
+
+RegistrationParams.prototype.sign = function (account) {
+    let packagedParamsBuffer;
+    packagedParamsBuffer = varint.encode(BITMARK_CONFIG.record.asset.value);
+    packagedParamsBuffer = binary.appendString(packagedParamsBuffer, this.assetName);
+    packagedParamsBuffer = binary.appendString(packagedParamsBuffer, this.fingerprint);
+    packagedParamsBuffer = binary.appendString(packagedParamsBuffer, common.mapToMetadataString(this.metadata));
+    packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, account.packagePublicKey());
+
+    this.signature = account.sign(packagedParamsBuffer);
+    this.registrant = account.getAccountNumber();
+};
+
+RegistrationParams.prototype.toJSON = function () {
+    assert(this.signature, 'Need to sign the record before getting JSON format');
+    let result = {
+        fingerprint: this.fingerprint,
+        name: this.assetName,
+        metadata: common.mapToMetadataString(this.metadata),
+        registrant: this.registrant,
+        signature: this.signature.toString('hex')
+    };
+
+    return result;
+};
+
+
+module.exports = RegistrationParams;

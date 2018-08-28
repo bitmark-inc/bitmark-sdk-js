@@ -91,6 +91,24 @@ let makeSureSDKInitialized = function () {
     assert.parameter(sdkConfig.network, `Global network is not defined`);
 };
 
+let generateRandomInteger = function (min = 1, max = Number.MAX_SAFE_INTEGER) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+let mapToMetadataString = function (map) {
+    let metadataSeparator = String.fromCharCode(parseInt('\u0000', 16));
+
+    let elements = [];
+    for (let key in map) {
+        elements.push(key, map[key]);
+    }
+    return elements.join(metadataSeparator);
+};
+
+let computeAssetId = function (fingerprint) {
+    return getSHA3_512(new Buffer(fingerprint, 'utf8')).toString('hex');
+};
+
 module.exports = {
     getKeyTypeByValue: getKeyTypeByValue,
     generateRandomBytesByLength: generateRandomBytesByLength,
@@ -100,5 +118,8 @@ module.exports = {
     sha3_256: getSHA3_256,
     sha3_512: getSHA3_512,
     createSHA3_512Stream: createSHA3_512Stream,
-    makeSureSDKInitialized: makeSureSDKInitialized
+    makeSureSDKInitialized: makeSureSDKInitialized,
+    generateRandomInteger: generateRandomInteger,
+    mapToMetadataString: mapToMetadataString,
+    computeAssetId: computeAssetId
 };

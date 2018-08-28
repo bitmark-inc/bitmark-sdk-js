@@ -54,6 +54,7 @@ RecoveryPhrase.prototype.getCore = function () {
     return this._core;
 };
 
+// INTERNAL METHODS
 let masks = [new BigInteger('0'), new BigInteger('1'), new BigInteger('3'), new BigInteger('7'), new BigInteger('15'), new BigInteger('31'), new BigInteger('63'), new BigInteger('127'), new BigInteger('255'), new BigInteger('511'), new BigInteger('1023')];
 
 function exportToWords(core, network) {

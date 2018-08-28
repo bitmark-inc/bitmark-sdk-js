@@ -4,20 +4,22 @@ const BigInteger = require('bn.js');
 const nacl = require('tweetnacl-nodewrap');
 
 const BITMARK_CONFIG = require('../config/bitmark-config');
+const NETWORKS_CONFIG = require('../config/network-config');
 
-const util = require('../util');
-const assert = require('../util/assert.js');
+const common = require('../util/common');
+const varint = require('../util/varint');
+const assert = require('../util/assert');
 const Seed = require('./account/seed');
 const RecoveryPhrase = require('./account/recovery-phrase');
 const AccountKey = require('./account/account-key');
 
 let Account = function (network, core) {
-    util.common.makeSureSDKInitialized();
+    common.makeSureSDKInitialized();
     let sdkConfig = global.getSDKConfig();
     if (network) assert.parameter(network === sdkConfig.network, `Network is not valid`);
 
     this._network = sdkConfig.network;
-    this._core = core || util.common.generateRandomBytesByLength(BITMARK_CONFIG.core.length);
+    this._core = core || common.generateRandomBytesByLength(BITMARK_CONFIG.core.length);
     this._accountKey = AccountKey.fromBuffer(generateSeedKey(BITMARK_CONFIG.key.auth_key_index, this._core), this._network);
 };
 
@@ -38,7 +40,7 @@ Account.parseAccountNumber = function (accountNumber) {
 };
 
 Account.isValidAccountNumber = function (accountNumber) {
-    util.common.makeSureSDKInitialized();
+    common.makeSureSDKInitialized();
     let sdkConfig = global.getSDKConfig();
 
     try {
@@ -66,6 +68,23 @@ Account.prototype.getSeed = function () {
 Account.prototype.getRecoveryPhrase = function () {
     let recoveryPhrase = RecoveryPhrase.fromCore(this._core, this._network);
     return recoveryPhrase.toString();
+};
+
+Account.prototype.sign = function (data) {
+    return this._accountKey.sign(data);
+};
+
+Account.prototype.packagePublicKey = function () {
+    const networkConfig = NETWORKS_CONFIG[this._network];
+    let keyType = BITMARK_CONFIG.key.type.ed25519;
+    let keyTypeVal = new BigInteger(keyType.value);
+    let keyVariantVal = keyTypeVal.shln(4); // for key type from bit 5 -> 7
+
+    keyVariantVal.ior(new BigInteger(BITMARK_CONFIG.key.part.public_key.toString())); // first bit indicates account number/auth key
+    keyVariantVal.ior(new BigInteger(networkConfig.account_number_value).ishln(1)); // second bit indicates net
+
+    let keyVariantBuffer = varint.encode(keyVariantVal);
+    return Buffer.concat([keyVariantBuffer, this._accountKey._pubKey], keyVariantBuffer.length + this._accountKey._pubKey.length);
 };
 
 // INTERNAL METHODS

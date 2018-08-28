@@ -92,6 +92,7 @@ AccountKey.prototype.getAccountNumber = function () {
     return this._accountNumber;
 };
 
+// INTERNAL METHODS
 function buildAccountKey(buffer, network) {
     let keyType = BITMARK_CONFIG.key.type.ed25519;
     let keyHandler = keyHandlers.getHandler(keyType.name);

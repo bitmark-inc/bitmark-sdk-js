@@ -48,6 +48,7 @@ Seed.prototype.getVersion = function () {
     return this._version;
 };
 
+// INTERNAL METHODS
 function exportToString(core, network, version) {
     assert.parameter(core && Buffer.isBuffer(core) && core.length === BITMARK_CONFIG.core.length, 'unrecognized core');
     assert.parameter(network, 'unrecognized network');
