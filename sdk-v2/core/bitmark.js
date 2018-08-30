@@ -4,11 +4,17 @@ const _ = require('lodash');
 const assert = require('../util/assert');
 const SDKError = require('../util/sdk-error');
 const IssuanceParams = require('../model/params/issuance-params');
+const BitmarkQueryBuilder = require('../model/query-builder/bitmark-query-builder');
 const apiService = require('../service/api-service');
-const CONSTANTS = require('../constant/constants');
 
 const ISSUE_API_NAME = 'issue';
-const API_METHOD = 'post';
+const ISSUE_API_METHOD = 'post';
+
+const GET_API_NAME = 'bitmarks';
+const GET_API_METHOD = 'get';
+
+const TRANSFER_API_NAME = 'transfer';
+const TRANSFER_API_METHOD = 'post';
 
 let Bitmark = function () {
     throw SDKError.operationFobidden('Can not construct Bitmark object');
@@ -16,10 +22,6 @@ let Bitmark = function () {
 
 // STATIC METHODS
 Bitmark.newIssuanceParams = function (assetId, param) {
-    assert.parameter(_.isString(assetId), 'Asset Id must be a string');
-    assert.parameter(param !== undefined, 'Param is required');
-    assert(isValidNumberOfBitmarks(param), `The number of bitmarks must be greater than 1 and less than or equal ${CONSTANTS.ISSUE_BATCH_QUANTITY}`);
-
     return new IssuanceParams(assetId, param);
 };
 
@@ -29,22 +31,40 @@ Bitmark.issue = async function (issuanceParams) {
     let requestBody = {};
     requestBody.issues = issuanceParams.toJSON();
 
-    let response = await apiService.sendRequest({method: API_METHOD, url: ISSUE_API_NAME, params: requestBody});
+    let response = await apiService.sendRequest({method: ISSUE_API_METHOD, url: ISSUE_API_NAME, params: requestBody});
     return response;
 };
 
+Bitmark.newTransferParams = function (receiverAccountNumber) {
+    const TransferParams = require('../model/params/transfer-params');
+    return new TransferParams(receiverAccountNumber);
+};
 
-// INTERNAL METHODS
-function isValidNumberOfBitmarks(param) {
-    let quality = 0;
+Bitmark.transfer = async function (transferParams) {
+    const TransferParams = require('../model/params/transfer-params');
+    assert.parameter(transferParams instanceof TransferParams, `Transfer Params is not valid`);
 
-    if (_.isNumber(param)) {
-        quality = param;
-    } else if (param instanceof Array) {
-        quality = param.length;
-    }
+    let requestBody = {transfer: transferParams.toJSON()};
+    let response = await apiService.sendRequest({method: TRANSFER_API_METHOD, url: TRANSFER_API_NAME, params: requestBody});
+    return response;
+};
 
-    return quality > 0 && quality <= CONSTANTS.ISSUE_BATCH_QUANTITY;
-}
+Bitmark.get = async function (bitmarkId, options) {
+    assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
+
+    let response = await apiService.sendRequest({method: GET_API_METHOD, url: `${GET_API_NAME}/${bitmarkId}`, params: options});
+    return response.bitmark;
+};
+
+Bitmark.newBitmarkQueryBuilder = function () {
+    return new BitmarkQueryBuilder();
+};
+
+Bitmark.list = async function (bitmarkQueryParams) {
+    assert.parameter(bitmarkQueryParams, 'Bitmark Query Params is required');
+
+    let response = await apiService.sendRequest({method: GET_API_METHOD, url: `${GET_API_NAME}`, params: bitmarkQueryParams});
+    return response;
+};
 
 module.exports = Bitmark;

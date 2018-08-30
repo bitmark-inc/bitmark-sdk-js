@@ -51,6 +51,11 @@ Account.isValidAccountNumber = function (accountNumber) {
     }
 };
 
+Account.packagePublicKeyFromAccountNumber = function (accountNumber) {
+    let accountInfo = AccountKey.parseAccountNumber(accountNumber);
+    return packagePublicKey(accountInfo.network, accountInfo.pubKey);
+};
+
 // PROTOTYPE METHODS
 Account.prototype.getAccountNumber = function () {
     return this._accountKey.getAccountNumber();
@@ -75,16 +80,7 @@ Account.prototype.sign = function (data) {
 };
 
 Account.prototype.packagePublicKey = function () {
-    const networkConfig = NETWORKS_CONFIG[this._network];
-    let keyType = BITMARK_CONFIG.key.type.ed25519;
-    let keyTypeVal = new BigInteger(keyType.value);
-    let keyVariantVal = keyTypeVal.shln(4); // for key type from bit 5 -> 7
-
-    keyVariantVal.ior(new BigInteger(BITMARK_CONFIG.key.part.public_key.toString())); // first bit indicates account number/auth key
-    keyVariantVal.ior(new BigInteger(networkConfig.account_number_value).ishln(1)); // second bit indicates net
-
-    let keyVariantBuffer = varint.encode(keyVariantVal);
-    return Buffer.concat([keyVariantBuffer, this._accountKey._pubKey], keyVariantBuffer.length + this._accountKey._pubKey.length);
+    return packagePublicKey(this._network, this._accountKey._pubKey);
 };
 
 // INTERNAL METHODS
@@ -94,6 +90,19 @@ function generateSeedKey(index, randomBytes) {
     let nonce = Buffer.alloc(BITMARK_CONFIG.core.nonce_length, 0);
     let seedKey = nacl.secretbox(counterBuffer, nonce, randomBytes);
     return seedKey;
+}
+
+function packagePublicKey(network, publicKey) {
+    const networkConfig = NETWORKS_CONFIG[network];
+    let keyType = BITMARK_CONFIG.key.type.ed25519;
+    let keyTypeVal = new BigInteger(keyType.value);
+    let keyVariantVal = keyTypeVal.shln(4); // for key type from bit 5 -> 7
+
+    keyVariantVal.ior(new BigInteger(BITMARK_CONFIG.key.part.public_key.toString())); // first bit indicates account number/auth key
+    keyVariantVal.ior(new BigInteger(networkConfig.account_number_value).ishln(1)); // second bit indicates net
+
+    let keyVariantBuffer = varint.encode(keyVariantVal);
+    return Buffer.concat([keyVariantBuffer, publicKey], keyVariantBuffer.length + publicKey.length);
 }
 
 module.exports = Account;

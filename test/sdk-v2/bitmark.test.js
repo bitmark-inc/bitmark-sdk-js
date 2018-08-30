@@ -13,16 +13,17 @@ let testData = {
         publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
         network: 'testnet',
         version: 1,
-        existedAssetId: '0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64'
+        existedAssetId: '0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64',
+        receiverAccountNumber: 'ePqVaiK4Du1gBdkujbn86atHPU3XCsgoFcDDzLupDJB5FGpgc7'
     }
 };
 
 describe('Bitmark', function () {
-    describe('Issue Bitmarks', function () {
-        before(function () {
-            sdk.init({network: 'testnet'});
-        });
+    before(function () {
+        sdk.init({network: 'testnet'});
+    });
 
+    describe('Issue Bitmarks', function () {
         this.timeout(15000);
 
         it('should issue bitmarks with valid quality', async function () {
@@ -61,6 +62,28 @@ describe('Bitmark', function () {
 
                 Bitmark.issue(issuanceParams);
             }).to.throw();
+        });
+    });
+
+    describe('Transfer Bitmarks', function () {
+        this.timeout(15000);
+
+        describe('Transfer 1 sig', function () {
+            it('should transfer bitmark with valid info', async function () {
+                let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
+
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
+                let result = await Bitmark.list(bitmarkQueryParams);
+
+                let bitmarks = result.bitmarks;
+                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed');
+
+                let transferParams = Bitmark.newTransferParams(testData.testnet.receiverAccountNumber);
+                await transferParams.fromBitmark(bitmark.id);
+                transferParams.sign(account);
+
+                let txId = await Bitmark.transfer(transferParams);
+            });
         });
     });
 });
