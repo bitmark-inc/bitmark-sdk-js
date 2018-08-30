@@ -7,8 +7,14 @@ const varint = require('../../util/varint');
 const binary = require('../../util/binary');
 const SDKError = require('../../util/sdk-error');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
+const CONSTANTS = require('../../constant/constants');
 
+// CONSTRUCTOR
 let IssuanceParams = function (assetId, param) {
+    assert.parameter(_.isString(assetId), 'Asset Id must be a string');
+    assert.parameter(param !== undefined, 'Param is required');
+    assert(isValidNumberOfBitmarks(param), `The number of bitmarks must be greater than 1 and less than or equal ${CONSTANTS.ISSUE_BATCH_QUANTITY}`);
+
     this.assetId = assetId;
 
     if (_.isNumber(param)) {
@@ -58,5 +64,19 @@ IssuanceParams.prototype.toJSON = function () {
 
     return results;
 };
+
+
+// INTERNAL METHODS
+function isValidNumberOfBitmarks(param) {
+    let quality = 0;
+
+    if (_.isNumber(param)) {
+        quality = param;
+    } else if (param instanceof Array) {
+        quality = param.length;
+    }
+
+    return quality > 0 && quality <= CONSTANTS.ISSUE_BATCH_QUANTITY;
+}
 
 module.exports = IssuanceParams;

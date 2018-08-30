@@ -8,7 +8,12 @@ const varint = require('../../util/varint');
 const binary = require('../../util/binary');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 
+// CONSTRUCTOR
 let RegistrationParams = function (assetName, metadata) {
+    assert.parameter(_.isString(assetName), `Asset Name must be a string`);
+    assert.parameter(_.isObject(metadata), `Metadata must be an object`);
+    assert.parameter(isValidMetadataLength(metadata), `Metadata is too long`);
+
     this.assetName = assetName;
     this.metadata = metadata;
 };
@@ -43,5 +48,10 @@ RegistrationParams.prototype.toJSON = function () {
     return result;
 };
 
+// INTERNAL METHODS
+function isValidMetadataLength(metadata) {
+    let metadataString = common.mapToMetadataString(metadata);
+    return metadataString.length <= BITMARK_CONFIG.record.asset.max_metadata;
+}
 
 module.exports = RegistrationParams;

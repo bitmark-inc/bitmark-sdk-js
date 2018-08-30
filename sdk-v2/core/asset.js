@@ -1,8 +1,6 @@
 'use strict';
 const _ = require('lodash');
 
-const common = require('../util/common');
-const BITMARK_CONFIG = require('../config/bitmark-config');
 const assert = require('../util/assert');
 const SDKError = require('../util/sdk-error');
 const RegistrationParams = require('../model/params/registration-params');
@@ -18,10 +16,6 @@ let Asset = function () {
 
 // STATIC METHODS
 Asset.newRegistrationParams = function (assetName, metadata) {
-    assert.parameter(_.isString(assetName), `Asset Name must be a string`);
-    assert.parameter(_.isObject(metadata), `Metadata must be an object`);
-    assert.parameter(isValidMetadataLength(metadata), `Metadata is too long`);
-
     return new RegistrationParams(assetName, metadata);
 };
 
@@ -40,11 +34,5 @@ Asset.register = async function (registrationParams, issuanceParams) {
     let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody});
     return response;
 };
-
-// INTERNAL METHODS
-function isValidMetadataLength(metadata) {
-    let metadataString = common.mapToMetadataString(metadata);
-    return metadataString.length <= BITMARK_CONFIG.record.asset.max_metadata;
-}
 
 module.exports = Asset;
