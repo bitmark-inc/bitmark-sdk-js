@@ -1,6 +1,6 @@
 'use strict';
-
 const _ = require('lodash');
+
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const NETWORKS_CONFIG = require('../../config/network-config');
 const common = require('../../util/common.js');
@@ -41,12 +41,15 @@ Seed.fromCore = function (core, network) {
 Seed.prototype.toString = function () {
     return this._string;
 };
+
 Seed.prototype.getNetwork = function () {
     return this._network;
 };
+
 Seed.prototype.getCore = Seed.prototype.toBuffer = function () {
     return this._core;
 };
+
 Seed.prototype.getVersion = function () {
     return this._version;
 };

@@ -1,12 +1,10 @@
 'use strict';
-
 const _ = require('lodash');
 const BigInteger = require('../../../node_modules/bn.js/lib/bn');
 
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const NETWORKS_CONFIG = require('../../config/network-config');
 const bip39 = require('../../config/bip39').words;
-
 const varint = require('../../util/varint.js');
 const assert = require('../../util/assert.js');
 

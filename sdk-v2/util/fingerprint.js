@@ -1,7 +1,9 @@
-let _ = require('lodash');
-let fs = require('fs');
-let assert = require('./assert');
-let common = require('./common');
+'use strict';
+const _ = require('lodash');
+const fs = require('fs');
+
+const assert = require('./assert');
+const common = require('./common');
 
 let computeFingerprintFromBuffer = function (data) {
     assert(Buffer.isBuffer(data), new TypeError('Fingerprint error: buffer is required'));

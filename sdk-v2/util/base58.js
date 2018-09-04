@@ -1,6 +1,5 @@
 'use strict';
-
-let bs58 = require('bs58');
+const bs58 = require('bs58');
 
 module.exports = {
     encode: bs58.encode,

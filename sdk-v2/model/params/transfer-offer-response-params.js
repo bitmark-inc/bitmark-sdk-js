@@ -3,7 +3,6 @@ const _ = require('lodash');
 
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const CONSTANTS = require('../../constant/constants');
-
 const assert = require('../../util/assert');
 const varint = require('../../util/varint');
 const binary = require('../../util/binary');

@@ -1,9 +1,8 @@
 'use strict';
+const nacl = require('tweetnacl-nodewrap');
 
-let nacl = require('tweetnacl-nodewrap');
-
-let assert = require('../../../util/assert.js');
-let ed25519Info = require('../../../config/bitmark-config').key.type.ed25519;
+const assert = require('../../../util/assert.js');
+const ed25519Info = require('../../../config/bitmark-config').key.type.ed25519;
 
 let _checkPriKeyLength = function (priKey) {
     assert(priKey.length === ed25519Info.prikey_length, ed25519Info.name + ' private key must be ' + ed25519Info.prikey_length + ' bytes');

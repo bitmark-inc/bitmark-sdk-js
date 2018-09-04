@@ -5,7 +5,6 @@ const nacl = require('tweetnacl-nodewrap');
 
 const BITMARK_CONFIG = require('../config/bitmark-config');
 const NETWORKS_CONFIG = require('../config/network-config');
-
 const common = require('../util/common');
 const varint = require('../util/varint');
 const assert = require('../util/assert');

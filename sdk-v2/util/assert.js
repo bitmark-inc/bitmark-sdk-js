@@ -1,7 +1,7 @@
 'use strict';
+const _ = require('lodash');
 
-let _ = require('lodash');
-let SDKError = require('./sdk-error');
+const SDKError = require('./sdk-error');
 
 let assert = function (condition, message, code) {
     let error;

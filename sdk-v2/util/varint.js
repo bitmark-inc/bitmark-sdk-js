@@ -1,6 +1,5 @@
 'use strict';
-
-let BigInteger = require('bn.js');
+const BigInteger = require('bn.js');
 
 let varintEncode = function (value) {
     // Correct the value data type to BigInteger

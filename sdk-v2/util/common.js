@@ -1,5 +1,4 @@
 'use strict';
-
 const sha3_256 = require('js-sha3').sha3_256;
 const sha3_512 = require('js-sha3').sha3_512;
 const nacl = require('tweetnacl-nodewrap');
@@ -7,7 +6,6 @@ const BigInteger = require('bn.js');
 const _ = require('lodash');
 
 const BITMARK_CONFIG = require('../config/bitmark-config');
-
 const assert = require('./assert.js');
 
 let getKeyTypeByValue = function (value) {

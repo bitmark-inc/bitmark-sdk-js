@@ -1,7 +1,7 @@
 'use strict';
-
 const _ = require('lodash');
 const BigInteger = require('../../../node_modules/bn.js/lib/bn');
+
 const keyHandlers = require('./key-types/key-handlers.js');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const NETWORKS_CONFIG = require('../../config/network-config');

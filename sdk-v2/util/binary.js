@@ -1,3 +1,4 @@
+'use strict';
 const varint = require('./varint.js');
 
 let appendString = function (desBuffer, str, encoding) {
