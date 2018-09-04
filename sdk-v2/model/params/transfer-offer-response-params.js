@@ -10,11 +10,13 @@ const binary = require('../../util/binary');
 const Bitmark = require('../../core/bitmark');
 const Account = require('../../core/account');
 
+
 // CONSTRUCTOR
 let TransferOfferResponseParams = function (responseType) {
     assert(CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.includes(responseType), 'Response Type is not supported');
     this.responseType = responseType;
 };
+
 
 // PROTOTYPE METHODS
 TransferOfferResponseParams.prototype.fromOffer = async function (offerId) {
@@ -31,7 +33,6 @@ TransferOfferResponseParams.prototype.sign = function (account) {
     packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, new Buffer(this.offer.record.signature, 'hex'));
 
     this.counterSignature = account.sign(packagedParamsBuffer);
-
 };
 
 TransferOfferResponseParams.prototype.toJSON = function () {

@@ -10,9 +10,12 @@ const apiService = require('../service/api-service');
 const API_NAME = 'issue';
 const API_METHOD = 'post';
 
+
+// CONSTRUCTOR
 let Asset = function () {
     throw SDKError.operationFobidden('Can not construct Asset object');
 };
+
 
 // STATIC METHODS
 Asset.newRegistrationParams = function (assetName, metadata) {
@@ -34,5 +37,6 @@ Asset.register = async function (registrationParams, issuanceParams) {
     let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody});
     return response;
 };
+
 
 module.exports = Asset;

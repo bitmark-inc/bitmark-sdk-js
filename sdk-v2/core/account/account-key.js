@@ -11,10 +11,12 @@ const base58 = require('../../util/base58.js');
 const assert = require('../../util/assert.js');
 
 
+// CONSTRUCTOR
 let AccountKey = function (accountKeyInfo) {
     assert.parameter(accountKeyInfo, 'Account Key info is required');
     Object.assign(this, accountKeyInfo);
 };
+
 
 // STATIC METHODS
 AccountKey.fromBuffer = function (buffer, network) {
@@ -61,6 +63,7 @@ AccountKey.parseAccountNumber = function (accountNumber) {
         pubKey: pubKey
     };
 };
+
 
 // PROTOTYPE METHODS
 AccountKey.prototype.sign = function (message) {
@@ -131,5 +134,6 @@ function generateAccountNumber(pubKey, network, keyType) {
 
     return base58AccountNumber;
 }
+
 
 module.exports = AccountKey;

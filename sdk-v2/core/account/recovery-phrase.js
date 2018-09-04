@@ -11,10 +11,12 @@ const varint = require('../../util/varint.js');
 const assert = require('../../util/assert.js');
 
 
+// CONSTRUCTOR
 function RecoveryPhrase(recoveryPhraseInfo) {
     assert.parameter(recoveryPhraseInfo, 'Recovery Phrase info is required');
     Object.assign(this, recoveryPhraseInfo);
 }
+
 
 // STATIC METHODS
 RecoveryPhrase.fromCore = RecoveryPhrase.fromBuffer = function (buffer, network) {
@@ -36,6 +38,7 @@ RecoveryPhrase.fromString = function (phrase) {
     phrase = phrase.replace(/\s\s/g, ' ');
     return new RecoveryPhrase(parseWords(phrase.split(' ')));
 };
+
 
 // PROTOTYPE METHODS
 RecoveryPhrase.prototype.toString = function () {
@@ -112,5 +115,6 @@ function parseWords(words) {
         _words: words
     };
 }
+
 
 module.exports = RecoveryPhrase;

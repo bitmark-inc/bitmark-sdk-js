@@ -8,6 +8,7 @@ const varint = require('../../util/varint');
 const binary = require('../../util/binary');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 
+
 // CONSTRUCTOR
 let RegistrationParams = function (assetName, metadata) {
     assert.parameter(_.isString(assetName), `Asset Name must be a string`);
@@ -17,6 +18,7 @@ let RegistrationParams = function (assetName, metadata) {
     this.assetName = assetName;
     this.metadata = metadata;
 };
+
 
 // PROTOTYPE METHODS
 RegistrationParams.prototype.setFingerprint = async function (filePath) {
@@ -48,10 +50,12 @@ RegistrationParams.prototype.toJSON = function () {
     return result;
 };
 
+
 // INTERNAL METHODS
 function isValidMetadataLength(metadata) {
     let metadataString = common.mapToMetadataString(metadata);
     return metadataString.length <= BITMARK_CONFIG.record.asset.max_metadata;
 }
+
 
 module.exports = RegistrationParams;

@@ -9,6 +9,7 @@ const SDKError = require('../../util/sdk-error');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const CONSTANTS = require('../../constant/constants');
 
+
 // CONSTRUCTOR
 let IssuanceParams = function (assetId, param) {
     assert.parameter(_.isString(assetId), 'Asset Id must be a string');
@@ -26,6 +27,8 @@ let IssuanceParams = function (assetId, param) {
     }
 };
 
+
+// PROTOTYPE METHODS
 IssuanceParams.prototype.sign = function (account) {
     if (!this.nonces) {
         this.nonces = [];
@@ -78,5 +81,6 @@ function isValidNumberOfBitmarks(param) {
 
     return quality > 0 && quality <= CONSTANTS.ISSUE_BATCH_QUANTITY;
 }
+
 
 module.exports = IssuanceParams;

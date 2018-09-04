@@ -13,6 +13,8 @@ const Seed = require('./account/seed');
 const RecoveryPhrase = require('./account/recovery-phrase');
 const AccountKey = require('./account/account-key');
 
+
+// CONSTRUCTOR
 let Account = function (network, core) {
     common.makeSureSDKInitialized();
     let sdkConfig = global.getSDKConfig();
@@ -22,6 +24,7 @@ let Account = function (network, core) {
     this._core = core || common.generateRandomBytesByLength(BITMARK_CONFIG.core.length);
     this._accountKey = AccountKey.fromBuffer(generateSeedKey(BITMARK_CONFIG.key.auth_key_index, this._core), this._network);
 };
+
 
 // STATIC METHODS
 Account.fromSeed = function (seedString) {
@@ -56,6 +59,7 @@ Account.packagePublicKeyFromAccountNumber = function (accountNumber) {
     return packagePublicKey(accountInfo.network, accountInfo.pubKey);
 };
 
+
 // PROTOTYPE METHODS
 Account.prototype.getAccountNumber = function () {
     return this._accountKey.getAccountNumber();
@@ -83,6 +87,7 @@ Account.prototype.packagePublicKey = function () {
     return packagePublicKey(this._network, this._accountKey._pubKey);
 };
 
+
 // INTERNAL METHODS
 function generateSeedKey(index, randomBytes) {
     let counter = new BigInteger(index.toString());
@@ -104,5 +109,6 @@ function packagePublicKey(network, publicKey) {
     let keyVariantBuffer = varint.encode(keyVariantVal);
     return Buffer.concat([keyVariantBuffer, publicKey], keyVariantBuffer.length + publicKey.length);
 }
+
 
 module.exports = Account;

@@ -9,11 +9,13 @@ const binary = require('../../util/binary');
 const Bitmark = require('../../core/bitmark');
 const Account = require('../../core/account');
 
+
 // CONSTRUCTOR
 let TransferParams = function (receiverAccountNumber) {
     assert(receiverAccountNumber, 'Receiver Account Number is required');
     this.receiverAccountNumber = receiverAccountNumber;
 };
+
 
 // PROTOTYPE METHODS
 TransferParams.prototype.fromBitmark = async function (bitmarkId) {

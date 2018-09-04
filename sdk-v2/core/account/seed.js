@@ -10,6 +10,8 @@ const assert = require('../../util/assert.js');
 const SDKError = require('../../util/sdk-error');
 const seedVersionEncoded = varint.encode(BITMARK_CONFIG.seed.version);
 
+
+// CONSTRUCTOR
 let Seed = function (seedInfo) {
     assert.parameter(seedInfo, 'Seed info is required');
     Object.assign(this, seedInfo);
@@ -34,6 +36,7 @@ Seed.fromCore = function (core, network) {
     });
 };
 
+
 // PROTOTYPE METHODS
 Seed.prototype.toString = function () {
     return this._string;
@@ -47,6 +50,7 @@ Seed.prototype.getCore = Seed.prototype.toBuffer = function () {
 Seed.prototype.getVersion = function () {
     return this._version;
 };
+
 
 // INTERNAL METHODS
 function exportToString(core, network, version) {
@@ -112,5 +116,6 @@ function parseSeedString(seedString) {
         _version: version.readUInt8(0)
     };
 }
+
 
 module.exports = Seed;

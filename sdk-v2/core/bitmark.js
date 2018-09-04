@@ -23,9 +23,12 @@ const SEND_TRANSFER_OFFER_API_METHOD = 'post';
 const GET_TRANSFER_OFFER_API_METHOD = 'get';
 const RESPONSE_TRANSFER_OFFER_API_METHOD = 'patch';
 
+
+// CONSTRUCTOR
 let Bitmark = function () {
     throw SDKError.operationFobidden('Can not construct Bitmark object');
 };
+
 
 // STATIC METHODS
 Bitmark.newIssuanceParams = function (assetId, param) {
@@ -111,7 +114,7 @@ Bitmark.response = async function (transferOfferResponseParams, account) {
         timestamp: timestamp,
         signature: signature
     };
-    
+
     let response = await apiService.sendRequest({
         method: RESPONSE_TRANSFER_OFFER_API_METHOD,
         url: TRANSFER_OFFER_API_NAME,
@@ -165,5 +168,6 @@ Bitmark.getTransferOffers = async function (accountNumber) {
     });
     return response;
 };
+
 
 module.exports = Bitmark;

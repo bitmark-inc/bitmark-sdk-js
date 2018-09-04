@@ -4,10 +4,12 @@ const _ = require('lodash');
 const assert = require('../../util/assert');
 const CONSTANTS = require('../../constant/constants');
 
+
 // CONSTRUCTOR
 let BitmarkQueryBuilder = function () {
     this.params = {};
 };
+
 
 // PROTOTYPE METHODS
 BitmarkQueryBuilder.prototype.owner = function (owner) {
