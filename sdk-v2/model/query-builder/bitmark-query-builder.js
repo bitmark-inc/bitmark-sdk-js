@@ -29,6 +29,12 @@ BitmarkQueryBuilder.prototype.status = function (status) {
     return this;
 };
 
+BitmarkQueryBuilder.prototype.offerTo = function (accountNumber) {
+    assert(_.isString(accountNumber), 'Account Number must be a string');
+    this.params.accountNumber = accountNumber;
+    return this;
+};
+
 BitmarkQueryBuilder.prototype.build = function () {
     return this.params;
 };
