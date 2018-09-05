@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sdk = require('../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
+const common = require('../../sdk-v2/util/common');
 
 let testData = {
     testnet: {
@@ -16,10 +17,11 @@ let testData = {
         existedAssetId: '0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64',
         receiverAccount: {
             accountNumber: 'eujeF5ZBDV3qJyKeHxNqnmJsrc9iN7eHJGECsRuSXvLmnNjsWX',
+            publicKey: '807f4d123c944e0c3ecc95d9bde89916ced6341a8c8cedeb8caafef8f35654e7',
             seed: '5XEECsXPYA9wDVXMtRMAVrtaWx7WSc5tG2hqj6b8iiz9rARjg2BgA9w',
             phrase: 'abuse tooth riot whale dance dawn armor patch tube sugar edit clean guilt person lake height tilt wall prosper episode produce spy artist account',
             network: 'testnet',
-            version: 1,
+            version: 1
         }
     }
 };
@@ -32,42 +34,50 @@ describe('Bitmark', function () {
     describe('Issue Bitmarks', function () {
         this.timeout(15000);
 
-        it('should issue bitmarks with valid quality', async function () {
+        it('should issue bitmarks with valid quantity', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
 
-            let quality = 10;
+            let quantity = 10;
             let assetId = testData.testnet.existedAssetId;
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, quality);
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, quantity);
             issuanceParams.sign(account);
 
             let bitmarks = await Bitmark.issue(issuanceParams);
-            expect(bitmarks.length).to.be.equal(quality);
+            expect(bitmarks.length).to.be.equal(quantity);
         });
 
-        it('should not issue bitmarks with invalid quality', function () {
-            expect(function () {
-                let account = Account.fromSeed(testData.testnet.seed);
+        it('should issue bitmarks with valid nonces array', async function () {
+            let account = Account.fromSeed(testData.testnet.seed);
 
-                let quality = -1;
-                let assetId = testData.testnet.existedAssetId;
-                let issuanceParams = Bitmark.newIssuanceParams(assetId, quality);
-                issuanceParams.sign(account);
+            let quantity = 10;
+            let nonces = [];
+            for (let i = 0; i < quantity; i++) {
+                nonces.push(common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER));
+            }
 
-                Bitmark.issue(issuanceParams);
-            }).to.throw();
+            let assetId = testData.testnet.existedAssetId;
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, nonces);
+            issuanceParams.sign(account);
+
+            let bitmarks = await Bitmark.issue(issuanceParams);
+            expect(bitmarks.length).to.be.equal(quantity);
         });
 
-        it('should not issue number of bitmarks greater than 100', function () {
-            expect(function () {
-                let account = Account.fromSeed(testData.testnet.seed);
+        it('should issue bitmarks with invalid asset id', async function () {
+            let account = Account.fromSeed(testData.testnet.seed);
 
-                let quality = 101;
-                let assetId = testData.testnet.existedAssetId;
-                let issuanceParams = Bitmark.newIssuanceParams(assetId, quality);
-                issuanceParams.sign(account);
+            let quantity = 10;
+            let nonces = [];
+            for (let i = 0; i < quantity; i++) {
+                nonces.push(common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER));
+            }
 
-                Bitmark.issue(issuanceParams);
-            }).to.throw();
+            let assetId = testData.testnet.existedAssetId;
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, nonces);
+            issuanceParams.sign(account);
+
+            let bitmarks = await Bitmark.issue(issuanceParams);
+            expect(bitmarks.length).to.be.equal(quantity);
         });
     });
 
@@ -79,9 +89,7 @@ describe('Bitmark', function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let result = await Bitmark.list(bitmarkQueryParams);
-
-                let bitmarks = result.bitmarks;
+                let bitmarks = await Bitmark.list(bitmarkQueryParams);
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved');
 
                 let transferParams = Bitmark.newTransferParams(testData.testnet.receiverAccount.accountNumber);
@@ -99,12 +107,10 @@ describe('Bitmark', function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.offers.from;
+                let yourTransferOffers = transferOffers.from;
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let result = await Bitmark.list(bitmarkQueryParams);
-
-                let bitmarks = result.bitmarks;
+                let bitmarks = await Bitmark.list(bitmarkQueryParams);
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer
@@ -130,12 +136,10 @@ describe('Bitmark', function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.offers.from;
+                let yourTransferOffers = transferOffers.from;
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let result = await Bitmark.list(bitmarkQueryParams);
-
-                let bitmarks = result.bitmarks;
+                let bitmarks = await Bitmark.list(bitmarkQueryParams);
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer
@@ -162,12 +166,10 @@ describe('Bitmark', function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.offers.from;
+                let yourTransferOffers = transferOffers.from;
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let result = await Bitmark.list(bitmarkQueryParams);
-
-                let bitmarks = result.bitmarks;
+                let bitmarks = await Bitmark.list(bitmarkQueryParams);
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer

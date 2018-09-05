@@ -140,7 +140,7 @@ Bitmark.list = async function (bitmarkQueryParams) {
     assert.parameter(bitmarkQueryParams, 'Bitmark Query Params is required');
 
     let response = await apiService.sendRequest({method: GET_API_METHOD, url: `${GET_API_NAME}`, params: bitmarkQueryParams});
-    return response;
+    return response.bitmarks;
 };
 
 Bitmark.getTransferOffer = async function (offerId) {
@@ -166,7 +166,7 @@ Bitmark.getTransferOffers = async function (accountNumber) {
         apiVersion: TRANSFER_OFFER_API_VERSION,
         params: requestBody
     });
-    return response;
+    return response.offers;
 };
 
 
