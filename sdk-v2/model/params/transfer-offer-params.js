@@ -11,7 +11,7 @@ const Account = require('../../core/account');
 
 // CONSTRUCTOR
 let TransferOfferParams = function (receiverAccountNumber) {
-    assert(receiverAccountNumber, 'Receiver Account Number is required');
+    assert(_.isString(receiverAccountNumber), 'Receiver Account Number must be a string');
     this.receiverAccountNumber = receiverAccountNumber;
 };
 
@@ -20,6 +20,10 @@ let TransferOfferParams = function (receiverAccountNumber) {
 TransferOfferParams.prototype.fromBitmark = async function (bitmarkId) {
     let bitmark = await Bitmark.get(bitmarkId);
     this.link = bitmark.head_id;
+};
+
+TransferOfferParams.prototype.fromLatestTxId = function (latestTxId) {
+    this.link = latestTxId;
 };
 
 TransferOfferParams.prototype.sign = function (account) {

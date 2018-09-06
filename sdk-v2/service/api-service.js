@@ -1,12 +1,11 @@
 'use strict';
-
 const axios = require('axios');
-const _ = require('lodash');
 
 const NETWORKS_CONFIG = require('../config/network-config');
 const assert = require('../util/assert.js');
 const common = require('../util/common');
 const SDKError = require('../util/sdk-error');
+
 
 let sendRequest = async (options) => {
     common.makeSureSDKInitialized();
