@@ -4,11 +4,11 @@ const _ = require('lodash');
 const assert = require('../util/assert');
 const SDKError = require('../util/sdk-error');
 const RegistrationParams = require('../model/params/registration-params');
-const IssuanceParams = require('../model/params/issuance-params');
 const apiService = require('../service/api-service');
 
-const API_NAME = 'issue';
+const API_NAME = 'registerAsset';
 const API_METHOD = 'post';
+const API_VERSION = 'v3';
 
 
 // CONSTRUCTOR
@@ -22,19 +22,13 @@ Asset.newRegistrationParams = function (assetName, metadata) {
     return new RegistrationParams(assetName, metadata);
 };
 
-Asset.register = async function (registrationParams, issuanceParams) {
+Asset.register = async function (registrationParams) {
     assert.parameter((registrationParams instanceof RegistrationParams), `Registration Params is not valid`);
-    assert.parameter(!issuanceParams || (issuanceParams instanceof IssuanceParams), `Issuance Params is not valid`);
 
     let requestBody = {};
     requestBody.assets = [registrationParams.toJSON()];
 
-    // TODO: Will remove if API support user register asset without issue at least 1 bitmark
-    if (issuanceParams) {
-        requestBody.issues = issuanceParams.toJSON();
-    }
-
-    let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody});
+    let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, apiVersion: API_VERSION, params: requestBody});
     return response;
 };
 

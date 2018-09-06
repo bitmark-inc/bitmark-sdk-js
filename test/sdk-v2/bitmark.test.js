@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const assertion = chai.assertion;
 
 const sdk = require('../../index');
 const Account = sdk.Account;
@@ -43,7 +44,9 @@ describe('Bitmark', function () {
             issuanceParams.sign(account);
 
             let bitmarks = await Bitmark.issue(issuanceParams);
+            expect(bitmarks).to.be.an('array');
             expect(bitmarks.length).to.be.equal(quantity);
+            expect(bitmarks[0]).to.have.property('txId');
         });
 
         it('should issue bitmarks with valid nonces array', async function () {
@@ -60,24 +63,26 @@ describe('Bitmark', function () {
             issuanceParams.sign(account);
 
             let bitmarks = await Bitmark.issue(issuanceParams);
+            expect(bitmarks).to.be.an('array');
             expect(bitmarks.length).to.be.equal(quantity);
+            expect(bitmarks[0]).to.have.property('txId');
         });
 
-        it('should issue bitmarks with invalid asset id', async function () {
+        it('should not issue bitmarks with invalid asset id', function (done) {
             let account = Account.fromSeed(testData.testnet.seed);
 
             let quantity = 10;
-            let nonces = [];
-            for (let i = 0; i < quantity; i++) {
-                nonces.push(common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER));
-            }
-
-            let assetId = testData.testnet.existedAssetId;
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, nonces);
+            let assetId = 'fakeAssetId';
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, quantity);
             issuanceParams.sign(account);
 
-            let bitmarks = await Bitmark.issue(issuanceParams);
-            expect(bitmarks.length).to.be.equal(quantity);
+            Bitmark.issue(issuanceParams).then(() => {
+                assertion.fail();
+                done();
+            }).catch(error => {
+                expect(error.response.status).to.be.equal(400);
+                done();
+            });
         });
     });
 

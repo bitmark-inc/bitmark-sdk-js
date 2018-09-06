@@ -9,12 +9,14 @@ const apiService = require('../service/api-service');
 
 const ISSUE_API_NAME = 'issue';
 const ISSUE_API_METHOD = 'post';
+const ISSUE_API_VERSION = 'v3';
 
 const GET_API_NAME = 'bitmarks';
 const GET_API_METHOD = 'get';
 
 const TRANSFER_API_NAME = 'transfer';
 const TRANSFER_API_METHOD = 'post';
+const TRANSFER_API_VERSION = 'v3';
 
 const TRANSFER_OFFER_API_VERSION = 'v2';
 const TRANSFER_OFFER_API_NAME = 'transfer_offers';
@@ -41,7 +43,7 @@ Bitmark.issue = async function (issuanceParams) {
     let requestBody = {};
     requestBody.issues = issuanceParams.toJSON();
 
-    let response = await apiService.sendRequest({method: ISSUE_API_METHOD, url: ISSUE_API_NAME, params: requestBody});
+    let response = await apiService.sendRequest({method: ISSUE_API_METHOD, url: ISSUE_API_NAME, apiVersion: ISSUE_API_VERSION, params: requestBody});
     return response;
 };
 
@@ -56,7 +58,12 @@ Bitmark.transfer = async function (transferParams) {
     assert.parameter(transferParams instanceof TransferParams, `Transfer Params is not valid`);
 
     let requestBody = transferParams.toJSON();
-    let response = await apiService.sendRequest({method: TRANSFER_API_METHOD, url: TRANSFER_API_NAME, params: requestBody});
+    let response = await apiService.sendRequest({
+        method: TRANSFER_API_METHOD,
+        url: TRANSFER_API_NAME,
+        apiVersion: TRANSFER_API_VERSION,
+        params: requestBody
+    });
     return response;
 };
 

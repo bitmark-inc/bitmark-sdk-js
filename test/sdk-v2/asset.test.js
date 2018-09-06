@@ -1,13 +1,12 @@
 const chai = require('chai');
 const expect = chai.expect;
+const assertion = chai.assertion;
 const fs = require('fs');
 
 const sdk = require('../../index');
 const common = require('../../sdk-v2/util/common');
-const apiService = require('../../sdk-v2/service/api-service');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
-const Bitmark = sdk.Bitmark;
 
 let testData = {
     testnet: {
@@ -36,7 +35,7 @@ describe('Asset', function () {
 
         this.timeout(15000);
 
-        it('should register asset successfully', async function () {
+        it('should register new asset', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
             let testFile = './test/sdk-v2/tmp/myfile.test';
             fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
@@ -45,56 +44,58 @@ describe('Asset', function () {
             await registrationParams.setFingerprint(testFile);
             registrationParams.sign(account);
 
-            // TODO: Will remove if API support user register asset without issue at least 1 bitmark
-            let assetId = common.computeAssetId(registrationParams.fingerprint);
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, 1);
-            issuanceParams.sign(account);
-
-            // TODO: Will remove if Bitmark Blockchain doesn't support store asset file anymore
-            await upload(fs.createReadStream(testFile), 'public', assetId, account);
-
-            await Asset.register(registrationParams, issuanceParams);
-
+            let response = await Asset.register(registrationParams);
             fs.unlinkSync(testFile);
+
+            expect(response).to.be.an('array');
+            expect(response[0]).to.have.property('id');
+            expect(response[0].duplicate).to.be.equal(false);
         });
 
-        it('should not register asset without registration params', function (done) {
-            expect(function () {
-                Asset.register().then(() => {
-                    done();
-                }).catch((err) => {
-                    done();
-                });
-            }).to.not.throw();
+        it('should register existing asset', async function () {
+            let account = Account.fromSeed(testData.testnet.seed);
+            let testFile = './test/sdk-v2/tmp/undelete.test';
+
+            let registrationParams = Asset.newRegistrationParams('name', {author: 'test'});
+            await registrationParams.setFingerprint(testFile);
+            registrationParams.sign(account);
+
+            let response = await Asset.register(registrationParams);
+            expect(response).to.be.an('array');
+            expect(response[0]).to.have.property('id');
+            expect(response[0].duplicate).to.be.equal(true);
         });
 
-        it('should not register asset with wrong registration params', function (done) {
-            expect(function () {
-                Asset.register({}).then(() => {
-                    done();
-                }).catch((err) => {
-                    done();
-                });
-            }).to.not.throw();
+        it('should not re-register existing asset with different asset name', async function () {
+            let account = Account.fromSeed(testData.testnet.seed);
+            let testFile = './test/sdk-v2/tmp/undelete.test';
+
+            let registrationParams = Asset.newRegistrationParams('another name', {author: 'test'});
+            await registrationParams.setFingerprint(testFile);
+            registrationParams.sign(account);
+
+            try {
+                await Asset.register(registrationParams);
+                assertion.fail();
+            } catch (error) {
+                expect(error.response.status).to.be.equal(403);
+            }
+        });
+
+        it('should not re-register existing asset with different metadata name', async function () {
+            let account = Account.fromSeed(testData.testnet.seed);
+            let testFile = './test/sdk-v2/tmp/undelete.test';
+
+            let registrationParams = Asset.newRegistrationParams('name', {author: 'test', new_attribute: 'new_attribute'});
+            await registrationParams.setFingerprint(testFile);
+            registrationParams.sign(account);
+
+            try {
+                await Asset.register(registrationParams);
+                assertion.fail();
+            } catch (error) {
+                expect(error.response.status).to.be.equal(403);
+            }
         });
     });
 });
-
-
-function upload(fileReaderStream, accessibility, assetId, account) {
-    let requester = account.getAccountNumber();
-    let timestamp = new Date().getTime();
-    let messageToSign = `uploadAsset|${assetId}|${requester}|${timestamp}`;
-    let signature = account.sign(messageToSign).toString('hex');
-    let headers = {
-        requester,
-        timestamp,
-        signature
-    };
-
-    return apiService.sendMultipartRequest({
-        url: 'assets',
-        params: {file: fileReaderStream, accessibility, asset_id: assetId},
-        headers
-    });
-}

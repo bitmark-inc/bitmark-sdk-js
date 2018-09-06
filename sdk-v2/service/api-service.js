@@ -42,16 +42,8 @@ let sendRequest = async (options) => {
         requestOptions.headers = headers;
     }
 
-    try {
-        let response = await axios(requestOptions);
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            assert(false, error.response.data);
-        } else {
-            assert(false, error.message, SDKError.SERVICE_FAILED);
-        }
-    }
+    let response = await axios(requestOptions);
+    return response.data;
 };
 
 let sendMultipartRequest = async (options) => {
