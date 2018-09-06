@@ -12,6 +12,7 @@ const BITMARK_CONFIG = require('../../config/bitmark-config');
 // CONSTRUCTOR
 let RegistrationParams = function (assetName, metadata) {
     assert.parameter(_.isString(assetName), `Asset Name must be a string`);
+    assert.parameter(isValidAssetNameLength(assetName), `Asset Name is too long`);
     assert.parameter(_.isObject(metadata), `Metadata must be an object`);
     assert.parameter(isValidMetadataLength(metadata), `Metadata is too long`);
 
@@ -52,6 +53,10 @@ RegistrationParams.prototype.toJSON = function () {
 
 
 // INTERNAL METHODS
+function isValidAssetNameLength(assetName) {
+    return assetName.length <= BITMARK_CONFIG.record.asset.max_name;
+}
+
 function isValidMetadataLength(metadata) {
     let metadataString = common.mapToMetadataString(metadata);
     return metadataString.length <= BITMARK_CONFIG.record.asset.max_metadata;
