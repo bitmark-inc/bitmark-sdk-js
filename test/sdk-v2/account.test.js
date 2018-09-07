@@ -3,6 +3,7 @@ const expect = chai.expect;
 
 const sdk = require('../../index');
 const Account = sdk.Account;
+const CONSTANTS = require('./constant/constants');
 
 let validData = {
     testnet: {
@@ -24,12 +25,9 @@ let validData = {
 };
 
 describe('Account', function () {
-    describe('Constructor', function () {
-        before(function () {
-            sdk.init({network: 'testnet'});
-        });
-
-        it('should construct without Error', function () {
+    describe('Create new account', function () {
+        it('should create new account - testnet', function () {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
             expect(function () {
                 return new Account();
             }).to.not.throw();
@@ -37,12 +35,22 @@ describe('Account', function () {
             let account = new Account();
             expect(account.getNetwork()).to.equal('testnet');
         });
+
+        it('should create new account - livenet', function () {
+            sdk.init({network: 'livenet', apiToken: CONSTANTS.TEST_API_TOKEN});
+            expect(function () {
+                return new Account();
+            }).to.not.throw();
+
+            let account = new Account();
+            expect(account.getNetwork()).to.equal('livenet');
+        });
     });
 
     describe('From existing data', function () {
         describe('From existing data - testnet', function () {
             before(function () {
-                sdk.init({network: 'testnet'});
+                sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
             });
 
             let data = validData.testnet;
@@ -65,7 +73,7 @@ describe('Account', function () {
 
         describe('From existing data - livenet', function () {
             before(function () {
-                sdk.init({network: 'livenet'});
+                sdk.init({network: 'livenet', apiToken: CONSTANTS.TEST_API_TOKEN});
             });
 
             let data = validData.livenet;
@@ -88,6 +96,10 @@ describe('Account', function () {
     });
 
     describe('Parse account number', function () {
+        before(function () {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        });
+
         it('should parse valid account number', function () {
             let accountInfo = Account.parseAccountNumber(validData.testnet.accountNumber);
 
@@ -110,7 +122,7 @@ describe('Account', function () {
 
     describe('Validate account number', function () {
         before(function () {
-            sdk.init({network: 'testnet'});
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
         });
 
         it('should validate valid account number', function () {

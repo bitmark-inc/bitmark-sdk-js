@@ -9,12 +9,14 @@ const SDKError = require('../util/sdk-error');
 
 let sendRequest = async (options) => {
     common.makeSureSDKInitialized();
+    let sdkConfig = global.getSDKConfig();
+
     options = options || {};
     let method = options.method;
     let apiUrl = options.url;
     let params = options.params;
     let headers = options.headers;
-    let network = NETWORKS_CONFIG[global.getSDKConfig().network];
+    let network = NETWORKS_CONFIG[sdkConfig.network];
     let apiVersion = options.apiVersion || network.api_version;
 
     assert(network, 'unrecognized network', SDKError.INVALID_PARAMETERS_ERROR_CODE);
@@ -36,8 +38,10 @@ let sendRequest = async (options) => {
         throw SDKError.invalidParameter('method is not supported');
     }
 
+    // Headers
+    requestOptions.headers = {'api-token': sdkConfig.apiToken};
     if (headers) {
-        requestOptions.headers = headers;
+        Object.assign(requestOptions.headers, headers);
     }
 
     let response = await axios(requestOptions);

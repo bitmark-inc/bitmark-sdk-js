@@ -2,25 +2,38 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const sdk = require('../../index');
+const CONSTANTS = require('./constant/constants');
 
 describe('SDK', function () {
     describe('initialization', function () {
-        it('should build with livenet as default', function () {
-            sdk.init({});
+        it('should initialize SDK with livenet as default network', function () {
+            sdk.init({apiToken: CONSTANTS.TEST_API_TOKEN});
 
             expect(global.getSDKConfig().network).to.equal('livenet');
         });
 
-        it('should build for testnet if specified', function () {
-            sdk.init({network: 'testnet'});
+        it('should initialize SDK with testnet network', function () {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
 
             expect(global.getSDKConfig().network).to.equal('testnet');
         });
 
-        it('should throw errors on wrong network', function () {
+        it('should not initialize SDK with invalid network', function () {
             expect(function () {
-                sdk.init({network: 'fakenet'})
-            }).to.throw(Error);
+                sdk.init({network: 'fakenet', apiToken: CONSTANTS.TEST_API_TOKEN})
+            }).to.throw();
+        });
+
+        it('should initialize SDK with API Token', function () {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+
+            expect(global.getSDKConfig().apiToken).to.equal(CONSTANTS.TEST_API_TOKEN);
+        });
+
+        it('should not initialize SDK without API Token', function () {
+            expect(function () {
+                sdk.init({network: 'testnet'})
+            }).to.throw();
         });
     });
 });

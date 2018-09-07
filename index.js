@@ -25,6 +25,7 @@ module.exports = exports = {
         config.network = config.network || NETWORKS_CONFIG.default_network;
 
         assert([NETWORKS_CONFIG.livenet.name, NETWORKS_CONFIG.testnet.name].includes(config.network), 'Network is supported');
+        assert(config.apiToken, 'API Token is required');
 
         global.getSDKConfig = () => config;
     },

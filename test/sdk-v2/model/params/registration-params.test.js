@@ -6,6 +6,7 @@ const sdk = require('../../../../index');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
 const common = require('../../../../sdk-v2/util/common');
+const CONSTANTS = require('../../constant/constants');
 
 let testData = {
     testnet: {
@@ -20,7 +21,7 @@ let testData = {
 
 describe('Registration Params', function () {
     before(function () {
-        sdk.init({network: 'testnet'});
+        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     it('should create registration params with valid info', function () {

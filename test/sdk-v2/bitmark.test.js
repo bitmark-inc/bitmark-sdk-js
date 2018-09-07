@@ -6,6 +6,7 @@ const sdk = require('../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
 const common = require('../../sdk-v2/util/common');
+const CONSTANTS = require('./constant/constants');
 
 let testData = {
     testnet: {
@@ -29,7 +30,7 @@ let testData = {
 
 describe('Bitmark', function () {
     before(function () {
-        sdk.init({network: 'testnet'});
+        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     describe('Issue Bitmarks', function () {

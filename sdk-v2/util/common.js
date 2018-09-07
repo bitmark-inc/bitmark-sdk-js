@@ -87,6 +87,7 @@ let makeSureSDKInitialized = function () {
     const sdkConfig = global.getSDKConfig();
     assert.parameter(sdkConfig, `SDK is not initialized yet`);
     assert.parameter(sdkConfig.network, `Global network is not defined`);
+    assert.parameter(sdkConfig.apiToken, `API Token is not defined`);
 };
 
 let generateRandomInteger = function (min = 1, max = Number.MAX_SAFE_INTEGER) {

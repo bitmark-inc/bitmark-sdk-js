@@ -7,6 +7,7 @@ const sdk = require('../../index');
 const common = require('../../sdk-v2/util/common');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
+const CONSTANTS = require('./constant/constants');
 
 let testData = {
     testnet: {
@@ -30,7 +31,7 @@ let testData = {
 describe('Asset', function () {
     describe('Register Asset', function () {
         before(function () {
-            sdk.init({network: 'testnet'});
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
         });
 
         this.timeout(15000);

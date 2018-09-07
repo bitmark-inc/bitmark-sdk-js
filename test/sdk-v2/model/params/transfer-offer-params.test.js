@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sdk = require('../../../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
+const CONSTANTS = require('../../constant/constants');
 
 let testData = {
     testnet: {
@@ -19,7 +20,7 @@ let testData = {
 
 describe('Transfer Offer Params', function () {
     before(function () {
-        sdk.init({network: 'testnet'});
+        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     it('should create transfer offer params with valid account number', async function () {
