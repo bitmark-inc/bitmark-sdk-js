@@ -101,8 +101,8 @@ Bitmark.offer = async function (transferOfferParams, account) {
 };
 
 Bitmark.newTransferResponseParams = function (responseType) {
-    const TransferOfferResponseParams = require('../model/params/transfer-offer-response-params');
-    return new TransferOfferResponseParams(responseType);
+    const TransferResponseParams = require('../model/params/transfer-response-params');
+    return new TransferResponseParams(responseType);
 };
 
 Bitmark.response = async function (transferOfferResponseParams, account) {

@@ -1,6 +1,4 @@
 'use strict';
-const _ = require('lodash');
-
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const CONSTANTS = require('../../constant/constants');
 const assert = require('../../util/assert');
@@ -11,19 +9,19 @@ const Account = require('../../core/account');
 
 
 // CONSTRUCTOR
-let TransferOfferResponseParams = function (responseType) {
+let TransferResponseParams = function (responseType) {
     assert(CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.includes(responseType), 'Response Type is not supported');
     this.responseType = responseType;
 };
 
 
 // PROTOTYPE METHODS
-TransferOfferResponseParams.prototype.fromOffer = async function (offerId) {
+TransferResponseParams.prototype.fromOffer = async function (offerId) {
     let result = await Bitmark.getTransferOffer(offerId);
     this.offer = result.offer;
 };
 
-TransferOfferResponseParams.prototype.sign = function (account) {
+TransferResponseParams.prototype.sign = function (account) {
     let packagedParamsBuffer;
     packagedParamsBuffer = varint.encode(BITMARK_CONFIG.record.transfer_2_signatures.value);
     packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, new Buffer(this.offer.record.link, 'hex'));
@@ -34,7 +32,7 @@ TransferOfferResponseParams.prototype.sign = function (account) {
     this.counterSignature = account.sign(packagedParamsBuffer);
 };
 
-TransferOfferResponseParams.prototype.toJSON = function () {
+TransferResponseParams.prototype.toJSON = function () {
     assert(this.counterSignature, 'Need to sign the record before getting JSON format');
     let result = {
         id: this.offer.id,
@@ -48,4 +46,4 @@ TransferOfferResponseParams.prototype.toJSON = function () {
 };
 
 
-module.exports = TransferOfferResponseParams;
+module.exports = TransferResponseParams;
