@@ -6,7 +6,7 @@ module.exports = {
     kif_value: 0x00,
     core_value: 0x00,
     api_server: 'https://api.bitmark.com',
-    api_version: 'v1'
+    api_version: 'v3'
   },
   testnet: {
     name: 'testnet',
@@ -14,6 +14,6 @@ module.exports = {
     kif_value: 0x01,
     core_value: 0x01,
     api_server: 'https://api.test.bitmark.com',
-    api_version: 'v1'
+    api_version: 'v3'
   }
 };

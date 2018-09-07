@@ -8,7 +8,6 @@ const apiService = require('../service/api-service');
 
 const API_NAME = 'registerAsset';
 const API_METHOD = 'post';
-const API_VERSION = 'v3';
 
 
 // CONSTRUCTOR
@@ -28,7 +27,7 @@ Asset.register = async function (registrationParams) {
     let requestBody = {};
     requestBody.assets = [registrationParams.toJSON()];
 
-    let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, apiVersion: API_VERSION, params: requestBody});
+    let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody});
     return response;
 };
 

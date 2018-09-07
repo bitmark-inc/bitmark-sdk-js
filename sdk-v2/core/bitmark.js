@@ -9,14 +9,12 @@ const apiService = require('../service/api-service');
 
 const ISSUE_API_NAME = 'issue';
 const ISSUE_API_METHOD = 'post';
-const ISSUE_API_VERSION = 'v3';
 
-const GET_API_NAME = 'bitmarks';
-const GET_API_METHOD = 'get';
+const BITMARK_GET_API_NAME = 'bitmarks';
+const BITMARK_GET_API_METHOD = 'get';
 
 const TRANSFER_API_NAME = 'transfer';
 const TRANSFER_API_METHOD = 'post';
-const TRANSFER_API_VERSION = 'v3';
 
 const TRANSFER_OFFER_API_VERSION = 'v2';
 const TRANSFER_OFFER_API_NAME = 'transfer_offers';
@@ -43,7 +41,7 @@ Bitmark.issue = async function (issuanceParams) {
     let requestBody = {};
     requestBody.issues = issuanceParams.toJSON();
 
-    let response = await apiService.sendRequest({method: ISSUE_API_METHOD, url: ISSUE_API_NAME, apiVersion: ISSUE_API_VERSION, params: requestBody});
+    let response = await apiService.sendRequest({method: ISSUE_API_METHOD, url: ISSUE_API_NAME, params: requestBody});
     return response;
 };
 
@@ -61,7 +59,6 @@ Bitmark.transfer = async function (transferParams) {
     let response = await apiService.sendRequest({
         method: TRANSFER_API_METHOD,
         url: TRANSFER_API_NAME,
-        apiVersion: TRANSFER_API_VERSION,
         params: requestBody
     });
     return response;
@@ -106,7 +103,7 @@ Bitmark.newTransferResponseParams = function (responseType) {
 };
 
 Bitmark.response = async function (transferOfferResponseParams, account) {
-    const TransferOfferResponseParams = require('../model/params/transfer-offer-response-params');
+    const TransferOfferResponseParams = require('../model/params/transfer-response-params');
     assert.parameter(transferOfferResponseParams instanceof TransferOfferResponseParams, `Transfer Offer Response Params is not valid`);
 
     let requestBody = transferOfferResponseParams.toJSON();
@@ -135,7 +132,11 @@ Bitmark.response = async function (transferOfferResponseParams, account) {
 Bitmark.get = async function (bitmarkId, options) {
     assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
 
-    let response = await apiService.sendRequest({method: GET_API_METHOD, url: `${GET_API_NAME}/${bitmarkId}`, params: options});
+    let response = await apiService.sendRequest({
+        method: BITMARK_GET_API_METHOD,
+        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`,
+        params: options
+    });
     return response.bitmark;
 };
 
@@ -146,7 +147,11 @@ Bitmark.newBitmarkQueryBuilder = function () {
 Bitmark.list = async function (bitmarkQueryParams) {
     assert.parameter(bitmarkQueryParams, 'Bitmark Query Params is required');
 
-    let response = await apiService.sendRequest({method: GET_API_METHOD, url: `${GET_API_NAME}`, params: bitmarkQueryParams});
+    let response = await apiService.sendRequest({
+        method: BITMARK_GET_API_METHOD,
+        url: `${BITMARK_GET_API_NAME}`,
+        params: bitmarkQueryParams
+    });
     return response.bitmarks;
 };
 
