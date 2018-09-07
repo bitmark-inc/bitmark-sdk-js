@@ -17,28 +17,28 @@ let testData = {
     }
 };
 
-describe('Transfer Offer Params', function () {
+describe('Transfer Params', function () {
     before(function () {
         sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
-    it('should create transfer offer params with valid account number', async function () {
+    it('should create transfer params with valid account number', async function () {
         expect(function () {
             let account = Account.fromSeed(testData.testnet.seed);
-            Bitmark.newTransferOfferParams(account.getAccountNumber());
+            Bitmark.newTransferParams(account.getAccountNumber());
         }).to.not.throw();
     });
 
-    it('should not create transfer offer params with invalid account number', async function () {
+    it('should not create transfer params with invalid account number', async function () {
         expect(function () {
             let accountNumber = 1;
-            Bitmark.newTransferOfferParams(accountNumber);
+            Bitmark.newTransferParams(accountNumber);
         }).to.throw();
     });
 
-    it('should not create transfer offer params without account number', async function () {
+    it('should not create transfer params without account number', async function () {
         expect(function () {
-            Bitmark.newTransferOfferParams();
+            Bitmark.newTransferParams();
         }).to.throw();
     });
 });

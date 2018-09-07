@@ -11,7 +11,7 @@ const Account = require('../../core/account');
 
 // CONSTRUCTOR
 let TransferParams = function (receiverAccountNumber) {
-    assert(receiverAccountNumber, 'Receiver Account Number is required');
+    assert(_.isString(receiverAccountNumber), 'Receiver Account Number is required');
     this.receiverAccountNumber = receiverAccountNumber;
 };
 
