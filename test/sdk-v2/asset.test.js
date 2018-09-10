@@ -29,11 +29,11 @@ let testData = {
 };
 
 describe('Asset', function () {
-    describe('Register Asset', function () {
-        before(function () {
-            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
-        });
+    before(function () {
+        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+    });
 
+    describe('Register Asset', function () {
         this.timeout(15000);
 
         it('should register new asset', async function () {
@@ -97,6 +97,47 @@ describe('Asset', function () {
             } catch (error) {
                 expect(error.response.status).to.be.equal(403);
             }
+        });
+    });
+
+    describe('Query Asset', function () {
+        this.timeout(15000);
+
+        describe('Query assets - List', function () {
+            it('should get assets by registrant', async function () {
+                let assetQueryParams = Asset.newAssetQueryBuilder().registeredBy(testData.testnet.accountNumber).build();
+                let response = await Asset.list(assetQueryParams);
+                let assets = response.assets;
+
+                expect(assets).to.be.an('array');
+                assets.forEach((tx) => {
+                    expect(tx.registrant).to.be.equal(testData.testnet.accountNumber);
+                });
+            });
+
+            it('should get assets with limit', async function () {
+                let limit = 1;
+                let assetQueryParams = Asset.newAssetQueryBuilder().limit(limit).build();
+                let response = await Asset.list(assetQueryParams);
+                expect(response.assets).to.be.an('array');
+                expect(response.assets.length).to.be.equal(limit);
+            });
+        });
+
+        describe('Query asset - Get', function () {
+            it('should get asset by id', async function () {
+                let limit = 1;
+                let assetQueryParams = Asset.newAssetQueryBuilder().limit(limit).build();
+                let assetsResponse = await Asset.list(assetQueryParams);
+                expect(assetsResponse.assets).to.be.an('array');
+                expect(assetsResponse.assets.length).to.be.equal(limit);
+
+                let assetId = assetsResponse.assets[0].id;
+                let assetResponse = await Asset.get(assetId);
+                expect(assetResponse).to.have.property('asset');
+                expect(assetResponse.asset).to.have.property('id');
+                expect(assetResponse.asset.id).to.be.equal(assetId);
+            });
         });
     });
 });

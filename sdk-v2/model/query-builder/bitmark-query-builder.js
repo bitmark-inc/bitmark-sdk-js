@@ -56,7 +56,7 @@ BitmarkQueryBuilder.prototype.loadAsset = function (shouldLoadAsset) {
 };
 
 BitmarkQueryBuilder.prototype.limit = function (limit) {
-    assert(_.isNumber(parseInt(limit)), 'limit must be a number');
+    assert(_.isNumber(parseInt(limit)), 'Limit must be a number');
     this.params.limit = limit;
     return this;
 };

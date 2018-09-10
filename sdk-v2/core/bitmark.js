@@ -148,7 +148,7 @@ Bitmark.list = async function (bitmarkQueryParams) {
 
     let response = await apiService.sendRequest({
         method: BITMARK_GET_API_METHOD,
-        url: `${BITMARK_GET_API_NAME}`,
+        url: BITMARK_GET_API_NAME,
         params: bitmarkQueryParams
     });
     return response;

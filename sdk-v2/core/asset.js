@@ -4,11 +4,14 @@ const _ = require('lodash');
 const assert = require('../util/assert');
 const SDKError = require('../util/sdk-error');
 const RegistrationParams = require('../model/params/registration-params');
+const AssetQueryBuilder = require('../model/query-builder/asset-query-builder');
 const apiService = require('../service/api-service');
 
-const API_NAME = 'registerAsset';
-const API_METHOD = 'post';
+const REGISTER_ASSET_API_NAME = 'registerAsset';
+const REGISTER_ASSET_API_METHOD = 'post';
 
+const GET_ASSET_API_NAME = 'assets';
+const GET_ASSET_API_METHOD = 'get';
 
 // CONSTRUCTOR
 let Asset = function () {
@@ -27,7 +30,32 @@ Asset.register = async function (registrationParams) {
     let requestBody = {};
     requestBody.assets = [registrationParams.toJSON()];
 
-    let response = await apiService.sendRequest({method: API_METHOD, url: API_NAME, params: requestBody});
+    let response = await apiService.sendRequest({method: REGISTER_ASSET_API_METHOD, url: REGISTER_ASSET_API_NAME, params: requestBody});
+    return response;
+};
+
+Asset.get = async function (assetId) {
+    assert.parameter(_.isString(assetId), 'Asset Id must be a string');
+
+    let response = await apiService.sendRequest({
+        method: GET_ASSET_API_METHOD,
+        url: `${GET_ASSET_API_NAME}/${assetId}`
+    });
+    return response;
+};
+
+Asset.newAssetQueryBuilder = function () {
+    return new AssetQueryBuilder();
+};
+
+Asset.list = async function (assetQueryParams) {
+    assert.parameter(assetQueryParams, 'Asset Query Params is required');
+
+    let response = await apiService.sendRequest({
+        method: GET_ASSET_API_METHOD,
+        url: GET_ASSET_API_NAME,
+        params: assetQueryParams
+    });
     return response;
 };
 
