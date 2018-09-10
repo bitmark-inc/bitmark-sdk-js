@@ -12,9 +12,15 @@ let BitmarkQueryBuilder = function () {
 
 
 // PROTOTYPE METHODS
-BitmarkQueryBuilder.prototype.owner = function (owner) {
-    assert(_.isString(owner), 'Owner must be a string');
-    this.params.owner = owner;
+BitmarkQueryBuilder.prototype.ownedBy = function (accountNumber) {
+    assert(_.isString(accountNumber), 'Account Number must be a string');
+    this.params.owner = accountNumber;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.issuedBy = function (issuer) {
+    assert(_.isString(issuer), 'Issuer must be a string');
+    this.params.issuer = issuer;
     return this;
 };
 
@@ -34,6 +40,24 @@ BitmarkQueryBuilder.prototype.status = function (status) {
 BitmarkQueryBuilder.prototype.offerTo = function (accountNumber) {
     assert(_.isString(accountNumber), 'Account Number must be a string');
     this.params.accountNumber = accountNumber;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.referencedAsset = function (assetId) {
+    assert(_.isString(assetId), 'Asset Id must be a string');
+    this.params.asset_id = assetId;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.loadAsset = function (shouldLoadAsset) {
+    assert(_.isBoolean(shouldLoadAsset), 'shouldLoadAsset must be a boolean');
+    this.params.asset = shouldLoadAsset;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.limit = function (limit) {
+    assert(_.isNumber(parseInt(limit)), 'limit must be a number');
+    this.params.limit = limit;
     return this;
 };
 

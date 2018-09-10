@@ -129,15 +129,14 @@ Bitmark.response = async function (transferOfferResponseParams, account) {
     return response;
 };
 
-Bitmark.get = async function (bitmarkId, options) {
+Bitmark.get = async function (bitmarkId) {
     assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
 
     let response = await apiService.sendRequest({
         method: BITMARK_GET_API_METHOD,
-        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`,
-        params: options
+        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`
     });
-    return response.bitmark;
+    return response;
 };
 
 Bitmark.newBitmarkQueryBuilder = function () {
@@ -152,7 +151,7 @@ Bitmark.list = async function (bitmarkQueryParams) {
         url: `${BITMARK_GET_API_NAME}`,
         params: bitmarkQueryParams
     });
-    return response.bitmarks;
+    return response;
 };
 
 Bitmark.getTransferOffer = async function (offerId) {

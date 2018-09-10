@@ -87,6 +87,76 @@ describe('Bitmark', function () {
         });
     });
 
+    describe('Query Bitmarks', function () {
+        this.timeout(15000);
+
+        describe('Query bitmarks - List', function () {
+            it('should get bitmarks by owner', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(testData.testnet.accountNumber).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((tx) => {
+                    expect(tx.owner).to.be.equal(testData.testnet.accountNumber);
+                });
+            });
+
+            it('should get bitmarks by issuer', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().issuedBy(testData.testnet.accountNumber).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((tx) => {
+                    expect(tx.issuer).to.be.equal(testData.testnet.accountNumber);
+                });
+            });
+
+            it('should get bitmarks by asset id', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().referencedAsset(testData.testnet.existedAssetId).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((tx) => {
+                    expect(tx.asset_id).to.be.equal(testData.testnet.existedAssetId);
+                });
+            });
+
+            it('should get bitmarks with assets', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().loadAsset(true).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                expect(response.bitmarks).to.be.an('array');
+                expect(response.assets).to.be.an('array');
+            });
+
+            it('should get bitmarks with limit', async function () {
+                let limit = 1;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().limit(limit).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                expect(response.bitmarks).to.be.an('array');
+                expect(response.bitmarks.length).to.be.equal(limit);
+            });
+        });
+
+        describe('Query bitmark - Get', function () {
+            it('should get bitmark by id', async function () {
+                let limit = 1;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().limit(limit).build();
+                let bitmarksResponse = await Bitmark.list(bitmarkQueryParams);
+                expect(bitmarksResponse.bitmarks).to.be.an('array');
+                expect(bitmarksResponse.bitmarks.length).to.be.equal(limit);
+
+                let bitmarkId = bitmarksResponse.bitmarks[0].id;
+                let bitmarkResponse = await Bitmark.get(bitmarkId);
+                expect(bitmarkResponse).to.have.property('bitmark');
+                expect(bitmarkResponse.bitmark).to.have.property('id');
+                expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
+            });
+        });
+    });
+
     describe('Transfer Bitmarks', function () {
         this.timeout(15000);
 
@@ -94,8 +164,8 @@ describe('Bitmark', function () {
             it('should transfer bitmark with valid info', async function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
-                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let bitmarks = await Bitmark.list(bitmarkQueryParams);
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
+                let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved');
 
                 let transferParams = Bitmark.newTransferParams(testData.testnet.receiverAccount.accountNumber);
@@ -115,8 +185,9 @@ describe('Bitmark', function () {
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
                 let yourTransferOffers = transferOffers.from;
 
-                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let bitmarks = await Bitmark.list(bitmarkQueryParams);
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
+                let bitmarksResponse = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = bitmarksResponse.bitmarks;
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer
@@ -144,8 +215,8 @@ describe('Bitmark', function () {
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
                 let yourTransferOffers = transferOffers.from;
 
-                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let bitmarks = await Bitmark.list(bitmarkQueryParams);
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
+                let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer
@@ -174,8 +245,8 @@ describe('Bitmark', function () {
                 let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
                 let yourTransferOffers = transferOffers.from;
 
-                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().owner(account.getAccountNumber()).pending(true).build();
-                let bitmarks = await Bitmark.list(bitmarkQueryParams);
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
+                let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
                 let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
 
                 // Send transfer offer

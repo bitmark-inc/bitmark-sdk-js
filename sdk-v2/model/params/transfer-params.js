@@ -18,7 +18,7 @@ let TransferParams = function (receiverAccountNumber) {
 
 // PROTOTYPE METHODS
 TransferParams.prototype.fromBitmark = async function (bitmarkId) {
-    let bitmark = await Bitmark.get(bitmarkId);
+    let bitmark = (await Bitmark.get(bitmarkId)).bitmark;
     this.link = bitmark.head_id;
 };
 
