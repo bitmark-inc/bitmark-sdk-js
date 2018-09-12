@@ -7,7 +7,7 @@ const RegistrationParams = require('../model/params/registration-params');
 const AssetQueryBuilder = require('../model/query-builder/asset-query-builder');
 const apiService = require('../service/api-service');
 
-const REGISTER_ASSET_API_NAME = 'registerAsset';
+const REGISTER_ASSET_API_NAME = 'register-asset';
 const REGISTER_ASSET_API_METHOD = 'post';
 
 const GET_ASSET_API_NAME = 'assets';

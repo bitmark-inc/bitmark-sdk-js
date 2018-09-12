@@ -45,7 +45,7 @@ describe('Asset', function () {
             await registrationParams.setFingerprint(testFile);
             registrationParams.sign(account);
 
-            let response = await Asset.register(registrationParams);
+            let response = (await Asset.register(registrationParams)).assets;
             fs.unlinkSync(testFile);
 
             expect(response).to.be.an('array');
@@ -61,7 +61,7 @@ describe('Asset', function () {
             await registrationParams.setFingerprint(testFile);
             registrationParams.sign(account);
 
-            let response = await Asset.register(registrationParams);
+            let response = (await Asset.register(registrationParams)).assets;
             expect(response).to.be.an('array');
             expect(response[0]).to.have.property('id');
             expect(response[0].duplicate).to.be.equal(true);
