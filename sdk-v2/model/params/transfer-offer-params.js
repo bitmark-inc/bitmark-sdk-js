@@ -34,20 +34,19 @@ TransferOfferParams.prototype.sign = function (account) {
     packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, Account.packagePublicKeyFromAccountNumber(this.receiverAccountNumber));
 
     this.signature = account.sign(packagedParamsBuffer);
-    this.senderAccountNumber = account.getAccountNumber();
 };
 
 TransferOfferParams.prototype.toJSON = function () {
     assert(this.signature, 'Need to sign the record before getting JSON format');
     let result = {
-        from: this.senderAccountNumber,
-        record: {
-            link: this.link,
-            owner: this.receiverAccountNumber,
-            signature: this.signature.toString('hex')
-        },
-        // TODO: should expose extra_info as a parameter
-        extra_info: {}
+        offer: {
+            extra_info: {},
+            record: {
+                link: this.link,
+                owner: this.receiverAccountNumber,
+                signature: this.signature.toString('hex')
+            }
+        }
     };
 
     return result;

@@ -10,15 +10,15 @@ const Account = require('../../core/account');
 
 // CONSTRUCTOR
 let TransferResponseParams = function (responseType) {
-    assert(CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.includes(responseType), 'Response Type is not supported');
+    assert(Object.values(CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES).includes(responseType), 'Response Type is not supported');
     this.responseType = responseType;
 };
 
 
 // PROTOTYPE METHODS
-TransferResponseParams.prototype.fromOffer = async function (offerId) {
-    let result = await Bitmark.getTransferOffer(offerId);
-    this.offer = result.offer;
+TransferResponseParams.prototype.fromBitmark = async function (bitmarkId) {
+    let result = await Bitmark.get(bitmarkId);
+    this.offer = result.bitmark.offer;
 };
 
 TransferResponseParams.prototype.sign = function (account) {
@@ -33,13 +33,14 @@ TransferResponseParams.prototype.sign = function (account) {
 };
 
 TransferResponseParams.prototype.toJSON = function () {
-    assert(this.counterSignature, 'Need to sign the record before getting JSON format');
+    if (this.responseType === CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.ACCEPT) {
+        assert(this.counterSignature, 'Need to sign the record before getting JSON format');
+    }
+
     let result = {
-        id: this.offer.id,
-        reply: {
-            action: this.responseType,
-            countersignature: this.counterSignature.toString('hex')
-        }
+        action: this.responseType,
+        countersignature: this.responseType === CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.ACCEPT ? this.counterSignature.toString('hex') : undefined,
+        id: this.offer.id
     };
 
     return result;
