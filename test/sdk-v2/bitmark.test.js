@@ -7,6 +7,7 @@ const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
 const common = require('../../sdk-v2/util/common');
 const CONSTANTS = require('./constant/constants');
+const BITMARK_CONSTANTS = require('../../sdk-v2/constant/constants');
 
 let testData = {
     testnet: {
@@ -44,10 +45,10 @@ describe('Bitmark', function () {
             let issuanceParams = Bitmark.newIssuanceParams(assetId, quantity);
             issuanceParams.sign(account);
 
-            let bitmarks = await Bitmark.issue(issuanceParams);
+            let bitmarks = (await Bitmark.issue(issuanceParams)).bitmarks;
             expect(bitmarks).to.be.an('array');
             expect(bitmarks.length).to.be.equal(quantity);
-            expect(bitmarks[0]).to.have.property('txId');
+            expect(bitmarks[0]).to.have.property('id');
         });
 
         it('should issue bitmarks with valid nonces array', async function () {
@@ -63,10 +64,10 @@ describe('Bitmark', function () {
             let issuanceParams = Bitmark.newIssuanceParams(assetId, nonces);
             issuanceParams.sign(account);
 
-            let bitmarks = await Bitmark.issue(issuanceParams);
+            let bitmarks = (await Bitmark.issue(issuanceParams)).bitmarks;
             expect(bitmarks).to.be.an('array');
             expect(bitmarks.length).to.be.equal(quantity);
-            expect(bitmarks[0]).to.have.property('txId');
+            expect(bitmarks[0]).to.have.property('id');
         });
 
         it('should not issue bitmarks with invalid asset id', function (done) {
@@ -166,15 +167,14 @@ describe('Bitmark', function () {
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved');
+                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
 
                 let transferParams = Bitmark.newTransferParams(testData.testnet.receiverAccount.accountNumber);
                 await transferParams.fromBitmark(bitmark.id);
                 transferParams.sign(account);
 
                 let response = await Bitmark.transfer(transferParams);
-                expect(response).to.be.an('array');
-                expect(response[0]).to.have.property('txid');
+                expect(response).to.have.property('txid');
             });
         });
 
@@ -182,13 +182,10 @@ describe('Bitmark', function () {
             it('should send transfer offer then accept', async function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
-                let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.from;
-
+                // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
-                let bitmarksResponse = await Bitmark.list(bitmarkQueryParams);
-                let bitmarks = bitmarksResponse.bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
+                let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
+                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
@@ -196,28 +193,25 @@ describe('Bitmark', function () {
                 await transferOfferParams.fromBitmark(bitmark.id);
                 transferOfferParams.sign(account);
 
-                let response = await Bitmark.offer(transferOfferParams, account);
+                let response = await Bitmark.offer(transferOfferParams);
                 expect(response).to.have.property('offer_id');
 
                 // Response transfer offer
-                let offerId = response.offer_id;
-                let transferOfferResponseParams = Bitmark.newTransferResponseParams('accept');
-                await transferOfferResponseParams.fromOffer(offerId);
+                let transferOfferResponseParams = Bitmark.newTransferResponseParams(BITMARK_CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.ACCEPT);
+                await transferOfferResponseParams.fromBitmark(bitmark.id);
                 transferOfferResponseParams.sign(receiverAccount);
 
                 response = await Bitmark.response(transferOfferResponseParams, receiverAccount);
-                expect(response).to.have.property('tx_id');
+                expect(response).to.have.property('txid');
             });
 
             it('should send transfer offer then reject', async function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
-                let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.from;
-
+                // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
+                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
@@ -225,29 +219,25 @@ describe('Bitmark', function () {
                 await transferOfferParams.fromBitmark(bitmark.id);
                 transferOfferParams.sign(account);
 
-                let response = await Bitmark.offer(transferOfferParams, account);
+                let response = await Bitmark.offer(transferOfferParams);
                 expect(response).to.have.property('offer_id');
 
                 // Response transfer offer
-                let offerId = response.offer_id;
-                let transferOfferResponseParams = Bitmark.newTransferResponseParams('reject');
-                await transferOfferResponseParams.fromOffer(offerId);
-                transferOfferResponseParams.sign(receiverAccount);
+                let transferOfferResponseParams = Bitmark.newTransferResponseParams(BITMARK_CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.REJECT);
+                await transferOfferResponseParams.fromBitmark(bitmark.id);
 
                 response = await Bitmark.response(transferOfferResponseParams, receiverAccount);
                 expect(response).to.have.property('status');
-                expect(response.status).to.be.equal('OK');
+                expect(response.status).to.be.equal('ok');
             });
 
             it('should send transfer offer then cancel', async function () {
                 let account = Account.fromRecoveryPhrase(testData.testnet.phrase);
 
-                let transferOffers = await Bitmark.getTransferOffers(account.getAccountNumber());
-                let yourTransferOffers = transferOffers.from;
-
+                // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !yourTransferOffers.find(offer => offer.bitmark_id === bitmark.id));
+                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
@@ -255,18 +245,16 @@ describe('Bitmark', function () {
                 await transferOfferParams.fromBitmark(bitmark.id);
                 transferOfferParams.sign(account);
 
-                let response = await Bitmark.offer(transferOfferParams, account);
+                let response = await Bitmark.offer(transferOfferParams);
                 expect(response).to.have.property('offer_id');
 
                 // Response transfer offer
-                let offerId = response.offer_id;
-                let transferOfferResponseParams = Bitmark.newTransferResponseParams('cancel');
-                await transferOfferResponseParams.fromOffer(offerId);
-                transferOfferResponseParams.sign(account);
+                let transferOfferResponseParams = Bitmark.newTransferResponseParams(BITMARK_CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.CANCEL);
+                await transferOfferResponseParams.fromBitmark(bitmark.id);
 
                 response = await Bitmark.response(transferOfferResponseParams, account);
                 expect(response).to.have.property('status');
-                expect(response.status).to.be.equal('OK');
+                expect(response.status).to.be.equal('ok');
             });
         });
     });
