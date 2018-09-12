@@ -58,7 +58,7 @@ IssuanceParams.prototype.toJSON = function () {
         let result = {
             owner: this.owner,
             signature: this.signatures[i].toString('hex'),
-            assetId: this.assetId,
+            asset_id: this.assetId,
             nonce: this.nonces[i]
         };
 
