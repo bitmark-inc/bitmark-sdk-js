@@ -17,6 +17,12 @@ AssetQueryBuilder.prototype.registeredBy = function (accountNumber) {
     return this;
 };
 
+AssetQueryBuilder.prototype.assetIds = function (assetIds) {
+    assert(_.isArray(assetIds), 'Asset Ids must be an array');
+    this.params.asset_ids = assetIds;
+    return this;
+};
+
 AssetQueryBuilder.prototype.limit = function (limit) {
     assert(_.isNumber(parseInt(limit)), 'Limit must be a number');
     this.params.limit = limit;

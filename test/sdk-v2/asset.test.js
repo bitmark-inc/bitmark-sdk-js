@@ -16,15 +16,8 @@ let testData = {
         accountNumber: 'ec6yMcJATX6gjNwvqp8rbc4jNEasoUgbfBBGGyV5NvoJ54NXva',
         publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
         network: 'testnet',
-        version: 1
-    },
-    livenet: {
-        seed: '5XEECqWqA47qWg86DR5HJ29HhbVqwigHUAhgiBMqFSBycbiwnbY639s',
-        phrase: 'ability panel leave spike mixture token voice certain today market grief crater cruise smart camera palm wheat rib swamp labor bid rifle piano glass',
-        accountNumber: 'bDnC8nCaupb1AQtNjBoLVrGmobdALpBewkyYRG7kk2euMG93Bf',
-        publicKey: '9aaf14f906e2be86b32eae1b206335e73646e51f8bf29b6bc580b1d5a0be67b1',
-        network: 'livenet',
-        version: 1
+        version: 1,
+        existedAssetIds: ['0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64', '0d8fc4a5dbc11b21528dd61fde427fbc89087bb591102b284fd5360d127fa80592ef5e5ad93c61db7e0fb88f66dfe7c02e68905f78a3734446b2fa299d79ae98']
     }
 };
 
@@ -121,6 +114,18 @@ describe('Asset', function () {
                 let response = await Asset.list(assetQueryParams);
                 expect(response.assets).to.be.an('array');
                 expect(response.assets.length).to.be.equal(limit);
+            });
+
+            it('should get assets by asset ids', async function () {
+                let assetIds = testData.testnet.existedAssetIds;
+                let assetQueryParams = Asset.newAssetQueryBuilder().assetIds(assetIds).build();
+                let response = await Asset.list(assetQueryParams);
+                let assets = response.assets;
+                expect(assets).to.be.an('array');
+                expect(assets.length).to.be.equal(assetIds.length);
+                assets.forEach((asset) => {
+                    expect(assetIds.includes(asset.id)).to.be.equal(true);
+                });
             });
         });
 
