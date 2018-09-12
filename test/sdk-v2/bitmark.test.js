@@ -18,6 +18,7 @@ let testData = {
         network: 'testnet',
         version: 1,
         existedAssetId: '0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64',
+        existedBitmarkIds: ['5b01acab6102c4bc134e5634d2f673a751c3e9be966e4c2961840271db170bb3', 'c1e671c92f5fdd6bebf6afa7e4a5542f555a3054972bb07a7efdccb37a052c13'],
         receiverAccount: {
             accountNumber: 'eujeF5ZBDV3qJyKeHxNqnmJsrc9iN7eHJGECsRuSXvLmnNjsWX',
             publicKey: '807f4d123c944e0c3ecc95d9bde89916ced6341a8c8cedeb8caafef8f35654e7',
@@ -125,6 +126,40 @@ describe('Bitmark', function () {
                 });
             });
 
+            it('should get bitmarks by offer from', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().offerFrom(testData.testnet.accountNumber).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((bitmark) => {
+                    expect(bitmark.offer.from).to.be.equal(testData.testnet.accountNumber);
+                });
+            });
+
+            it('should get bitmarks by offer to', async function () {
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().offerTo(testData.testnet.receiverAccount.accountNumber).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((bitmark) => {
+                    expect(bitmark.offer.to).to.be.equal(testData.testnet.receiverAccount.accountNumber);
+                });
+            });
+
+            it('should get bitmarks by bitmark ids', async function () {
+                let bitmarkIds = testData.testnet.existedBitmarkIds;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().bitmarkIds(bitmarkIds).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+                expect(bitmarks).to.be.an('array');
+                expect(bitmarks.length).to.be.equal(bitmarkIds.length);
+                bitmarks.forEach((bitmark) => {
+                    expect(bitmarkIds.includes(bitmark.id)).to.be.equal(true);
+                });
+            });
+
             it('should get bitmarks with assets', async function () {
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().loadAsset(true).build();
                 let response = await Bitmark.list(bitmarkQueryParams);
@@ -154,6 +189,38 @@ describe('Bitmark', function () {
                 expect(bitmarkResponse).to.have.property('bitmark');
                 expect(bitmarkResponse.bitmark).to.have.property('id');
                 expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
+            });
+
+            it('should get bitmark by id without asset ', async function () {
+                let limit = 1;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().limit(limit).build();
+                let bitmarksResponse = await Bitmark.list(bitmarkQueryParams);
+                expect(bitmarksResponse.bitmarks).to.be.an('array');
+                expect(bitmarksResponse.bitmarks.length).to.be.equal(limit);
+
+                let bitmarkId = bitmarksResponse.bitmarks[0].id;
+                let includeAsset = false;
+                let bitmarkResponse = await Bitmark.get(bitmarkId, includeAsset);
+                expect(bitmarkResponse).to.have.property('bitmark');
+                expect(bitmarkResponse.bitmark).to.have.property('id');
+                expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
+                expect(bitmarkResponse).to.not.have.property('asset');
+            });
+
+            it('should get bitmark by id with asset ', async function () {
+                let limit = 1;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().limit(limit).build();
+                let bitmarksResponse = await Bitmark.list(bitmarkQueryParams);
+                expect(bitmarksResponse.bitmarks).to.be.an('array');
+                expect(bitmarksResponse.bitmarks.length).to.be.equal(limit);
+
+                let bitmarkId = bitmarksResponse.bitmarks[0].id;
+                let includeAsset = true;
+                let bitmarkResponse = await Bitmark.get(bitmarkId, includeAsset);
+                expect(bitmarkResponse).to.have.property('bitmark');
+                expect(bitmarkResponse.bitmark).to.have.property('id');
+                expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
+                expect(bitmarkResponse).to.have.property('asset');
             });
         });
     });

@@ -28,6 +28,7 @@ let Bitmark = function () {
 
 
 // STATIC METHODS
+// Issue Bitmark
 Bitmark.newIssuanceParams = function (assetId, param) {
     return new IssuanceParams(assetId, param);
 };
@@ -112,12 +113,14 @@ Bitmark.response = async function (transferOfferResponseParams, account) {
 };
 
 // Query Bitmark
-Bitmark.get = async function (bitmarkId) {
+Bitmark.get = async function (bitmarkId, includeAsset) {
     assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
+    assert.parameter(!includeAsset || _.isBoolean(includeAsset), 'includeAsset must be a Boolean');
 
     let response = await apiService.sendRequest({
         method: BITMARK_GET_API_METHOD,
-        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`
+        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`,
+        params: {asset: !!includeAsset}
     });
     return response;
 };

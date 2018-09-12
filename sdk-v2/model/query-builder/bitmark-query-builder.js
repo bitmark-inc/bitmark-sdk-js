@@ -39,7 +39,19 @@ BitmarkQueryBuilder.prototype.status = function (status) {
 
 BitmarkQueryBuilder.prototype.offerTo = function (accountNumber) {
     assert(_.isString(accountNumber), 'Account Number must be a string');
-    this.params.accountNumber = accountNumber;
+    this.params.offer_to = accountNumber;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.offerFrom = function (accountNumber) {
+    assert(_.isString(accountNumber), 'Account Number must be a string');
+    this.params.offer_from = accountNumber;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.bitmarkIds = function (bitmarkIds) {
+    assert(_.isArray(bitmarkIds), 'BitmarkIds must be an array');
+    this.params.bitmark_ids = bitmarkIds;
     return this;
 };
 
