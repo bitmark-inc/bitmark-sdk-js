@@ -21,6 +21,10 @@ TransferResponseParams.prototype.fromBitmark = async function (bitmarkId) {
     this.offer = result.bitmark.offer;
 };
 
+TransferResponseParams.prototype.fromOffer = function (offer) {
+    this.offer = offer;
+};
+
 TransferResponseParams.prototype.sign = function (account) {
     let packagedParamsBuffer;
     packagedParamsBuffer = varint.encode(BITMARK_CONFIG.record.transfer_2_signatures.value);
