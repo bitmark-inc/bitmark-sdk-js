@@ -95,6 +95,7 @@ AccountKey.prototype.getAccountNumber = function () {
     return this._accountNumber;
 };
 
+
 // INTERNAL METHODS
 function buildAccountKey(buffer, network) {
     let keyType = BITMARK_CONFIG.key.type.ed25519;
@@ -111,8 +112,7 @@ function buildAccountKey(buffer, network) {
 }
 
 function generateAccountNumber(pubKey, network, keyType) {
-    assert.parameter(pubKey.length === keyType.pubkey_length,
-        `public key for key type ${keyType.name} must be ${keyType.pubkey_length} bytes`);
+    assert.parameter(pubKey.length === keyType.pubkey_length, `public key for key type ${keyType.name} must be ${keyType.pubkey_length} bytes`);
 
     const networkConfig = NETWORKS_CONFIG[network];
     let keyTypeVal, keyVariantVal;

@@ -32,7 +32,7 @@ BitmarkQueryBuilder.prototype.pending = function (isPending) {
 };
 
 BitmarkQueryBuilder.prototype.status = function (status) {
-    assert(CONSTANTS.BITMARK_STATUSES.includes(status), 'Status is not supported');
+    assert(Object.values(CONSTANTS.BITMARK_STATUSES).includes(status), 'Status is not supported');
     this.params.status = status;
     return this;
 };

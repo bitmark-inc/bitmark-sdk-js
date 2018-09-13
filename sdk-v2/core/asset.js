@@ -13,6 +13,7 @@ const REGISTER_ASSET_API_METHOD = 'post';
 const GET_ASSET_API_NAME = 'assets';
 const GET_ASSET_API_METHOD = 'get';
 
+
 // CONSTRUCTOR
 let Asset = function () {
     throw SDKError.operationFobidden('Can not construct Asset object');

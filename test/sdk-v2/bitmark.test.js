@@ -234,7 +234,7 @@ describe('Bitmark', function () {
 
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
+                let bitmark = bitmarks.find(bitmark => bitmark.status === BITMARK_CONSTANTS.BITMARK_STATUSES.SETTLED && bitmark.head !== 'moved' && !bitmark.offer);
 
                 let transferParams = Bitmark.newTransferParams(testData.testnet.receiverAccount.accountNumber);
                 await transferParams.fromBitmark(bitmark.id);
@@ -252,7 +252,7 @@ describe('Bitmark', function () {
                 // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
+                let bitmark = bitmarks.find(bitmark => bitmark.status === BITMARK_CONSTANTS.BITMARK_STATUSES.SETTLED && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
@@ -278,7 +278,7 @@ describe('Bitmark', function () {
                 // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
+                let bitmark = bitmarks.find(bitmark => bitmark.status === BITMARK_CONSTANTS.BITMARK_STATUSES.SETTLED && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
@@ -304,7 +304,7 @@ describe('Bitmark', function () {
                 // Get bitmark to transfer
                 let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().ownedBy(account.getAccountNumber()).pending(true).build();
                 let bitmarks = (await Bitmark.list(bitmarkQueryParams)).bitmarks;
-                let bitmark = bitmarks.find(bitmark => bitmark.status === 'confirmed' && bitmark.head !== 'moved' && !bitmark.offer);
+                let bitmark = bitmarks.find(bitmark => bitmark.status === BITMARK_CONSTANTS.BITMARK_STATUSES.SETTLED && bitmark.head !== 'moved' && !bitmark.offer);
 
                 // Send transfer offer
                 let receiverAccount = Account.fromSeed(testData.testnet.receiverAccount.seed);
