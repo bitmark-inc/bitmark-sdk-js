@@ -2,7 +2,6 @@
 const _ = require('lodash');
 
 const assert = require('../../util/assert');
-const CONSTANTS = require('../../constant/constants');
 
 
 // CONSTRUCTOR
@@ -24,16 +23,9 @@ BitmarkQueryBuilder.prototype.issuedBy = function (issuer) {
     return this;
 };
 
-// TODO: Will remove if new API support user query by status
 BitmarkQueryBuilder.prototype.pending = function (isPending) {
     assert(_.isBoolean(isPending), 'Pending must be boolean');
     this.params.pending = isPending;
-    return this;
-};
-
-BitmarkQueryBuilder.prototype.status = function (status) {
-    assert(Object.values(CONSTANTS.BITMARK_STATUSES).includes(status), 'Status is not supported');
-    this.params.status = status;
     return this;
 };
 
