@@ -4,10 +4,10 @@ const assertion = chai.assertion;
 const fs = require('fs');
 
 const sdk = require('../../index');
-const common = require('../../sdk-v2/util/common');
+const common = require('../../sdk/util/common');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
-const CONSTANTS = require('./constant/constants');
+const CONSTANTS = require('../constant/constants');
 
 let testData = {
     testnet: {
@@ -31,10 +31,10 @@ describe('Asset', function () {
 
         it('should register new asset', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
-            let testFile = './test/sdk-v2/tmp/myfile.test';
+            let testFile = './test/tmp/myfile.test';
             fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
 
-            let registrationParams = Asset.newRegistrationParams('name', {author: 'test'});
+            let registrationParams = Asset.newRegistrationParams('name', {});
             await registrationParams.setFingerprint(testFile);
             registrationParams.sign(account);
 
@@ -48,7 +48,7 @@ describe('Asset', function () {
 
         it('should register existing asset', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
-            let testFile = './test/sdk-v2/tmp/undelete.test';
+            let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('name', {author: 'test'});
             await registrationParams.setFingerprint(testFile);
@@ -62,7 +62,7 @@ describe('Asset', function () {
 
         it('should not re-register existing asset with different asset name', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
-            let testFile = './test/sdk-v2/tmp/undelete.test';
+            let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('another name', {author: 'test'});
             await registrationParams.setFingerprint(testFile);
@@ -78,7 +78,7 @@ describe('Asset', function () {
 
         it('should not re-register existing asset with different metadata name', async function () {
             let account = Account.fromSeed(testData.testnet.seed);
-            let testFile = './test/sdk-v2/tmp/undelete.test';
+            let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('name', {author: 'test', new_attribute: 'new_attribute'});
             await registrationParams.setFingerprint(testFile);

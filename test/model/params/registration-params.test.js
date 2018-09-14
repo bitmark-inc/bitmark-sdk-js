@@ -2,10 +2,10 @@ const chai = require('chai');
 const expect = chai.expect;
 const fs = require('fs');
 
-const sdk = require('../../../../index');
+const sdk = require('../../../index');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
-const common = require('../../../../sdk-v2/util/common');
+const common = require('../../../sdk/util/common');
 const CONSTANTS = require('../../constant/constants');
 
 let testData = {
@@ -56,7 +56,7 @@ describe('Registration Params', function () {
 
     it('should set fingerprint with valid info', async function () {
         let account = Account.fromSeed(testData.testnet.seed);
-        let testFile = './test/sdk-v2/tmp/myfile.test';
+        let testFile = './test/tmp/myfile.test';
         fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
 
         let registrationParams = Asset.newRegistrationParams('name', {author: 'test'});

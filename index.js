@@ -1,5 +1,5 @@
-const assert = require('./sdk-v2/util/assert.js');
-const NETWORKS_CONFIG = require('./sdk-v2/config/network-config');
+const assert = require('./sdk/util/assert.js');
+const NETWORKS_CONFIG = require('./sdk/config/network-config');
 
 module.exports = exports = {
     init: function (config) {
@@ -11,8 +11,8 @@ module.exports = exports = {
 
         global.getSDKConfig = () => config;
     },
-    Account: require('./sdk-v2/core/account'),
-    Asset: require('./sdk-v2/core/asset'),
-    Bitmark: require('./sdk-v2/core/bitmark'),
-    Transaction: require('./sdk-v2/core/transaction')
+    Account: require('./sdk/core/account'),
+    Asset: require('./sdk/core/asset'),
+    Bitmark: require('./sdk/core/bitmark'),
+    Transaction: require('./sdk/core/transaction')
 };

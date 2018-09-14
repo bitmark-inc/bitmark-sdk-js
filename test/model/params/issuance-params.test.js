@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const sdk = require('../../../../index');
+const sdk = require('../../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
 const CONSTANTS = require('../../constant/constants');

@@ -3,7 +3,7 @@ const expect = chai.expect;
 
 const sdk = require('../../index');
 const Account = sdk.Account;
-const CONSTANTS = require('./constant/constants');
+const CONSTANTS = require('../constant/constants');
 
 let validData = {
     testnet: {

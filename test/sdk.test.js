@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const sdk = require('../../index');
+const sdk = require('../index');
 const CONSTANTS = require('./constant/constants');
 
 describe('SDK', function () {

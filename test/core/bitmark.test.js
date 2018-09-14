@@ -5,9 +5,9 @@ const assertion = chai.assertion;
 const sdk = require('../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
-const common = require('../../sdk-v2/util/common');
-const CONSTANTS = require('./constant/constants');
-const BITMARK_CONSTANTS = require('../../sdk-v2/constant/constants');
+const common = require('../../sdk/util/common');
+const CONSTANTS = require('../constant/constants');
+const BITMARK_CONSTANTS = require('../../sdk/constant/constants');
 
 let testData = {
     testnet: {
