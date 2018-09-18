@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "_mocha \"./test/**/**.test.js\"",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover _mocha \"./test/**/**.test.js\"",
+    "coverage": "istanbul cover _mocha \"./test/**/**.test.js\"",
     "coveralls": "npm run-script coverage && ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
   "repository": {
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0"
   }
