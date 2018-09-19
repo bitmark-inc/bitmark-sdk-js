@@ -22,6 +22,10 @@ TransferParams.prototype.fromBitmark = async function (bitmarkId) {
     this.link = bitmark.head_id;
 };
 
+TransferParams.prototype.fromLatestTxId = function (latestTxId) {
+    this.link = latestTxId;
+};
+
 TransferParams.prototype.sign = function (account) {
     let packagedParamsBuffer;
     packagedParamsBuffer = varint.encode(BITMARK_CONFIG.record.transfer.value);
