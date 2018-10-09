@@ -10,12 +10,11 @@ const CONSTANTS = require('../../constant/constants');
 
 let testData = {
     testnet: {
-        seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
-        phrase: 'accident syrup inquiry you clutch liquid fame upset joke glow best school repeat birth library combine access camera organ trial crazy jeans lizard science',
-        accountNumber: 'ec6yMcJATX6gjNwvqp8rbc4jNEasoUgbfBBGGyV5NvoJ54NXva',
-        publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
-        network: 'testnet',
-        version: 1
+        seed: '9J87CAsHdFdoEu6N1unZk3sqhVBkVL8Z8',
+        phrase: 'name gaze apart lamp lift zone believe steak session laptop crowd hill',
+        accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
+        publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
+        network: 'testnet'
     }
 };
 

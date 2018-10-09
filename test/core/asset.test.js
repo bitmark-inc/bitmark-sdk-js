@@ -11,13 +11,12 @@ const CONSTANTS = require('../constant/constants');
 
 let testData = {
     testnet: {
-        seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
-        phrase: 'accident syrup inquiry you clutch liquid fame upset joke glow best school repeat birth library combine access camera organ trial crazy jeans lizard science',
-        accountNumber: 'ec6yMcJATX6gjNwvqp8rbc4jNEasoUgbfBBGGyV5NvoJ54NXva',
-        publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
+        seed: '9J87CAsHdFdoEu6N1unZk3sqhVBkVL8Z8',
+        phrase: 'name gaze apart lamp lift zone believe steak session laptop crowd hill',
+        accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
+        publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
         network: 'testnet',
-        version: 1,
-        existedAssetIds: ['0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64', '0d8fc4a5dbc11b21528dd61fde427fbc89087bb591102b284fd5360d127fa80592ef5e5ad93c61db7e0fb88f66dfe7c02e68905f78a3734446b2fa299d79ae98']
+        existedAssetIds: ['c54294134a632c478e978bcd7088e368828474a0d3716b884dd16c2a397edff357e76f90163061934f2c2acba1a77a5dcf6833beca000992e63e19dfaa5aee2a', 'd5d99e063eff28188f8fe9f5cf5f357490a6a0aaff169def257d12ee148a26a89de115e856e6ae934ce680c2127ec42d4e3c7598ef9c4f7a9170c5dfb0116bcf']
     }
 };
 
@@ -118,7 +117,7 @@ describe('Asset', function () {
 
             it('should get assets by asset ids', async function () {
                 let assetIds = testData.testnet.existedAssetIds;
-                let assetQueryParams = Asset.newAssetQueryBuilder().assetIds(assetIds).build();
+                let assetQueryParams = Asset.newAssetQueryBuilder().assetIds(assetIds).pending(true).build();
                 let response = await Asset.list(assetQueryParams);
                 let assets = response.assets;
                 expect(assets).to.be.an('array');

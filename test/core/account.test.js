@@ -7,20 +7,20 @@ const CONSTANTS = require('../constant/constants');
 
 let validData = {
     testnet: {
-        seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
-        phrase: 'accident syrup inquiry you clutch liquid fame upset joke glow best school repeat birth library combine access camera organ trial crazy jeans lizard science',
-        accountNumber: 'ec6yMcJATX6gjNwvqp8rbc4jNEasoUgbfBBGGyV5NvoJ54NXva',
-        publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
-        network: 'testnet',
-        version: 1
+        seed: '9J87CAsHdFdoEu6N1unZk3sqhVBkVL8Z8',
+        phrase: 'name gaze apart lamp lift zone believe steak session laptop crowd hill',
+        phrase_cn: '箱 阻 起 归 彻 矮 问 栽 瓜 鼓 支 乐',
+        accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
+        publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
+        network: 'testnet'
     },
     livenet: {
-        seed: '5XEECqWqA47qWg86DR5HJ29HhbVqwigHUAhgiBMqFSBycbiwnbY639s',
-        phrase: 'ability panel leave spike mixture token voice certain today market grief crater cruise smart camera palm wheat rib swamp labor bid rifle piano glass',
-        accountNumber: 'bDnC8nCaupb1AQtNjBoLVrGmobdALpBewkyYRG7kk2euMG93Bf',
-        publicKey: '9aaf14f906e2be86b32eae1b206335e73646e51f8bf29b6bc580b1d5a0be67b1',
-        network: 'livenet',
-        version: 1
+        seed: '9J87GaPq7FR9Uacdi3FUoWpP6LbEpo1Ax',
+        phrase: 'surprise mesh walk inject height join sound minor margin over jewel venue',
+        phrase_cn: '薯 托 剑 景 担 额 牢 痛 亦 软 凯 谊',
+        accountNumber: 'aiKFA9dKkNHPys3nSZrLTPusoocPqXSFp5EexsgQ1hbYUrJVne',
+        publicKey: '57c7e89cc648a387d9e5727237604a3b9007c2ceffbf99760a16b9d3cffcdf7e',
+        network: 'livenet'
     }
 };
 
@@ -69,6 +69,14 @@ describe('Account', function () {
                 expect(account.getNetwork()).to.equal(data.network);
                 expect(account.getAccountNumber()).to.equal(data.accountNumber);
             });
+
+            it('should recovery right account from recovery phrase chinese string', function () {
+                let account = Account.fromRecoveryPhrase(data.phrase_cn, 'cn');
+
+                expect(account.getRecoveryPhrase()).to.equal(data.phrase);
+                expect(account.getNetwork()).to.equal(data.network);
+                expect(account.getAccountNumber()).to.equal(data.accountNumber);
+            });
         });
 
         describe('From existing data - livenet', function () {
@@ -92,6 +100,40 @@ describe('Account', function () {
                 expect(account.getNetwork()).to.equal(data.network);
                 expect(account.getAccountNumber()).to.equal(data.accountNumber);
             });
+
+            it('should recovery right account from recovery phrase chinese string', function () {
+                let account = Account.fromRecoveryPhrase(data.phrase_cn, 'cn');
+
+                expect(account.getRecoveryPhrase()).to.equal(data.phrase);
+                expect(account.getNetwork()).to.equal(data.network);
+                expect(account.getAccountNumber()).to.equal(data.accountNumber);
+            });
+        });
+    });
+
+    describe('Validate multiple languages phrase - testnet', function () {
+        before(function () {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        });
+
+        let data = validData.testnet;
+        it('should validate valid chinese phrase', function () {
+            let account = Account.fromSeed(data.seed);
+
+            expect(account.getRecoveryPhrase('cn')).to.equal(data.phrase_cn);
+        });
+    });
+
+    describe('Validate multiple languages phrase - livenet', function () {
+        before(function () {
+            sdk.init({network: 'livenet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        });
+
+        let data = validData.livenet;
+        it('should validate valid chinese phrase', function () {
+            let account = Account.fromSeed(data.seed);
+
+            expect(account.getRecoveryPhrase('cn')).to.equal(data.phrase_cn);
         });
     });
 

@@ -23,6 +23,12 @@ AssetQueryBuilder.prototype.assetIds = function (assetIds) {
     return this;
 };
 
+AssetQueryBuilder.prototype.pending = function (isPending) {
+    assert(_.isBoolean(isPending), 'Pending must be boolean');
+    this.params.pending = isPending;
+    return this;
+};
+
 AssetQueryBuilder.prototype.limit = function (limit) {
     assert(_.isNumber(parseInt(limit)), 'Limit must be a number');
     this.params.limit = limit;

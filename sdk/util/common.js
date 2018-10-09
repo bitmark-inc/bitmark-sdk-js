@@ -37,10 +37,6 @@ let bufferEqual = function (bufferA, bufferB) {
     return true;
 };
 
-let normalizeStr = function (str) {
-    return _.isString(str) && str.normalize ? str.normalize() : str;
-};
-
 let getSHA3_256 = function (buffer) {
     let resultInArrayBuffer = sha3_256.buffer(buffer);
     let resultInBuffer = new Buffer(resultInArrayBuffer);
@@ -72,17 +68,6 @@ let generateRandomBytesByLength = function (length) {
     return nacl.randomBytes(length);
 };
 
-let addImmutableProperties = function (target, properties) {
-    Object.keys(properties).forEach(function (key) {
-        Object.defineProperty(target, key, {
-            configurable: false,
-            enumerable: true,
-            value: properties[key]
-        });
-    });
-    return target;
-};
-
 let makeSureSDKInitialized = function () {
     const sdkConfig = global.getSDKConfig();
     assert.parameter(sdkConfig, `SDK is not initialized yet`);
@@ -104,21 +89,14 @@ let mapToMetadataString = function (map) {
     return elements.join(metadataSeparator);
 };
 
-let computeAssetId = function (fingerprint) {
-    return getSHA3_512(new Buffer(fingerprint, 'utf8')).toString('hex');
-};
-
 module.exports = {
     getKeyTypeByValue: getKeyTypeByValue,
     generateRandomBytesByLength: generateRandomBytesByLength,
     bufferEqual: bufferEqual,
-    normalizeStr: normalizeStr,
-    addImmutableProperties: addImmutableProperties,
     sha3_256: getSHA3_256,
     sha3_512: getSHA3_512,
     createSHA3_512Stream: createSHA3_512Stream,
     makeSureSDKInitialized: makeSureSDKInitialized,
     generateRandomInteger: generateRandomInteger,
-    mapToMetadataString: mapToMetadataString,
-    computeAssetId: computeAssetId
+    mapToMetadataString: mapToMetadataString
 };

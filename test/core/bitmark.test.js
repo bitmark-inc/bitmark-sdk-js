@@ -11,21 +11,19 @@ const BITMARK_CONSTANTS = require('../../sdk/constant/constants');
 
 let testData = {
     testnet: {
-        seed: '5XEECt18HGBGNET1PpxLhy5CsCLG9jnmM6Q8QGF4U2yGb1DABXZsVeD',
-        phrase: 'accident syrup inquiry you clutch liquid fame upset joke glow best school repeat birth library combine access camera organ trial crazy jeans lizard science',
-        accountNumber: 'ec6yMcJATX6gjNwvqp8rbc4jNEasoUgbfBBGGyV5NvoJ54NXva',
-        publicKey: '58760a01edf5ed4f95bfe977d77a27627cd57a25df5dea885972212c2b1c0e2f',
+        seed: '9J87CAsHdFdoEu6N1unZk3sqhVBkVL8Z8',
+        phrase: 'name gaze apart lamp lift zone believe steak session laptop crowd hill',
+        accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
+        publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
         network: 'testnet',
-        version: 1,
-        existedAssetId: '0e0b4e3bd771811d35a23707ba6197aa1dd5937439a221eaf8e7909309e7b31b6c0e06a1001c261a099abf04c560199db898bc154cf128aa9efa5efd36030c64',
-        existedBitmarkIds: ['5b01acab6102c4bc134e5634d2f673a751c3e9be966e4c2961840271db170bb3', 'c1e671c92f5fdd6bebf6afa7e4a5542f555a3054972bb07a7efdccb37a052c13'],
+        existedAssetId: 'c54294134a632c478e978bcd7088e368828474a0d3716b884dd16c2a397edff357e76f90163061934f2c2acba1a77a5dcf6833beca000992e63e19dfaa5aee2a',
+        existedBitmarkIds: ['889f46d55ddbf6fae2da6fe14ca31b79ab84fe7cd104de735dc8cf9319eb68b5', '0d9a70dbad56820ac538417be3cacdcb643f295a1f2cf4812ad9fb4b56818221'],
         receiverAccount: {
-            accountNumber: 'eujeF5ZBDV3qJyKeHxNqnmJsrc9iN7eHJGECsRuSXvLmnNjsWX',
-            publicKey: '807f4d123c944e0c3ecc95d9bde89916ced6341a8c8cedeb8caafef8f35654e7',
-            seed: '5XEECsXPYA9wDVXMtRMAVrtaWx7WSc5tG2hqj6b8iiz9rARjg2BgA9w',
-            phrase: 'abuse tooth riot whale dance dawn armor patch tube sugar edit clean guilt person lake height tilt wall prosper episode produce spy artist account',
-            network: 'testnet',
-            version: 1
+            seed: '9J87CMoXoKo5CtSauY27xhMffEsWxVJJF',
+            phrase: 'noise tree today erosion symbol cloth slogan fiber acoustic moon tip deposit',
+            accountNumber: 'ezsdHvtQVFhA6JSPSyQZjsSD5UPcBycyrpmTnSAwZsUeujKbSG',
+            publicKey: '8c29b5b58f5e1905b4ea3ac00da6cf0148d39ef3b83be35d81421a7dc8a93eea',
+            network: 'testnet'
         }
     }
 };

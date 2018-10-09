@@ -30,18 +30,12 @@ module.exports = {
         transfer_2_signatures: {value: 0x05}
     },
     seed: {
-        version: 0x01,
         length: 32,
         checksum_length: 4,
-        network_length: 1,
-        magic: new Buffer('5afe', 'hex')
+        header: Buffer.from([0x5a, 0xfe, 0x02])
     },
     core: {
-        length: 32,
-        counter_length: 16,
-        nonce_length: 24
-    },
-    currency: {
-        'bitcoin': 0x01
+        number_of_random_bytes: 16,
+        length: 17
     }
 };
