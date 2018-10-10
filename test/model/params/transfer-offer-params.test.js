@@ -17,13 +17,14 @@ let testData = {
 };
 
 describe('Transfer Offer Params', function () {
+    let network = 'testnet';
     before(function () {
-        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     it('should create transfer offer params with valid account number', async function () {
         expect(function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
             Bitmark.newTransferOfferParams(account.getAccountNumber());
         }).to.not.throw();
     });

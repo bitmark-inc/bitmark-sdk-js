@@ -21,15 +21,16 @@ let testData = {
 };
 
 describe('Asset', function () {
+    let network = 'testnet';
     before(function () {
-        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     describe('Register Asset', function () {
         this.timeout(15000);
 
         it('should register new asset', async function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
             let testFile = './test/tmp/myfile.test';
             fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
 
@@ -46,7 +47,7 @@ describe('Asset', function () {
         });
 
         it('should register existing asset', async function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
             let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('name', {author: 'test'});
@@ -60,7 +61,7 @@ describe('Asset', function () {
         });
 
         it('should not re-register existing asset with different asset name', async function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
             let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('another name', {author: 'test'});
@@ -76,7 +77,7 @@ describe('Asset', function () {
         });
 
         it('should not re-register existing asset with different metadata name', async function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
             let testFile = './test/tmp/undelete.test';
 
             let registrationParams = Asset.newRegistrationParams('name', {author: 'test', new_attribute: 'new_attribute'});
@@ -97,13 +98,13 @@ describe('Asset', function () {
 
         describe('Query assets - List', function () {
             it('should get assets by registrant', async function () {
-                let assetQueryParams = Asset.newAssetQueryBuilder().registeredBy(testData.testnet.accountNumber).build();
+                let assetQueryParams = Asset.newAssetQueryBuilder().registeredBy(testData[network].accountNumber).build();
                 let response = await Asset.list(assetQueryParams);
                 let assets = response.assets;
 
                 expect(assets).to.be.an('array');
                 assets.forEach((tx) => {
-                    expect(tx.registrant).to.be.equal(testData.testnet.accountNumber);
+                    expect(tx.registrant).to.be.equal(testData[network].accountNumber);
                 });
             });
 
@@ -116,7 +117,7 @@ describe('Asset', function () {
             });
 
             it('should get assets by asset ids', async function () {
-                let assetIds = testData.testnet.existedAssetIds;
+                let assetIds = testData[network].existedAssetIds;
                 let assetQueryParams = Asset.newAssetQueryBuilder().assetIds(assetIds).pending(true).build();
                 let response = await Asset.list(assetQueryParams);
                 let assets = response.assets;

@@ -19,16 +19,17 @@ let testData = {
 };
 
 describe('Issuance Params', function () {
+    let network = 'testnet';
     before(function () {
-        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     it('should create issuance params with valid quality', async function () {
         expect(function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
 
             let quality = 10;
-            let assetId = testData.testnet.existedAssetId;
+            let assetId = testData[network].existedAssetId;
             let issuanceParams = Bitmark.newIssuanceParams(assetId, quality);
             issuanceParams.sign(account);
         }).to.not.throw();
@@ -36,9 +37,9 @@ describe('Issuance Params', function () {
 
     it('should create issuance params with valid nonces array', async function () {
         expect(function () {
-            let account = Account.fromSeed(testData.testnet.seed);
+            let account = Account.fromSeed(testData[network].seed);
 
-            let assetId = testData.testnet.existedAssetId;
+            let assetId = testData[network].existedAssetId;
             let issuanceParams = Bitmark.newIssuanceParams(assetId, [1, 2, 3, 4]);
             issuanceParams.sign(account);
         }).to.not.throw();
@@ -52,7 +53,7 @@ describe('Issuance Params', function () {
 
     it('should not create issuance params without quality or nonces array', function () {
         expect(function () {
-            let assetId = testData.testnet.existedAssetId;
+            let assetId = testData[network].existedAssetId;
             Bitmark.newIssuanceParams(assetId);
         }).to.throw();
     });
@@ -60,7 +61,7 @@ describe('Issuance Params', function () {
     it('should not create issuance params with quality less than 1', function () {
         expect(function () {
             let quality = -1;
-            let assetId = testData.testnet.existedAssetId;
+            let assetId = testData[network].existedAssetId;
             Bitmark.newIssuanceParams(assetId, quality);
         }).to.throw();
     });
@@ -68,7 +69,7 @@ describe('Issuance Params', function () {
     it('should not create issuance with quality greater than 100', function () {
         expect(function () {
             let quality = -1;
-            let assetId = testData.testnet.existedAssetId;
+            let assetId = testData[network].existedAssetId;
             Bitmark.newIssuanceParams(assetId, quality);
         }).to.throw();
     });

@@ -18,8 +18,9 @@ let testData = {
 };
 
 describe('Transaction', function () {
+    let network = 'testnet';
     before(function () {
-        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     describe('Query transaction', function () {
@@ -27,35 +28,35 @@ describe('Transaction', function () {
 
         describe('Query transactions - List', function () {
             it('should get transactions by owner', async function () {
-                let transactionQueryParams = Transaction.newTransactionQueryBuilder().ownedBy(testData.testnet.accountNumber).build();
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().ownedBy(testData[network].accountNumber).build();
                 let response = await Transaction.list(transactionQueryParams);
                 let txs = response.txs;
 
                 expect(txs).to.be.an('array');
                 txs.forEach((tx) => {
-                    expect(tx.owner).to.be.equal(testData.testnet.accountNumber);
+                    expect(tx.owner).to.be.equal(testData[network].accountNumber);
                 });
             });
 
             it('should get transactions by asset id', async function () {
-                let transactionQueryParams = Transaction.newTransactionQueryBuilder().referencedAsset(testData.testnet.existedAssetId).build();
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().referencedAsset(testData[network].existedAssetId).build();
                 let response = await Transaction.list(transactionQueryParams);
                 let txs = response.txs;
 
                 expect(txs).to.be.an('array');
                 txs.forEach((tx) => {
-                    expect(tx.asset_id).to.be.equal(testData.testnet.existedAssetId);
+                    expect(tx.asset_id).to.be.equal(testData[network].existedAssetId);
                 });
             });
 
             it('should get transactions by bitmark id', async function () {
-                let transactionQueryParams = Transaction.newTransactionQueryBuilder().referencedBitmark(testData.testnet.existedBitmarkId).build();
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().referencedBitmark(testData[network].existedBitmarkId).build();
                 let response = await Transaction.list(transactionQueryParams);
                 let txs = response.txs;
 
                 expect(txs).to.be.an('array');
                 txs.forEach((tx) => {
-                    expect(tx.bitmark_id).to.be.equal(testData.testnet.existedBitmarkId);
+                    expect(tx.bitmark_id).to.be.equal(testData[network].existedBitmarkId);
                 });
             });
 

@@ -19,8 +19,9 @@ let testData = {
 };
 
 describe('Registration Params', function () {
+    let network = 'testnet';
     before(function () {
-        sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+        sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
     it('should create registration params with valid info', function () {
@@ -54,7 +55,7 @@ describe('Registration Params', function () {
     });
 
     it('should set fingerprint with valid info', async function () {
-        let account = Account.fromSeed(testData.testnet.seed);
+        let account = Account.fromSeed(testData[network].seed);
         let testFile = './test/tmp/myfile.test';
         fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
 
