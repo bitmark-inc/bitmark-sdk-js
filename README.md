@@ -7,7 +7,7 @@
 
 ## Prerequisites
 
-- Node.js version 7.6+
+- Node.js version 8.9.4+
 
 ## Installing the SDK
 
@@ -23,7 +23,7 @@ Please refer to our [SDK Document](https://sdk-docs.bitmark.com/).
 
 # License
 
-Copyright (c) 2014-2017 Bitmark Inc (support@bitmark.com).
+Copyright (c) 2014-2018 Bitmark Inc (support@bitmark.com).
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
