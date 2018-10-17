@@ -151,7 +151,7 @@ describe('Bitmark Core', function () {
         })
     });
 
-    it('Core To Bas58', function () {
+    it('Core To Base58', function () {
         testData.forEach(item => {
             let coreFromHex = Buffer.from(item.hex + '0', 'hex');
             let base58 = bitmarkCore.exportToBase58(coreFromHex);
@@ -159,7 +159,7 @@ describe('Bitmark Core', function () {
         })
     });
 
-    it('Bas58 To Core', function () {
+    it('Base58 To Core', function () {
         testData.forEach(item => {
             let coreFromHex = Buffer.from(item.hex + '0', 'hex');
             let coreFromBase58 = bitmarkCore.base58ToCore(item.base58);
