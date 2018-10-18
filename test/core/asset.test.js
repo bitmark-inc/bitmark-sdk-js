@@ -16,7 +16,7 @@ let testData = {
         accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
         publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
         network: 'testnet',
-        existedAssetIds: ['c54294134a632c478e978bcd7088e368828474a0d3716b884dd16c2a397edff357e76f90163061934f2c2acba1a77a5dcf6833beca000992e63e19dfaa5aee2a', '9d12167d413519e08867efa2ab3fc4293301ea96ba35bebbe2f77540d294993de0bbe163a23f9cee2b6d9188c5a25a1d97425fabfa60b66d483c6f3a205f4932']
+        existedAssetIds: ['c54294134a632c478e978bcd7088e368828474a0d3716b884dd16c2a397edff357e76f90163061934f2c2acba1a77a5dcf6833beca000992e63e19dfaa5aee2a', '81c8b35d99bf89e561153a774bbbb57dde490be1cad98fe6e1e1cbb3b3e2520a00e854882fa5dfaf1118630ecca53171a74df24383fe44fa6a571fba9d235738']
     }
 };
 
