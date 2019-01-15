@@ -173,6 +173,30 @@ describe('Bitmark', function () {
                 expect(response.bitmarks).to.be.an('array');
                 expect(response.bitmarks.length).to.be.equal(limit);
             });
+
+            it('should get bitmarks with at and to (later)', async function () {
+                let limit = 10;
+                let at = 5;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().at(at).to(BITMARK_CONSTANTS.QUERY_TO_DIRECTIONS.LATER).limit(limit).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((bitmark) => {
+                    expect(bitmark.offset >= at);
+                });
+            });
+
+            it('should get bitmarks with at and to (earlier)', async function () {
+                let limit = 10;
+                let at = 5;
+                let bitmarkQueryParams = Bitmark.newBitmarkQueryBuilder().at(at).to(BITMARK_CONSTANTS.QUERY_TO_DIRECTIONS.EARLIER).limit(limit).build();
+                let response = await Bitmark.list(bitmarkQueryParams);
+                let bitmarks = response.bitmarks;
+                expect(bitmarks).to.be.an('array');
+                bitmarks.forEach((bitmark) => {
+                    expect(bitmark.offset <= at);
+                });
+            });
         });
 
         describe('Query bitmark - Get', function () {

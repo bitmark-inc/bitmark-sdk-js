@@ -10,5 +10,9 @@ module.exports = {
         ACCEPT: 'accept',
         REJECT: 'reject',
         CANCEL: 'cancel'
+    },
+    QUERY_TO_DIRECTIONS: {
+        LATER: 'later',
+        EARLIER: 'earlier',
     }
 };

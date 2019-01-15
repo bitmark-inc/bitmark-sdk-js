@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sdk = require('../../index');
 const Transaction = sdk.Transaction;
 const CONSTANTS = require('../constant/constants');
+const BITMARK_CONSTANTS = require('../../sdk/constant/constants');
 
 let testData = {
     testnet: {
@@ -73,6 +74,30 @@ describe('Transaction', function () {
                 let response = await Transaction.list(transactionQueryParams);
                 expect(response.txs).to.be.an('array');
                 expect(response.txs.length).to.be.equal(limit);
+            });
+
+            it('should get transactions with at and to (later)', async function () {
+                let limit = 1;
+                let at = 5;
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().at(at).to(BITMARK_CONSTANTS.QUERY_TO_DIRECTIONS.LATER).limit(limit).build();
+                let response = await Transaction.list(transactionQueryParams);
+                let txs = response.txs;
+                expect(txs).to.be.an('array');
+                txs.forEach((bitmark) => {
+                    expect(bitmark.offset >= at);
+                });
+            });
+
+            it('should get transactions with at and to (earlier)', async function () {
+                let limit = 1;
+                let at = 5;
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().at(at).to(BITMARK_CONSTANTS.QUERY_TO_DIRECTIONS.EARLIER).limit(limit).build();
+                let response = await Transaction.list(transactionQueryParams);
+                let txs = response.txs;
+                expect(txs).to.be.an('array');
+                txs.forEach((bitmark) => {
+                    expect(bitmark.offset <= at);
+                });
             });
         });
 
