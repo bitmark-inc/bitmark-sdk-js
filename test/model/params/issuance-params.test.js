@@ -24,23 +24,13 @@ describe('Issuance Params', function () {
         sdk.init({network: network, apiToken: CONSTANTS.TEST_API_TOKEN});
     });
 
-    it('should create issuance params with valid quality', async function () {
+    it('should create issuance params with valid quantity', async function () {
         expect(function () {
             let account = Account.fromSeed(testData[network].seed);
 
-            let quality = 10;
+            let quantity = 10;
             let assetId = testData[network].existedAssetId;
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, quality);
-            issuanceParams.sign(account);
-        }).to.not.throw();
-    });
-
-    it('should create issuance params with valid nonces array', async function () {
-        expect(function () {
-            let account = Account.fromSeed(testData[network].seed);
-
-            let assetId = testData[network].existedAssetId;
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, [1, 2, 3, 4]);
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, quantity);
             issuanceParams.sign(account);
         }).to.not.throw();
     });
@@ -51,26 +41,26 @@ describe('Issuance Params', function () {
         }).to.throw();
     });
 
-    it('should not create issuance params without quality or nonces array', function () {
+    it('should not create issuance params without quantity', function () {
         expect(function () {
             let assetId = testData[network].existedAssetId;
             Bitmark.newIssuanceParams(assetId);
         }).to.throw();
     });
 
-    it('should not create issuance params with quality less than 1', function () {
+    it('should not create issuance params with quantity less than 1', function () {
         expect(function () {
-            let quality = -1;
+            let quantity = -1;
             let assetId = testData[network].existedAssetId;
-            Bitmark.newIssuanceParams(assetId, quality);
+            Bitmark.newIssuanceParams(assetId, quantity);
         }).to.throw();
     });
 
-    it('should not create issuance with quality greater than 100', function () {
+    it('should not create issuance with quantity greater than 100', function () {
         expect(function () {
-            let quality = -1;
+            let quantity = -1;
             let assetId = testData[network].existedAssetId;
-            Bitmark.newIssuanceParams(assetId, quality);
+            Bitmark.newIssuanceParams(assetId, quantity);
         }).to.throw();
     });
 });

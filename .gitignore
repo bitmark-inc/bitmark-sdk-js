@@ -6,3 +6,4 @@ tmp*.js
 tmp*.txt
 npm-debug.log
 coverage/
+package-lock.json

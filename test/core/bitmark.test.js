@@ -1,13 +1,15 @@
 const chai = require('chai');
 const expect = chai.expect;
 const assertion = chai.assertion;
+const fs = require('fs');
 
 const sdk = require('../../index');
 const Account = sdk.Account;
 const Bitmark = sdk.Bitmark;
-const common = require('../../sdk/util/common');
+const Asset = sdk.Asset;
 const CONSTANTS = require('../constant/constants');
 const BITMARK_CONSTANTS = require('../../sdk/constant/constants');
+const common = require('../../sdk/util/common');
 
 let testData = {
     testnet: {
@@ -37,7 +39,7 @@ describe('Bitmark', function () {
     describe('Issue Bitmarks', function () {
         this.timeout(15000);
 
-        it('should issue bitmarks with valid quantity', async function () {
+        it('should issue bitmarks with valid quantity and existing asset', async function () {
             let account = Account.fromSeed(testData[network].seed);
 
             let quantity = 10;
@@ -51,17 +53,27 @@ describe('Bitmark', function () {
             expect(bitmarks[0]).to.have.property('id');
         });
 
-        it('should issue bitmarks with valid nonces array', async function () {
+        it('should issue bitmarks with valid quantity and new asset', async function () {
             let account = Account.fromSeed(testData[network].seed);
 
-            let quantity = 10;
-            let nonces = [];
-            for (let i = 0; i < quantity; i++) {
-                nonces.push(common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER));
-            }
+            // Register new asset
+            let testFile = './test/tmp/myfile.test';
+            fs.writeFileSync(testFile, common.generateRandomBytesByLength(1000));
 
-            let assetId = testData[network].existedAssetId;
-            let issuanceParams = Bitmark.newIssuanceParams(assetId, nonces);
+            let registrationParams = Asset.newRegistrationParams('name', {});
+            await registrationParams.setFingerprint(testFile);
+            registrationParams.sign(account);
+
+            let assetResponse = (await Asset.register(registrationParams)).assets;
+            fs.unlinkSync(testFile);
+
+            expect(assetResponse).to.be.an('array');
+            expect(assetResponse[0]).to.have.property('id');
+
+            // Issue bitmarks
+            let quantity = 10;
+            let assetId = assetResponse[0].id;
+            let issuanceParams = Bitmark.newIssuanceParams(assetId, quantity);
             issuanceParams.sign(account);
 
             let bitmarks = (await Bitmark.issue(issuanceParams)).bitmarks;
@@ -82,7 +94,7 @@ describe('Bitmark', function () {
                 assertion.fail();
                 done();
             }).catch(error => {
-                expect(error.response.status).to.be.equal(400);
+                expect(error.response.status).to.be.equal(404);
                 done();
             });
         });

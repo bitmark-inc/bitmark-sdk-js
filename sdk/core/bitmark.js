@@ -6,6 +6,7 @@ const SDKError = require('../util/sdk-error');
 const IssuanceParams = require('../model/params/issuance-params');
 const BitmarkQueryBuilder = require('../model/query-builder/bitmark-query-builder');
 const apiService = require('../service/api-service');
+const Asset = require('./asset');
 
 const ISSUE_API_NAME = 'issue';
 const ISSUE_API_METHOD = 'post';
@@ -35,6 +36,12 @@ Bitmark.newIssuanceParams = function (assetId, param) {
 
 Bitmark.issue = async function (issuanceParams) {
     assert.parameter(issuanceParams instanceof IssuanceParams, `Issuance Params is not valid`);
+
+    let assetResponse = await Asset.get(issuanceParams.assetId);
+    if (assetResponse.asset && assetResponse.asset.status !== 'confirmed') {
+        issuanceParams.nonces = issuanceParams.noncesStartWithZero;
+        issuanceParams.signatures = issuanceParams.signaturesWithZeroNonce;
+    }
 
     let requestBody = {};
     requestBody.issues = issuanceParams.toJSON();

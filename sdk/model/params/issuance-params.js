@@ -5,46 +5,59 @@ const assert = require('../../util/assert');
 const common = require('../../util/common');
 const varint = require('../../util/varint');
 const binary = require('../../util/binary');
-const SDKError = require('../../util/sdk-error');
 const BITMARK_CONFIG = require('../../config/bitmark-config');
 const CONSTANTS = require('../../constant/constants');
 
 
 // CONSTRUCTOR
-let IssuanceParams = function (assetId, param) {
+let IssuanceParams = function (assetId, quantity) {
     assert.parameter(_.isString(assetId), 'Asset Id must be a string');
-    assert.parameter(param !== undefined, 'Param is required');
-    assert(isValidNumberOfBitmarks(param), `The number of bitmarks must be greater than 1 and less than or equal ${CONSTANTS.ISSUE_BATCH_QUANTITY}`);
+    assert.parameter(_.isNumber(quantity), 'Quantity must be a number');
+    assert(isValidNumberOfBitmarks(quantity), `The number of bitmarks must be greater than 1 and less than or equal ${CONSTANTS.ISSUE_BATCH_QUANTITY}`);
 
     this.assetId = assetId;
-
-    if (_.isNumber(param)) {
-        this.quantity = param;
-    } else if (param instanceof Array) {
-        this.nonces = param;
-    } else {
-        throw SDKError.invalidParameter('invalid param');
-    }
+    this.quantity = quantity;
 };
 
 
 // PROTOTYPE METHODS
 IssuanceParams.prototype.sign = function (account) {
-    if (!this.nonces) {
-        this.nonces = [];
-        for (let i = 0; i < this.quantity; i++) {
-            this.nonces.push(common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER));
+    this.nonces = [];
+    this.noncesStartWithZero = [];
+
+    for (let i = 0; i < this.quantity; i++) {
+        let randomNonce = common.generateRandomInteger(1, Number.MAX_SAFE_INTEGER);
+
+        this.nonces.push(randomNonce);
+
+        if (i == 0) {
+            this.noncesStartWithZero.push(0);
+        } else {
+            this.noncesStartWithZero.push(randomNonce);
         }
     }
 
-    this.signatures = [];
-    for (let i = 0; i < this.nonces.length; i++) {
+    const packageParams = (nonce) => {
         let packagedParamsBuffer;
         packagedParamsBuffer = varint.encode(BITMARK_CONFIG.record.issue.value);
         packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, new Buffer(this.assetId, 'hex'));
         packagedParamsBuffer = binary.appendBuffer(packagedParamsBuffer, account.packagePublicKey());
-        packagedParamsBuffer = Buffer.concat([packagedParamsBuffer, varint.encode(this.nonces[i])]);
-        this.signatures.push(account.sign(packagedParamsBuffer));
+        packagedParamsBuffer = Buffer.concat([packagedParamsBuffer, varint.encode(nonce)]);
+
+        return packagedParamsBuffer;
+    };
+
+    this.signatures = [];
+    this.signaturesWithZeroNonce = [];
+    for (let i = 0; i < this.nonces.length; i++) {
+        let signature = account.sign(packageParams(this.nonces[i]));
+        this.signatures.push(signature);
+
+        if (i == 0) {
+            this.signaturesWithZeroNonce.push(account.sign(packageParams(this.noncesStartWithZero[0])));
+        } else {
+            this.signaturesWithZeroNonce.push(signature);
+        }
     }
 
     this.owner = account.getAccountNumber();
@@ -70,16 +83,8 @@ IssuanceParams.prototype.toJSON = function () {
 
 
 // INTERNAL METHODS
-function isValidNumberOfBitmarks(param) {
-    let quality = 0;
-
-    if (_.isNumber(param)) {
-        quality = param;
-    } else if (param instanceof Array) {
-        quality = param.length;
-    }
-
-    return quality > 0 && quality <= CONSTANTS.ISSUE_BATCH_QUANTITY;
+function isValidNumberOfBitmarks(quantity) {
+    return quantity > 0 && quantity <= CONSTANTS.ISSUE_BATCH_QUANTITY;
 }
 
 

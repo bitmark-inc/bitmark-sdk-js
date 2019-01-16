@@ -1,5 +1,6 @@
 'use strict';
 const axios = require('axios');
+const qs = require('qs');
 
 const NETWORKS_CONFIG = require('../config/network-config');
 const assert = require('../util/assert.js');
@@ -30,6 +31,9 @@ let sendRequest = async (options) => {
 
     if (method === 'GET') {
         requestOptions.params = params;
+        requestOptions.paramsSerializer = function (params) {
+            return qs.stringify(params, {arrayFormat: 'repeat'})
+        }
     } else if (method === 'POST') {
         requestOptions.data = params;
     } else if (method === 'PATCH') {

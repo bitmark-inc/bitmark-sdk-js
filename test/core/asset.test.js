@@ -57,7 +57,6 @@ describe('Asset', function () {
             let response = (await Asset.register(registrationParams)).assets;
             expect(response).to.be.an('array');
             expect(response[0]).to.have.property('id');
-            expect(response[0].duplicate).to.be.equal(true);
         });
 
         it('should not re-register existing asset with different asset name', async function () {
