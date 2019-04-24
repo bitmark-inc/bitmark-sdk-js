@@ -14,5 +14,6 @@ module.exports = exports = {
     Account: require('./sdk/core/account'),
     Asset: require('./sdk/core/asset'),
     Bitmark: require('./sdk/core/bitmark'),
-    Transaction: require('./sdk/core/transaction')
+    Transaction: require('./sdk/core/transaction'),
+    Constants: require('./sdk/constant/constants')
 };
