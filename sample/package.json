@@ -1,0 +1,12 @@
+{
+  "name": "bitmark-sdk-js-sample",
+  "version": "0.0.1",
+  "author": "Bitmark Inc <support@bitmark.com>",
+  "license": "ISC",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "bitmark-sdk": "^2.0.2"
+  }
+}
