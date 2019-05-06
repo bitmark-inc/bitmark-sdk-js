@@ -1,35 +1,44 @@
 const sdk = require('bitmark-sdk');
 const Bitmark = sdk.Bitmark;
 
-const transferOneSignature = async (account, transferInfo) => {
+const transferOneSignature = async (sender, transferInfo) => {
     let transferParams = Bitmark.newTransferParams(transferInfo.receiverAccountNumber);
     await transferParams.fromBitmark(transferInfo.bitmarkId);
-    transferParams.sign(account);
+    transferParams.sign(sender);
 
     let response = await Bitmark.transfer(transferParams);
     return response;
 };
 
-const sendTransferOffer = async (account, transferOfferInfo) => {
+const sendTransferOffer = async (sender, transferOfferInfo) => {
     let transferOfferParams = Bitmark.newTransferOfferParams(transferOfferInfo.receiverAccountNumber);
     await transferOfferParams.fromBitmark(transferOfferInfo.bitmarkId);
-    transferOfferParams.sign(account);
+    transferOfferParams.sign(sender);
 
     let response = await Bitmark.offer(transferOfferParams);
     return response;
 };
 
-const respondToTransferOffer = async (account, responseInfo) => {
+const respondToTransferOffer = async (receiver, responseInfo) => {
     let transferOfferResponseParams = Bitmark.newTransferResponseParams(responseInfo.confirmation);
     await transferOfferResponseParams.fromBitmark(responseInfo.bitmarkId);
-    transferOfferResponseParams.sign(account);
+    transferOfferResponseParams.sign(receiver);
 
-    let response = await Bitmark.response(transferOfferResponseParams, account);
+    let response = await Bitmark.response(transferOfferResponseParams, receiver);
+    return response;
+};
+
+const cancelTransferOffer = async (sender, bitmarkId) => {
+    let transferOfferResponseParams = Bitmark.newTransferResponseParams('cancel');
+    await transferOfferResponseParams.fromBitmark(bitmarkId);
+
+    let response = await Bitmark.response(transferOfferResponseParams, sender);
     return response;
 };
 
 module.exports = {
     transferOneSignature,
     sendTransferOffer,
-    respondToTransferOffer
+    respondToTransferOffer,
+    cancelTransferOffer
 };

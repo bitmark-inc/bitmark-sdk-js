@@ -1,5 +1,6 @@
 const sdk = require('bitmark-sdk');
 const Bitmark = sdk.Bitmark;
+const Asset = sdk.Asset;
 const Transaction = sdk.Transaction;
 
 const queryBitmarks = async (bitmarkQueryParams) => {
@@ -12,6 +13,18 @@ const queryBitmarks = async (bitmarkQueryParams) => {
 const queryBitmarkById = async (bitmarkId) => {
     let response = await Bitmark.get(bitmarkId);
     return response && response.bitmark;
+};
+
+const queryAssets = async (assetQueryParams) => {
+    let response = await Asset.list(assetQueryParams);
+    let assets = response.assets;
+
+    return assets;
+};
+
+const queryAssetById = async (assetId) => {
+    let response = await Asset.get(assetId);
+    return response && response.asset;
 };
 
 const queryTransactions = async (transactionQueryParams) => {
@@ -28,6 +41,8 @@ const queryTransactionById = async (txId) => {
 module.exports = {
     queryBitmarks,
     queryBitmarkById,
+    queryAssets,
+    queryAssetById,
     queryTransactions,
     queryTransactionById
 };

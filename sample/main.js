@@ -1,6 +1,7 @@
 const sdk = require('bitmark-sdk');
 const Bitmark = sdk.Bitmark;
 const Transaction = sdk.Transaction;
+const Asset = sdk.Asset;
 
 const API_TOKEN = 'YOUR_API_TOKEN';
 const NETWORK_MODE = 'testnet'; // testnet or livetest
@@ -9,28 +10,31 @@ const {
     createNewAccount,
     getAccountFromRecoveryPhrase,
     getRecoveryPhraseFromAccount
-} = require('./samples/account');
+} = require('./samples/account-sample');
 
 const {
     registerAsset
-} = require('./samples/register-asset');
+} = require('./samples/register-asset-sample');
 
 const {
     issueBitmarks
-} = require('./samples/issue-bitmark');
+} = require('./samples/issue-bitmark-sample');
 
 const {
     transferOneSignature,
     sendTransferOffer,
-    respondToTransferOffer
-} = require('./samples/transfer-bitmark');
+    respondToTransferOffer,
+    cancelTransferOffer
+} = require('./samples/transfer-bitmark-sample');
 
 const {
     queryBitmarks,
     queryBitmarkById,
     queryTransactions,
-    queryTransactionById
-} = require('./samples/query');
+    queryTransactionById,
+    queryAssets,
+    queryAssetById
+} = require('./samples/query-sample');
 
 
 const main = async () => {
@@ -86,7 +90,7 @@ const main = async () => {
     // 3. QUERY
     //////////////////////////////////////
 
-    // 3.1 Query bitmark/bitmarks
+    // 3.1 Query bitmarks/bitmark
 
     /**
      * 3.1.1 Query bitmarks
@@ -99,7 +103,7 @@ const main = async () => {
     let bitmarkId = 'BITMARK_ID';
     let bitmark = await queryBitmarkById(bitmarkId);
 
-    // 3.2 Query transaction/transactions
+    // 3.2 Query transactions/transaction
 
     /**
      * 3.2.1 Query transactions
@@ -112,6 +116,18 @@ const main = async () => {
     const txId = 'TRANSACTION_ID';
     let tx = await queryTransactionById(txId);
 
+    // 3.3 Query assets/asset
+    /**
+     * 3.3.1 Query assets
+     * Ex: Query assets which you registered
+     */
+    let assetQueryParams = Asset.newAssetQueryBuilder().registeredBy(account.getAccountNumber()).build();
+    let yourAssets = await queryAssets(assetQueryParams);
+
+    // 3.3.2 Query asset
+    const assetId = 'ASSET_ID';
+    let asset = await queryAssetById(assetId);
+
 
     //////////////////////////////////////
     // 4. TRANSFER BITMARKS
@@ -120,7 +136,7 @@ const main = async () => {
     /**
      * 4.1 Transfer bitmark using 1 signature
      * You can transfer your bitmark to another account without their acceptance.
-     * Note: Your bitmark must be confirmed on Bitmark block-chain before you can transfer it. You can query bitmark by bitmark ID to check it's status.
+     * Note: Your bitmark must be confirmed on Bitmark block-chain(status=settled) before you can transfer it. You can query bitmark by bitmark ID to check it's status.
      */
     bitmarkId = 'YOUR_BITMARK_ID';
     let receiverAccountNumber = 'ACCOUNT_NUMBER_YOU_WANT_TO_TRANSFER_BITMARK_TO';
@@ -133,19 +149,26 @@ const main = async () => {
      * a. You(sender): Send a transfer offer to receiver
      * b. Receiver: Accept/Reject your transfer offer
      * Notes:
-     * 1. Your bitmark must be confirmed on Bitmark block-chain before you can transfer it. You can query bitmark by bitmark ID to check it's status.
+     * 1. Your bitmark must be confirmed on Bitmark block-chain(status=settled) before you can transfer it. You can query bitmark by bitmark ID to check it's status.
      * 2. You can cancel your transfer offer if the receiver doesn't accept/reject it yet.
      */
+
     // YOUR CODE: Send transfer offer to receiver
     bitmarkId = 'YOUR_BITMARK_ID';
     receiverAccountNumber = 'ACCOUNT_NUMBER_YOU_WANT_TO_TRANSFER_BITMARK_TO';
     let offerResponse = await sendTransferOffer(account, {bitmarkId, receiverAccountNumber});
 
-    // RECEIVER's CODE: Confirm(accept/reject) your transfer offer
+    // 4.2.1 Receiver respond(accept/reject) your transfer offer
+    // RECEIVER's CODE
     bitmarkId = 'WILL_RECEIVE_BITMARK_ID';
     const receiverAccount = getAccountFromRecoveryPhrase('RECEIVER_RECOVERY_PHRASE');
     const confirmation = 'accept'; // accept or reject
     let confirmationResponse = await respondToTransferOffer(receiverAccount, {bitmarkId, confirmation});
+
+    // 4.2.2 You cancel your own transfer offer
+    // YOUR CODE
+    bitmarkId = "YOUR_BITMARK_ID_SENT";
+    let cancelResponse = cancelTransferOffer(account, bitmarkId);
 };
 
 main();
