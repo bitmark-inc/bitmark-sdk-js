@@ -11,7 +11,8 @@ const packageJson = require('../../package.json');
 
 let sendRequest = async (options) => {
     common.makeSureSDKInitialized();
-    let sdkConfig = global.getSDKConfig();
+    const sdkConfig = global.getSDKConfig();
+    const sdkLogger = global.getSDKLogger();
 
     options = options || {};
     let method = options.method;
@@ -21,7 +22,7 @@ let sendRequest = async (options) => {
     let network = NETWORKS_CONFIG[sdkConfig.network];
     let apiVersion = options.apiVersion || network.api_version;
 
-    assert(network, 'unrecognized network', SDKError.INVALID_PARAMETERS_ERROR_CODE);
+    assert(network, 'unrecognized network', SDKError.INVALID_PARAMETER_ERROR_CODE);
     assert(apiUrl, 'missing api url', SDKError.SERVICE_FAILED);
 
     let url = `${network.api_server}/${apiVersion}/${apiUrl}`;
@@ -29,6 +30,10 @@ let sendRequest = async (options) => {
     method = method.toUpperCase();
     requestOptions.method = method;
     requestOptions.url = url;
+
+    if (sdkLogger) {
+        sdkLogger.log(sdkLogger.level, `${requestOptions.method} ${requestOptions.url}`);
+    }
 
     if (method === 'GET') {
         requestOptions.params = params;
@@ -54,6 +59,11 @@ let sendRequest = async (options) => {
     }
 
     let response = await axios(requestOptions);
+
+    if (sdkLogger) {
+        sdkLogger.log(sdkLogger.level, `${response.status} ${response.statusText}`);
+    }
+
     return response.data;
 };
 

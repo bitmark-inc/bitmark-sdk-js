@@ -1,4 +1,5 @@
 'use strict';
+const fs = require('fs');
 const sha3_256 = require('js-sha3').sha3_256;
 const sha3_512 = require('js-sha3').sha3_512;
 const nacl = require('tweetnacl-nodewrap');
@@ -89,14 +90,22 @@ let mapToMetadataString = function (map) {
     return elements.join(metadataSeparator);
 };
 
+let mkdirSync = function (folderPath) {
+    try {
+        fs.mkdirSync(folderPath);
+    } catch (err) {
+    }
+};
+
 module.exports = {
-    getKeyTypeByValue: getKeyTypeByValue,
-    generateRandomBytesByLength: generateRandomBytesByLength,
-    bufferEqual: bufferEqual,
+    getKeyTypeByValue,
+    generateRandomBytesByLength,
+    bufferEqual,
     sha3_256: getSHA3_256,
     sha3_512: getSHA3_512,
-    createSHA3_512Stream: createSHA3_512Stream,
-    makeSureSDKInitialized: makeSureSDKInitialized,
-    generateRandomInteger: generateRandomInteger,
-    mapToMetadataString: mapToMetadataString
+    createSHA3_512Stream,
+    makeSureSDKInitialized,
+    generateRandomInteger,
+    mapToMetadataString,
+    mkdirSync
 };

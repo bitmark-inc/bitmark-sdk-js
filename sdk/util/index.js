@@ -6,5 +6,6 @@ module.exports = {
     fingerprint: require('./fingerprint'),
     binary: require('./binary'),
     networkUtil: require('./network'),
-    bitmarkCore: require('./bitmark-core')
+    bitmarkCore: require('./bitmark-core'),
+    logger: require('./logger')
 };

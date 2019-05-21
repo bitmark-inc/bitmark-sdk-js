@@ -34,7 +34,8 @@
     "js-sha3": "^0.8.0",
     "lodash": "^4.17.11",
     "qs": "^6.6.0",
-    "tweetnacl-nodewrap": "^0.1.9"
+    "tweetnacl-nodewrap": "^0.1.9",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
