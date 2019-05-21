@@ -6,6 +6,7 @@ const NETWORKS_CONFIG = require('../config/network-config');
 const assert = require('../util/assert.js');
 const common = require('../util/common');
 const SDKError = require('../util/sdk-error');
+const packageJson = require('../../package.json');
 
 
 let sendRequest = async (options) => {
@@ -43,7 +44,11 @@ let sendRequest = async (options) => {
     }
 
     // Headers
-    requestOptions.headers = {'api-token': sdkConfig.apiToken};
+    requestOptions.headers = {
+        'api-token': sdkConfig.apiToken,
+        'user-agent': `${packageJson.name}/${packageJson.version} ${process.platform} ${process.version}`
+    };
+
     if (headers) {
         Object.assign(requestOptions.headers, headers);
     }

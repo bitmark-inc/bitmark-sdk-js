@@ -1,13 +1,12 @@
 {
-  "name": "bitmark-sdk",
+  "name": "bitmark-js-sdk",
   "version": "2.0.2",
   "description": "Bitmark SDK",
   "main": "index.js",
   "directories": {
-    "example": "example",
+    "sample": "sample",
     "test": "test",
-    "lib": "lib",
-    "doc": "doc"
+    "sdk": "sdk"
   },
   "scripts": {
     "test": "_mocha \"./test/**/**.test.js\"",
