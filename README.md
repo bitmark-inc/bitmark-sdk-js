@@ -7,7 +7,7 @@
 
 ## Prerequisites
 
-- Node.js version 8.9.4+
+- Node.js version 7.6.0+
 
 ## Installing the SDK
 
