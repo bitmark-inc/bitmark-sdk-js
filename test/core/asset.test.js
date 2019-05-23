@@ -43,7 +43,6 @@ describe('Asset', function () {
 
             expect(response).to.be.an('array');
             expect(response[0]).to.have.property('id');
-            expect(response[0].duplicate).to.be.equal(false);
         });
 
         it('should register existing asset', async function () {
@@ -54,9 +53,13 @@ describe('Asset', function () {
             await registrationParams.setFingerprint(testFile);
             registrationParams.sign(account);
 
-            let response = (await Asset.register(registrationParams)).assets;
-            expect(response).to.be.an('array');
-            expect(response[0]).to.have.property('id');
+            try {
+                let response = (await Asset.register(registrationParams)).assets;
+                expect(response).to.be.an('array');
+                expect(response[0]).to.have.property('id');
+            } catch (error) {
+                expect(error.response.status).to.be.equal(400);
+            }
         });
 
         it('should not re-register existing asset with different asset name', async function () {
@@ -71,7 +74,7 @@ describe('Asset', function () {
                 await Asset.register(registrationParams);
                 assertion.fail();
             } catch (error) {
-                expect(error.response.status).to.be.equal(403);
+                expect(error.response.status).to.be.equal(400);
             }
         });
 
@@ -87,7 +90,7 @@ describe('Asset', function () {
                 await Asset.register(registrationParams);
                 assertion.fail();
             } catch (error) {
-                expect(error.response.status).to.be.equal(403);
+                expect(error.response.status).to.be.equal(400);
             }
         });
     });

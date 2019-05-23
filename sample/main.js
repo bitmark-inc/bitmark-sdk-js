@@ -81,7 +81,7 @@ const main = async () => {
      * 2.2 Issue bitmarks for asset
      * You need provide asset ID to issue bitmarks for asset
      */
-    const assetId = 'YOUR_ASSET_ID';
+    let assetId = 'YOUR_ASSET_ID';
     const quantity = 100; // Number of bitmarks you want to issue, quantity must be less than or equal 100.
     let bitmarks = await issueBitmarks(account, {assetId, quantity});
 
@@ -125,7 +125,7 @@ const main = async () => {
     let yourAssets = await queryAssets(assetQueryParams);
 
     // 3.3.2 Query asset
-    const assetId = 'ASSET_ID';
+    assetId = 'ASSET_ID';
     let asset = await queryAssetById(assetId);
 
 
@@ -170,5 +170,14 @@ const main = async () => {
     bitmarkId = "YOUR_BITMARK_ID_SENT";
     let cancelResponse = cancelTransferOffer(account, bitmarkId);
 };
+
+process.on('unhandledRejection', error => {
+    let printError = error;
+
+    if (error.response) {
+        printError = error.response
+    }
+    console.log('unhandledRejection', printError);
+});
 
 main();

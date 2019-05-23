@@ -276,7 +276,7 @@ describe('Bitmark', function () {
                 transferParams.sign(account);
 
                 let response = await Bitmark.transfer(transferParams);
-                expect(response).to.have.property('txid');
+                expect(response).to.have.property('txId');
             });
         });
 
