@@ -1,15 +1,16 @@
-# bitmark-sdk
+# Bitmark SDK for NodeJS
+The official Bitmark SDK for NodeJS
 
 [![Build Status](https://travis-ci.org/bitmark-inc/bitmark-sdk.svg?branch=master)](https://travis-ci.org/bitmark-inc/bitmark-sdk)
 [![Coverage Status](https://coveralls.io/repos/bitmark-inc/bitmark-sdk/badge.svg?branch=master)](https://coveralls.io/r/bitmark-inc/bitmark-sdk?branch=master)
 
-# Set Up
+## Setting Up
 
-## Prerequisites
+### Prerequisites
 
-- Node.js version 7.6.0+
+- NodeJS version 7.6.0+
 
-## Installing the SDK
+### Installing
 
 ```sh
 $ npm install bitmark-sdk
@@ -20,10 +21,16 @@ $ npm install bitmark-sdk
 Please refer to our [SDK Document](https://sdk-docs.bitmark.com/).
 
 
+## Sample code
+This is a [sample project](sample/). It shows how to use Bitmark SDK for NodeJS.
 
-# License
+## Opening Issues
+If you encounter a bug with the Bitmark SDK for NodeJS we would like to hear about it. Search the existing issues and try to make sure your problem doesn’t already exist before opening a new issue. It’s helpful if you include the version of the SDK, Node.js and OS you’re using. Please include a stack trace and reduced repro case when appropriate, too.
 
-Copyright (c) 2014-2018 Bitmark Inc (support@bitmark.com).
+
+## License
+
+Copyright (c) 2014-2019 Bitmark Inc (support@bitmark.com).
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
