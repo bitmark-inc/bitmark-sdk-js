@@ -22,5 +22,6 @@ module.exports = exports = {
     Asset: require('./sdk/core/asset'),
     Bitmark: require('./sdk/core/bitmark'),
     Transaction: require('./sdk/core/transaction'),
-    Constants: require('./sdk/constant/constants')
+    Constants: require('./sdk/constant/constants'),
+    BitmarkCore: require('./sdk/util/bitmark-core')
 };
