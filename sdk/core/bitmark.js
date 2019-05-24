@@ -93,7 +93,7 @@ Bitmark.newTransferResponseParams = function (responseType) {
     return new TransferResponseParams(responseType);
 };
 
-Bitmark.response = async function (transferOfferResponseParams, account) {
+Bitmark.respond = async function (transferOfferResponseParams, account) {
     const TransferOfferResponseParams = require('../model/params/transfer-response-params');
     assert.parameter(transferOfferResponseParams instanceof TransferOfferResponseParams, `Transfer Offer Response Params is not valid`);
 

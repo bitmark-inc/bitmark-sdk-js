@@ -24,7 +24,7 @@ const respondToTransferOffer = async (receiver, responseInfo) => {
     await transferOfferResponseParams.fromBitmark(responseInfo.bitmarkId);
     transferOfferResponseParams.sign(receiver);
 
-    let response = await Bitmark.response(transferOfferResponseParams, receiver);
+    let response = await Bitmark.respond(transferOfferResponseParams, receiver);
     return response;
 };
 
@@ -32,7 +32,7 @@ const cancelTransferOffer = async (sender, bitmarkId) => {
     let transferOfferResponseParams = Bitmark.newTransferResponseParams('cancel');
     await transferOfferResponseParams.fromBitmark(bitmarkId);
 
-    let response = await Bitmark.response(transferOfferResponseParams, sender);
+    let response = await Bitmark.respond(transferOfferResponseParams, sender);
     return response;
 };
 
