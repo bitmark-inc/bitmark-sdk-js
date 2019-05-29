@@ -120,14 +120,24 @@ Bitmark.respond = async function (transferOfferResponseParams, account) {
 };
 
 // Query Bitmark
-Bitmark.get = async function (bitmarkId, includeAsset) {
+Bitmark.get = async function (bitmarkId) {
     assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
-    assert.parameter(!includeAsset || _.isBoolean(includeAsset), 'includeAsset must be a Boolean');
 
     let response = await apiService.sendRequest({
         method: BITMARK_GET_API_METHOD,
         url: `${BITMARK_GET_API_NAME}/${bitmarkId}`,
-        params: {asset: !!includeAsset}
+        params: {asset: false, pending: true}
+    });
+    return response;
+};
+
+Bitmark.getWithAsset = async function (bitmarkId) {
+    assert.parameter(_.isString(bitmarkId), 'Bitmark Id must be a string');
+
+    let response = await apiService.sendRequest({
+        method: BITMARK_GET_API_METHOD,
+        url: `${BITMARK_GET_API_NAME}/${bitmarkId}`,
+        params: {asset: true, pending: true}
     });
     return response;
 };

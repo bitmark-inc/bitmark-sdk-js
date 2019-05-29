@@ -7,7 +7,9 @@ const CONSTANTS = require('../../constant/constants');
 
 // CONSTRUCTOR
 let BitmarkQueryBuilder = function () {
-    this.params = {};
+    this.params = {
+        pending: true
+    };
 };
 
 
@@ -15,6 +17,13 @@ let BitmarkQueryBuilder = function () {
 BitmarkQueryBuilder.prototype.ownedBy = function (accountNumber) {
     assert(_.isString(accountNumber), 'Account Number must be a string');
     this.params.owner = accountNumber;
+    return this;
+};
+
+BitmarkQueryBuilder.prototype.ownedByWithTransient = function (accountNumber) {
+    assert(_.isString(accountNumber), 'Account Number must be a string');
+    this.params.owner = accountNumber;
+    this.params.sent = true;
     return this;
 };
 

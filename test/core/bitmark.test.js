@@ -234,8 +234,7 @@ describe('Bitmark', function () {
                 expect(bitmarksResponse.bitmarks.length).to.be.equal(limit);
 
                 let bitmarkId = bitmarksResponse.bitmarks[0].id;
-                let includeAsset = false;
-                let bitmarkResponse = await Bitmark.get(bitmarkId, includeAsset);
+                let bitmarkResponse = await Bitmark.get(bitmarkId);
                 expect(bitmarkResponse).to.have.property('bitmark');
                 expect(bitmarkResponse.bitmark).to.have.property('id');
                 expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
@@ -250,8 +249,7 @@ describe('Bitmark', function () {
                 expect(bitmarksResponse.bitmarks.length).to.be.equal(limit);
 
                 let bitmarkId = bitmarksResponse.bitmarks[0].id;
-                let includeAsset = true;
-                let bitmarkResponse = await Bitmark.get(bitmarkId, includeAsset);
+                let bitmarkResponse = await Bitmark.getWithAsset(bitmarkId);
                 expect(bitmarkResponse).to.have.property('bitmark');
                 expect(bitmarkResponse.bitmark).to.have.property('id');
                 expect(bitmarkResponse.bitmark.id).to.be.equal(bitmarkId);
@@ -303,7 +301,7 @@ describe('Bitmark', function () {
                 await transferOfferResponseParams.fromBitmark(bitmark.id);
                 transferOfferResponseParams.sign(receiverAccount);
 
-                response = await Bitmark.response(transferOfferResponseParams, receiverAccount);
+                response = await Bitmark.respond(transferOfferResponseParams, receiverAccount);
                 expect(response).to.have.property('txId');
             });
 
@@ -328,7 +326,7 @@ describe('Bitmark', function () {
                 let transferOfferResponseParams = Bitmark.newTransferResponseParams(BITMARK_CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.REJECT);
                 await transferOfferResponseParams.fromBitmark(bitmark.id);
 
-                response = await Bitmark.response(transferOfferResponseParams, receiverAccount);
+                response = await Bitmark.respond(transferOfferResponseParams, receiverAccount);
                 expect(response).to.have.property('status');
                 expect(response.status).to.be.equal('ok');
             });
@@ -354,7 +352,7 @@ describe('Bitmark', function () {
                 let transferOfferResponseParams = Bitmark.newTransferResponseParams(BITMARK_CONSTANTS.TRANSFER_OFFER_RESPONSE_TYPES.CANCEL);
                 await transferOfferResponseParams.fromBitmark(bitmark.id);
 
-                response = await Bitmark.response(transferOfferResponseParams, account);
+                response = await Bitmark.respond(transferOfferResponseParams, account);
                 expect(response).to.have.property('status');
                 expect(response.status).to.be.equal('ok');
             });
