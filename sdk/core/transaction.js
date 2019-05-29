@@ -25,7 +25,20 @@ Transaction.get = async function (txId) {
 
     let response = await apiService.sendRequest({
         method: TRANSACTION_API_METHOD,
-        url: `${TRANSACTION_API_NAME}/${txId}`
+        url: `${TRANSACTION_API_NAME}/${txId}`,
+        params: {asset: false, pending: true}
+    });
+
+    return response;
+};
+
+Transaction.getWithAsset = async function (txId) {
+    assert.parameter(_.isString(txId), 'Tx Id must be a string');
+
+    let response = await apiService.sendRequest({
+        method: TRANSACTION_API_METHOD,
+        url: `${TRANSACTION_API_NAME}/${txId}`,
+        params: {asset: true, pending: true}
     });
 
     return response;

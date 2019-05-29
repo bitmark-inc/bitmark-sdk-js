@@ -7,7 +7,9 @@ const CONSTANTS = require('../../constant/constants');
 
 // CONSTRUCTOR
 let TransactionQueryBuilder = function () {
-    this.params = {};
+    this.params = {
+        pending: true
+    };
 };
 
 
@@ -15,6 +17,13 @@ let TransactionQueryBuilder = function () {
 TransactionQueryBuilder.prototype.ownedBy = function (accountNumber) {
     assert(_.isString(accountNumber), 'Account Number must be a string');
     this.params.owner = accountNumber;
+    return this;
+};
+
+TransactionQueryBuilder.prototype.ownedByWithTransient = function (accountNumber) {
+    assert(_.isString(accountNumber), 'Account Number must be a string');
+    this.params.owner = accountNumber;
+    this.params.sent = true;
     return this;
 };
 
@@ -30,9 +39,22 @@ TransactionQueryBuilder.prototype.referencedBitmark = function (bitmarkId) {
     return this;
 };
 
+
+TransactionQueryBuilder.prototype.referencedBlockNumber = function (blockNumber) {
+    assert(_.isNumber(parseInt(blockNumber)), 'Block Number must be a number');
+    this.params.block_number = blockNumber;
+    return this;
+};
+
 TransactionQueryBuilder.prototype.loadAsset = function (shouldLoadAsset) {
     assert(_.isBoolean(shouldLoadAsset), 'shouldLoadAsset must be a boolean');
     this.params.asset = shouldLoadAsset;
+    return this;
+};
+
+TransactionQueryBuilder.prototype.pending = function (isPending) {
+    assert(_.isBoolean(isPending), 'Pending must be boolean');
+    this.params.pending = isPending;
     return this;
 };
 

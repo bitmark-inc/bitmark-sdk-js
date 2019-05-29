@@ -14,7 +14,8 @@ let testData = {
         publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
         network: 'testnet',
         existedAssetId: 'c54294134a632c478e978bcd7088e368828474a0d3716b884dd16c2a397edff357e76f90163061934f2c2acba1a77a5dcf6833beca000992e63e19dfaa5aee2a',
-        existedBitmarkId: '889f46d55ddbf6fae2da6fe14ca31b79ab84fe7cd104de735dc8cf9319eb68b5'
+        existedBitmarkId: '889f46d55ddbf6fae2da6fe14ca31b79ab84fe7cd104de735dc8cf9319eb68b5',
+        existedBlockNumber: 100
     }
 };
 
@@ -58,6 +59,17 @@ describe('Transaction', function () {
                 expect(txs).to.be.an('array');
                 txs.forEach((tx) => {
                     expect(tx.bitmark_id).to.be.equal(testData[network].existedBitmarkId);
+                });
+            });
+
+            it('should get transactions by block number', async function () {
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().referencedBlockNumber(testData[network].existedBlockNumber).limit(10).build();
+                let response = await Transaction.list(transactionQueryParams);
+                let txs = response.txs;
+
+                expect(txs).to.be.an('array');
+                txs.forEach((tx) => {
+                    expect(tx.block_number).to.be.equal(testData[network].existedBlockNumber);
                 });
             });
 
@@ -114,6 +126,22 @@ describe('Transaction', function () {
                 expect(txResponse).to.have.property('tx');
                 expect(txResponse.tx).to.have.property('id');
                 expect(txResponse.tx.id).to.be.equal(txId);
+            });
+
+            it('should get transaction by id with asset', async function () {
+                let limit = 1;
+                let transactionQueryParams = Transaction.newTransactionQueryBuilder().limit(limit).build();
+                let txsResponse = await Transaction.list(transactionQueryParams);
+                expect(txsResponse.txs).to.be.an('array');
+                expect(txsResponse.txs.length).to.be.equal(limit);
+
+                let txId = txsResponse.txs[0].id;
+                let txResponse = await Transaction.getWithAsset(txId);
+                expect(txResponse).to.have.property('tx');
+                expect(txResponse.tx).to.have.property('id');
+                expect(txResponse.tx.id).to.be.equal(txId);
+
+                expect(txResponse).to.have.property('asset');
             });
         });
     });
