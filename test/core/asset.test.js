@@ -8,6 +8,7 @@ const common = require('../../sdk/util/common');
 const Account = sdk.Account;
 const Asset = sdk.Asset;
 const CONSTANTS = require('../constant/constants');
+const BITMARK_CONSTANTS = require('../../sdk/constant/constants');
 
 let testData = {
     testnet: {
@@ -127,6 +128,18 @@ describe('Asset', function () {
                 expect(assets.length).to.be.equal(assetIds.length);
                 assets.forEach((asset) => {
                     expect(assetIds.includes(asset.id)).to.be.equal(true);
+                });
+            });
+
+            it('should get assets by at and to (earlier)', async function () {
+                let limit = 10;
+                let at = 5;
+                let assetQueryParams = Asset.newAssetQueryBuilder().at(at).to(BITMARK_CONSTANTS.QUERY_TO_DIRECTIONS.EARLIER).limit(limit).build();
+                let response = await Asset.list(assetQueryParams);
+                let assets = response.assets;
+                expect(assets).to.be.an('array');
+                assets.forEach((asset) => {
+                    expect(asset.offset <= at);
                 });
             });
         });
