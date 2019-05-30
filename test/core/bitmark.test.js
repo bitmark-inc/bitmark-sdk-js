@@ -274,7 +274,7 @@ describe('Bitmark', function () {
                 transferParams.sign(account);
 
                 let response = await Bitmark.transfer(transferParams);
-                expect(response).to.have.property('txId');
+                expect(response).to.have.property('txid');
             });
         });
 
@@ -302,7 +302,7 @@ describe('Bitmark', function () {
                 transferOfferResponseParams.sign(receiverAccount);
 
                 response = await Bitmark.respond(transferOfferResponseParams, receiverAccount);
-                expect(response).to.have.property('txId');
+                expect(response).to.have.property('txid');
             });
 
             it('should send transfer offer then reject', async function () {
