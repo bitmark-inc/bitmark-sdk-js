@@ -1,5 +1,5 @@
 {
-  "name": "bitmark-js-sdk",
+  "name": "bitmark-sdk-js",
   "version": "2.0.3",
   "description": "Bitmark SDK",
   "main": "index.js",

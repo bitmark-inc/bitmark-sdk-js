@@ -1,6 +1,6 @@
 # Changelog for Bitmark SDK for NodeJS
 
-## 2.0.4
+## 2.0.3
 ### Features:
 - Account: create new account, generate Recovery Phrase, recover account from Recovery Phrase
 - Register Asset, Issue Bitmarks
