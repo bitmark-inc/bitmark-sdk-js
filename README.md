@@ -13,7 +13,7 @@ The official Bitmark SDK for NodeJS
 ### Installing
 
 ```sh
-$ npm install bitmark-sdk
+$ npm install bitmark-sdk-js
 ```
 
 ## Documentation
