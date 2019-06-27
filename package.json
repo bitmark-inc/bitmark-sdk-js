@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "_mocha \"./test/**/**.test.js\"",
-    "coverage": "nyc npm run test",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
     "coveralls": "npm run coverage && ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
   "repository": {
