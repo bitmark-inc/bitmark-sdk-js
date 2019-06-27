@@ -82,7 +82,7 @@ const main = async () => {
      * You need provide asset ID to issue bitmarks for asset
      */
     let assetId = 'YOUR_ASSET_ID';
-    const quantity = 100; // Number of bitmarks you want to issue, quantity must be less than or equal 100.
+    const quantity = 100; // Number of bitmarks you want to issue, quantity must be greater than or equal 1.
     let bitmarks = await issueBitmarks(account, {assetId, quantity});
 
 

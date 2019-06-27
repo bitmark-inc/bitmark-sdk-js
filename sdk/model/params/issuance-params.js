@@ -13,7 +13,7 @@ const CONSTANTS = require('../../constant/constants');
 let IssuanceParams = function (assetId, quantity) {
     assert.parameter(_.isString(assetId), 'Asset Id must be a string');
     assert.parameter(_.isNumber(quantity), 'Quantity must be a number');
-    assert(isValidNumberOfBitmarks(quantity), `The number of bitmarks must be greater than 1 and less than or equal ${CONSTANTS.ISSUE_BATCH_QUANTITY}`);
+    assert(isValidNumberOfBitmarks(quantity), `The number of bitmarks must be greater than or equal 1`);
 
     this.assetId = assetId;
     this.quantity = quantity;
@@ -84,7 +84,7 @@ IssuanceParams.prototype.toJSON = function () {
 
 // INTERNAL METHODS
 function isValidNumberOfBitmarks(quantity) {
-    return quantity > 0 && quantity <= CONSTANTS.ISSUE_BATCH_QUANTITY;
+    return quantity > 0;
 }
 
 
