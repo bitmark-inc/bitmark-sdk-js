@@ -19,6 +19,7 @@ let TransferResponseParams = function (responseType) {
 TransferResponseParams.prototype.fromBitmark = async function (bitmarkId) {
     let result = await Bitmark.get(bitmarkId);
     this.offer = result.bitmark.offer;
+    assert(this.offer, 'Offer does not exist');
 };
 
 TransferResponseParams.prototype.fromOffer = function (offer) {
