@@ -42,6 +42,8 @@ AccountKey.parseAccountNumber = function (accountNumber) {
     // detect network
     let networkVal = keyVariant.shrn(1).and(new BigInteger(0x01)).toNumber();
     let network = networkVal === NETWORKS_CONFIG.livenet.account_number_value ? NETWORKS_CONFIG.livenet : NETWORKS_CONFIG.testnet;
+    let sdkConfig = global.getSDKConfig();
+    assert.parameter(network.name === sdkConfig.network, `network is not valid: ${network.name}`);
     // key type
     let keyTypeVal = keyVariant.shrn(4).and(new BigInteger(0x07)).toNumber();
     let keyType = common.getKeyTypeByValue(keyTypeVal);
