@@ -51,7 +51,7 @@ let sendRequest = async (options) => {
     // Headers
     requestOptions.headers = {
         'api-token': sdkConfig.apiToken,
-        'user-agent': `${packageJson.name}/${packageJson.version} ${process.platform} ${process.version}`
+        'user-agent': `${packageJson.name}/${packageJson.version}, ${process.platform}, ${process.version}`
     };
 
     if (headers) {
