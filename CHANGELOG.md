@@ -1,4 +1,6 @@
 # Changelog for Bitmark SDK for NodeJS
+## 2.0.4
+Relink to bitmark-sdk-js
 
 ## 2.0.3
 ### Features:

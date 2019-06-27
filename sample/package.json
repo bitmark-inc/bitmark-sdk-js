@@ -7,6 +7,6 @@
     "start": "node main.js"
   },
   "dependencies": {
-    "bitmark-sdk-js": "^2.0.3"
+    "bitmark-sdk-js": "^2.0.4"
   }
 }

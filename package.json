@@ -1,7 +1,7 @@
 {
   "name": "bitmark-sdk-js",
-  "version": "2.0.3",
-  "description": "Bitmark SDK",
+  "version": "2.0.4",
+  "description": "Bitmark SDK JS",
   "main": "index.js",
   "directories": {
     "sample": "sample",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitmark-inc/bitmark-sdk"
+    "url": "https://github.com/bitmark-inc/bitmark-sdk-js"
   },
   "keywords": [
     "bitmark",
@@ -24,9 +24,9 @@
   "author": "Bitmark Inc <support@bitmark.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bitmark-inc/bitmark-sdk/issues"
+    "url": "https://github.com/bitmark-inc/bitmark-sdk-js/issues"
   },
-  "homepage": "https://github.com/bitmark-inc/bitmark-sdk",
+  "homepage": "https://github.com/bitmark-inc/bitmark-sdk-js",
   "dependencies": {
     "axios": "^0.18.0",
     "bn.js": "^4.11.8",
