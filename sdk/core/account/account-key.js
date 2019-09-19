@@ -62,7 +62,8 @@ AccountKey.parseAccountNumber = function (accountNumber) {
 
     return {
         network: network.name,
-        pubKey: pubKey
+        pubKey: pubKey,
+        keyType: keyType
     };
 };
 
@@ -70,7 +71,8 @@ AccountKey.parseAccountNumber = function (accountNumber) {
 // PROTOTYPE METHODS
 AccountKey.prototype.sign = function (message) {
     let keyHandler = keyHandlers.getHandler(this.getType());
-    return keyHandler.sign(Buffer.from(message, 'utf8'), this.getPrivateKey());
+    let messageBuffer = Buffer.isBuffer(message) ? message : Buffer.from(message, 'utf8');
+    return keyHandler.sign(messageBuffer, this.getPrivateKey());
 };
 
 AccountKey.prototype.getPrivateKey = function () {

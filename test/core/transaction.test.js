@@ -26,7 +26,7 @@ describe('Transaction', function () {
     });
 
     describe('Query transaction', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         describe('Query transactions - List', function () {
             it('should get transactions by owner', async function () {

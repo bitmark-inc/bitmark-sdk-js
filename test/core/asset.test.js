@@ -28,7 +28,7 @@ describe('Asset', function () {
     });
 
     describe('Register Asset', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         it('should register new asset', async function () {
             let account = Account.fromSeed(testData[network].seed);
@@ -97,7 +97,7 @@ describe('Asset', function () {
     });
 
     describe('Query Asset', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         describe('Query assets - List', function () {
             it('should get assets by registrant', async function () {

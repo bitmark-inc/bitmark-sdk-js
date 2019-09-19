@@ -12,7 +12,10 @@ let validData = {
         phrase_cn: '箱 阻 起 归 彻 矮 问 栽 瓜 鼓 支 乐',
         accountNumber: 'eMCcmw1SKoohNUf3LeioTFKaYNYfp2bzFYpjm3EddwxBSWYVCb',
         publicKey: '369f6ceb1c23dbccc61b75e7990d0b2db8e1ee8da1c44db32280e63ca5804f38',
-        network: 'testnet'
+        network: 'testnet',
+        message: '1568881480',
+        correctSignature: '5d64d5d8308c154bac92fb51712ce90a5e9fb24ede443efb76eca29920554f0e438ab4a852cad3c1d1b75293869b4225e34d79c533ea0679c5a518cc93992109',
+        incorrectSignature: '5d64d5d8308c154bac92fb51712ce90a5e9fb24ede443efb76eca29920554f0e438ab4a852cad3c1d1b75293869b4225e34d79c533ea0679c5a518cc93992108'
     },
     livenet: {
         seed: '9J87GaPq7FR9Uacdi3FUoWpP6LbEpo1Ax',
@@ -20,9 +23,16 @@ let validData = {
         phrase_cn: '薯 托 剑 景 担 额 牢 痛 亦 软 凯 谊',
         accountNumber: 'aiKFA9dKkNHPys3nSZrLTPusoocPqXSFp5EexsgQ1hbYUrJVne',
         publicKey: '57c7e89cc648a387d9e5727237604a3b9007c2ceffbf99760a16b9d3cffcdf7e',
-        network: 'livenet'
+        network: 'livenet',
+        message: '1568881527',
+        correctSignature: 'a4dea609384d8f1b39dba69996818023586710267f7d021842dfb5f8bb2a18dea7ad9ef5d6e36f6843ebee828277a5d160b876c79ee3770299b2ab1d1fcaaf09',
+        incorrectSignature: 'a4dea609384d8f1b39dba69996818023586710267f7d021842dfb5f8bb2a18dea7ad9ef5d6e36f6843ebee828277a5d160b876c79ee3770299b2ab1d1fcaaf08'
     }
 };
+
+let signatureData = {
+
+}
 
 describe('Account', function () {
     describe('Create new account', function () {
@@ -182,6 +192,30 @@ describe('Account', function () {
         it('should not validate not string account number', function () {
             let result = Account.isValidAccountNumber(123);
             expect(result).to.equal(false);
+        });
+    });
+
+    describe('Sign & Verify signature', function() {
+        describe('Sign & verify signature - testnet', function() {
+            sdk.init({network: 'testnet', apiToken: CONSTANTS.TEST_API_TOKEN});
+            let data = validData.testnet;
+            let account = Account.fromRecoveryPhrase(data.phrase);
+            let signature = account.sign(data.message);
+
+            expect(signature.toString('hex')).to.equal(data.correctSignature);
+            expect(Account.verify(account.getAccountNumber(), data.message, Buffer.from(data.correctSignature, 'hex'))).to.equal(true);
+            expect(Account.verify(account.getAccountNumber(), data.message, Buffer.from(data.incorrectSignature, 'hex'))).to.equal(false);
+        });
+        
+        it('Sign & verify signature - livenet', function () {
+            sdk.init({network: 'livenet', apiToken: CONSTANTS.TEST_API_TOKEN});
+            let data = validData.livenet;
+            let account = Account.fromRecoveryPhrase(data.phrase);
+            let signature = account.sign(data.message);
+
+            expect(signature.toString('hex')).to.equal(data.correctSignature);
+            expect(Account.verify(account.getAccountNumber(), data.message, Buffer.from(data.correctSignature, 'hex'))).to.equal(true);
+            expect(Account.verify(account.getAccountNumber(), data.message, Buffer.from(data.incorrectSignature, 'hex'))).to.equal(false);
         });
     });
 });
