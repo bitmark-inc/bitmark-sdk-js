@@ -30,10 +30,6 @@ let validData = {
     }
 };
 
-let signatureData = {
-
-}
-
 describe('Account', function () {
     describe('Create new account', function () {
         it('should create new account - testnet', function () {
