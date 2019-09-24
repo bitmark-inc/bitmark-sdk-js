@@ -8,6 +8,10 @@ let _checkPriKeyLength = function (priKey) {
     assert(priKey.length === ed25519Info.prikey_length, ed25519Info.name + ' private key must be ' + ed25519Info.prikey_length + ' bytes');
 };
 
+let _checkPubKeyLength = function (pubKey) {
+    assert(pubKey.length === ed25519Info.pubkey_length, ed25519Info.name + ' public key must be ' + ed25519Info.public_length + ' bytes');
+};
+
 let _checkSeedLength = function (seed) {
     assert(seed.length === ed25519Info.seed_length, ed25519Info.name + ' seed must be ' + ed25519Info.seed_length + ' bytes');
 };
@@ -49,10 +53,16 @@ let getSignature = function (message, priKey) {
     return signature;
 };
 
+let verifySignature = function(pubkey, message, signature) {
+    _checkPubKeyLength(pubkey);
+    return nacl.sign.detached.verify(message, signature, pubkey);
+}
+
 module.exports = {
     generateKeyPair: generateKeyPair,
     generateKeyPairFromPriKey: generateKeyPairFromPriKey,
     generateKeyPairFromSeed: generateKeyPairFromSeed,
     getSeedFromPriKey: getSeedFromPriKey,
-    sign: getSignature
+    sign: getSignature,
+    verify: verifySignature
 };

@@ -37,7 +37,7 @@ describe('Bitmark', function () {
     });
 
     describe('Issue Bitmarks', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         it('should issue bitmarks with valid quantity and existing asset', async function () {
             let account = Account.fromSeed(testData[network].seed);
@@ -101,7 +101,7 @@ describe('Bitmark', function () {
     });
 
     describe('Query Bitmarks', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         describe('Query bitmarks - List', function () {
             it('should get bitmarks by owner', async function () {
@@ -259,7 +259,7 @@ describe('Bitmark', function () {
     });
 
     describe('Transfer Bitmarks', function () {
-        this.timeout(15000);
+        this.timeout(30000);
 
         describe('Transfer 1 signature', function () {
             it('should transfer bitmark with valid info', async function () {

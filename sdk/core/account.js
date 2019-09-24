@@ -7,6 +7,7 @@ const assert = require('../util/assert');
 const Seed = require('./account/seed');
 const RecoveryPhrase = require('./account/recovery-phrase');
 const AccountKey = require('./account/account-key');
+const keyHandlers = require('./account/key-types/key-handlers.js');
 
 
 // CONSTRUCTOR
@@ -50,6 +51,21 @@ Account.isValidAccountNumber = function (accountNumber) {
         return false;
     }
 };
+
+Account.verify = function(accountNumber, message, signature) {
+    assert.parameter(Buffer.isBuffer(signature), `signature must be a buffer`);
+
+    common.makeSureSDKInitialized();
+    let sdkConfig = global.getSDKConfig();
+
+    let accountNumberInfo = AccountKey.parseAccountNumber(accountNumber);
+    assert.parameter(accountNumberInfo.network === sdkConfig.network, `Network is not valid`);
+
+    let messageBuffer = Buffer.isBuffer(message) ? message : Buffer.from(message);
+    let keyHandler = keyHandlers.getHandler(accountNumberInfo.keyType.name);
+    let isCorrectSignature = keyHandler.verify(accountNumberInfo.pubKey, messageBuffer, signature);
+    return isCorrectSignature;
+}
 
 Account.packagePublicKeyFromAccountNumber = function (accountNumber) {
     let accountInfo = AccountKey.parseAccountNumber(accountNumber);
