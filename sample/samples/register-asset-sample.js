@@ -1,4 +1,4 @@
-const sdk = require('bitmark-sdk');
+const sdk = require('bitmark-sdk-js');
 const Asset = sdk.Asset;
 
 const registerAsset = async (account, registrationInfo) => {

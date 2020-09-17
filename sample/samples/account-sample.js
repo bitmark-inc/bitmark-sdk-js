@@ -1,4 +1,4 @@
-const sdk = require('bitmark-sdk');
+const sdk = require('bitmark-sdk-js');
 const Account = sdk.Account;
 
 const createNewAccount = () => {

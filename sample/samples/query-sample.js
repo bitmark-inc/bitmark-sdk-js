@@ -1,4 +1,4 @@
-const sdk = require('bitmark-sdk');
+const sdk = require('bitmark-sdk-js');
 const Bitmark = sdk.Bitmark;
 const Asset = sdk.Asset;
 const Transaction = sdk.Transaction;
