@@ -1,8 +1,8 @@
 # Bitmark SDK for NodeJS
 The official Bitmark SDK for NodeJS
 
-[![Build Status](https://travis-ci.org/bitmark-inc/bitmark-sdk.svg?branch=master)](https://travis-ci.org/bitmark-inc/bitmark-sdk)
-[![Coverage Status](https://coveralls.io/repos/bitmark-inc/bitmark-sdk/badge.svg?branch=master)](https://coveralls.io/r/bitmark-inc/bitmark-sdk?branch=master)
+[![Build Status](https://travis-ci.org/bitmark-inc/bitmark-sdk-js.svg?branch=master)](https://travis-ci.org/bitmark-inc/bitmark-sdk-js)
+[![Coverage Status](https://coveralls.io/repos/bitmark-inc/bitmark-sdk-js/badge.svg?branch=master)](https://coveralls.io/r/bitmark-inc/bitmark-sdk-js?branch=master)
 
 ## Setting Up
 
